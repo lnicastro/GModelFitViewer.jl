@@ -64,11 +64,11 @@ function save_html(path::AbstractString,
     end
 
     if isnothing(data)
-        d = GFit.todict(model, binsize=rebin)
+        d = GFit.todict(model, rebin=rebin)
     elseif isnothing(bestfit)
-        d = GFit.todict(model, data, binsize=rebin)
+        d = GFit.todict(model, data, rebin=rebin)
     else
-        d = GFit.todict(model, data, bestfit, binsize=rebin)
+        d = GFit.todict(model, data, bestfit, rebin=rebin)
     end
 
     io = open(path, "w")
@@ -89,12 +89,11 @@ function save_html(path::AbstractString,
     return path
 end
 
-
-
 function viewer(args...; kw...)
     path = tempdir() * "/gfitviewer.html"
     save_html(path, args...; kw...)
     DefaultApplication.open(path)
 end
+
 
 end
