@@ -1,2 +1,2 @@
-# gfitviewer
-GFitViewer - web viewer for the GFit produced results
+# GFitViewer
+A web viewer for the GFit model, data and results.
