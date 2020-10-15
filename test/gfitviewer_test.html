@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1a" />
-  <meta name="date" content="2020-10-14" />
+  <meta name="date" content="2020-10-15" />
 
 <!-- @Remote
 -->
@@ -106,7 +106,6 @@
 
 <hr class="style-one"></hr>
 
-
   <script>
     var chart_data;
     //var chart_data = JSON_DATA;
@@ -179,6 +178,33 @@ const numberWithCommas = (x) => {
 
 const nfSignificant = (x) => {
   return Math.max((Math.abs(x) % 1).toPrecision(1).length - 2, 0);
+}
+
+// Format the parameters range at a given digits precision
+
+pRange = function(low, high, np) {
+  if ( low === null && high === null )
+    return '';
+
+  if ( np === undefined )
+    np = 4;
+
+  if ( low === undefined || typeof low !== 'number' )
+    v = '-Inf';
+  else {
+    v = low;
+    if ( ! Number.isInteger(v) )
+	v = +v.toPrecision(np);  // To number to remove trailing 0s
+  }
+  if ( high === undefined || typeof high !== 'number' )
+    v += ':Inf';
+  else {
+    var v2 = high;
+    if ( ! Number.isInteger(v2) )
+	v2 = +v2.toPrecision(np);
+    v += ':'+ v2;
+  }
+  return v;
 }
 
 
@@ -540,9 +566,10 @@ console.log('isel:', isel);
 
 
 //
-// -- Create series for the the main reducer of a prediction
+// -- Create series for the the main reducer of a prediction.
+//    If xsc_series=true, use it also for the X window scrolling. 
 
-function creaMainReducer(isel) {
+function creaMainReducer(isel, xsc_series) {
   if (isel === undefined)
     isel = c_ipre;
 
@@ -573,6 +600,9 @@ console.log('Create main reducer:', rname);
 // Highlight when cursor on legend item
   hs = series.segments.template.states.create("hover");
   hs.properties.strokeWidth = 5;
+
+  if ( xsc_series !== undefined && xsc_series == true )
+    chart.scrollbarX.series.push(series);
 }
 
 
@@ -583,6 +613,12 @@ function creaDataSeries(isel) {
   if (isel === undefined)
     isel = c_ipre;
 
+// No data, just the model. Create and return.
+  if ( chart_data.data[isel] === undefined ) {
+    creaMainReducer(isel, true);
+    return;
+  }
+
   var hs;
   sdata = [];
   sdata = chart.series.push(new am4charts.LineSeries());
@@ -590,6 +626,7 @@ function creaDataSeries(isel) {
   sdata.dataFields.valueY = 'y';
   sdata.name = 'data';  // chart_data.meta.data.label;
   sdata.strokeWidth = 2;
+  sdata.minBulletDistance = 5;
   sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
 
 
@@ -610,7 +647,6 @@ function creaDataSeries(isel) {
   var errorBullet = sdata.bullets.create(am4charts.ErrorBullet);
   errorBullet.isDynamic = true;
   errorBullet.strokeWidth = 1;
-
   errorBullet.width = 1;
 
 
@@ -657,6 +693,8 @@ function creaDataSeries(isel) {
     if (sdata.resid_visible) {
 	range.grid.strokeOpacity = 0.5;
 	range2.axisFill.fillOpacity = 0.1;
+	valueAxis.renderer.grid.template.strokeOpacity = 0;
+	valueAxis2.renderer.grid.template.strokeOpacity = 1;
     } else {
 	valueAxis2.visible = false;  // TODO
 	resid.hidden = true;
@@ -928,11 +966,13 @@ am4core.ready(function() {
 	resid.hidden = ! field.isHidden;
 	if (field.isHidden) {
 		range.grid.strokeOpacity = 0.5;
-		range2.axisFill.fillOpacity = 0.1; 
+		range2.axisFill.fillOpacity = 0.1;
+		valueAxis2.renderer.grid.template.strokeOpacity = 1;
 		valueAxis2.visible = true;  // TODO
 	} else {
 		range.grid.strokeOpacity = 0;
-		range2.axisFill.fillOpacity = 0; 
+		range2.axisFill.fillOpacity = 0;
+		valueAxis2.renderer.grid.template.strokeOpacity = 0;
 		valueAxis2.visible = false;  // TODO
 	}
     }
@@ -1118,25 +1158,23 @@ var tableFromJson = function(obj, type, tab_id) {
 	    par_tt += '<br />'+ pname[k] +' (unit: '+ chart_data.components[cname[i]].params[pname[k]].meta.unit +' note: '+ chart_data.components[cname[i]].params[pname[k]].meta.note +')';
 	  }
 
-//console.log(par_tt);
 
 // Add cell with tooltip text.
 	  tabCell = tr.insertCell(-1);
 	  tabCell.innerHTML = '<div class="partip"><span class="partiptext">'+ par_tt + '</span>'+
-				 cell + '</div>';
-	  //tabCell.title = par_tt;
+			cell + '</div>';
+//tabCell.title = par_tt;
 
 	  cell = '';
 	  var v = c.params[pname[0]].value;  // 4th is par. values
 	  if ( typeof v == 'number')
-		v = parseFloat(v).toPrecision(2);
+		v = +v.toPrecision(4);
 
 	  cell = v;
 	  for (var k = 1; k < pname.length; k++) {
 		v = c.params[pname[k]].value;
-		if ( typeof v == 'number') {
-		  v = parseFloat(v).toPrecision(2);
-		}
+		if ( typeof v == 'number')
+		  v = +v.toPrecision(4);
 		cell += '<br />'+ v;
 	  }
 	  tabCell = tr.insertCell(-1);
@@ -1145,34 +1183,15 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	  if (c.params[pname[0]].low === null && c.params[pname[0]].high === null)  // 5th is par. range
 		cell = ''
-	  else {
-		if ( typeof c.params[pname[0]].low !== 'number' )
-		  v = '-Inf';
-		else
-		  v = c.params[pname[0]].low;
-
-		if ( typeof c.params[pname[0]].high !== 'number' )
-		  v += ':Inf';
-		else
-		  v += ':'+ c.params[pname[0]].high;
-	  }
-	  cell = v;
+	  else
+		cell = pRange(c.params[pname[0]].low, c.params[pname[0]].high, 4);
 
 	  for (var k = 1; k < pname.length; k++) {
 		if (c.params[pname[k]].low === null && c.params[pname[k]].high === null)
-		  	v = ''
-		else {
-			if ( typeof c.params[pname[k]].low !== 'number' )
-			  v = '-Inf';
-			else
-			  v = c.params[pname[k]].low;
-
-			if ( typeof c.params[pname[k]].high !== 'number' )
-			  v += ':Inf';
-			else
-			  v += ':'+ c.params[pname[k]].high;
-		}
-	        cell += '<br />'+ v;
+			v = ''
+		else
+			v = pRange(c.params[pname[k]].low, c.params[pname[k]].high, 4);
+		cell += '<br />'+ v;
 	  }
 	  tabCell = tr.insertCell(-1);
 	  tabCell.classList.add('al-right');
@@ -1198,7 +1217,7 @@ var tableFromJson = function(obj, type, tab_id) {
 		if (j == 0 || j == 4)  // "error" is a counter
 		  cell = parseInt(c[pcol[j]]);
 		else
-		  cell = parseFloat(c[pcol[j]]).toPrecision(4);
+		  cell = +c[pcol[j]].toPrecision(4);
 		if ( [pcol[j]] == 'error' )
 			cell = '<span style="background: var(--danger); color: #fff; padding-left: 5px;">'+ cell +'</span>';
 	    } else
@@ -1228,7 +1247,7 @@ var tableFromJson = function(obj, type, tab_id) {
 		if (j == 0 || j == 4)  // "error" is a counter
 		  cell = parseInt(c[pcol[j]]);
 		else
-		  cell = parseFloat(c[pcol[j]]).toPrecision(4);
+		  cell = +c[pcol[j]].toPrecision(4);
 	    } else
 		cell = '';
 	    tabCell = tr.insertCell(-1);
@@ -1254,7 +1273,6 @@ var tableFromJson = function(obj, type, tab_id) {
 //console.log('pkname:',pkname);
  
 	  var np_fit = 0;  // Fit params counter
-//var par_tt = '';  // Parameter tooltip
 
 	  tr = tb.insertRow(-1);
 
@@ -1263,14 +1281,10 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	  var cell = pname[0];  // Second column is par. name
 
-//par_tt = cname[i] + '\n'+ pname[0] +' (unit: '+ chart_data.components[cname[i]].params[pname[0]].meta.unit +' note: '+ chart_data.components[cname[i]].params[pname[0]].meta.note +')';
-
 	  for (var k = 1; k < pname.length; k++) {
 	    cell += '<br />'+ pname[k];
-//par_tt += '\n'+ pname[k] +' (unit: '+ chart_data.components[cname[i]].params[pname[k]].meta.unit +' note: '+ chart_data.components[cname[i]].params[pname[k]].meta.note +')';
 	  }
 
-//console.log(par_tt);
 
 	  tabCell = tr.insertCell(-1);
 	  tabCell.innerHTML = cell;
@@ -1280,9 +1294,9 @@ var tableFromJson = function(obj, type, tab_id) {
 	    var cell = '';
 	    var v = c[pname[0]][pkname[j]];
 	    if ( typeof v == 'number') {
-		v = parseFloat(v).toPrecision(4);
+		v = +v.toPrecision(4);
 		np_fit++;
-		if ( pkname[j] == 'patched' && v !== parseFloat(c[pname[0]]['val']).toPrecision(4) )
+		if ( pkname[j] == 'patched' && v !== +c[pname[0]]['val'].toPrecision(4) )
 			v = '<span style="background: var(--danger); color: #fff;  padding-left: 5px;">'+ v +'</span>';
 	    } else if (pkname[j] == 'unc') {  // null
 			v = '';
@@ -1294,13 +1308,11 @@ var tableFromJson = function(obj, type, tab_id) {
 	    }
 	    cell = v;
 	    for (var k = 1; k < pname.length; k++) {
-
-
 		v = c[pname[k]][pkname[j]];
 		if ( typeof v == 'number') {
-		  v = parseFloat(v).toPrecision(4);
+		  v = +v.toPrecision(4);
 		  np_fit++;
-		  if ( pkname[j] == 'patched' && v !== parseFloat(c[pname[k]]['val']).toPrecision(4) )
+		  if ( pkname[j] == 'patched' && v !== +c[pname[k]]['val'].toPrecision(4) )
 			v = '<span style="background: var(--danger); color: #fff;  padding-left: 5px;">'+ v +'</span>';
 		} else if (pkname[j] == 'unc') {  // null
 			v = '';
@@ -1324,19 +1336,19 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	var div = document.createElement('div');
 	div.setAttribute('class', 'summ-div-col');
-	div.innerHTML = '<div class="fres-fixw">#Data</div>'+ ':<div class="fres-int">'+ obj.ndata +'</div><br />'+
-		'<div class="fres-fixw">#Param</div>'+':<div class="fres-int">'+ np_fit +'</div><br />'+
-		'<div class="fres-fixw">DOF</div>'+':<div class="fres-int">'+ obj.dof +'</div><br />'+
-		'<div class="fres-fixw">#Param</div>'+':<div class="fres-int" style="color: '+ (obj.status == 'OK' ? 'var(--success);"' : 'var(--danger);') +'">'+ obj.status +'</div>';
+	div.innerHTML = '<ul><li><div class="fres-fixw">#Data</div>'+ ':<div class="fres-int">'+ obj.ndata +'</div></li>'+
+		'<li><div class="fres-fixw">#Param</div>'+':<div class="fres-int">'+ np_fit +'</div></li>'+
+		'<li><div class="fres-fixw">DOF</div>'+':<div class="fres-int">'+ obj.dof +'</div></li>'+
+		'<li><div class="fres-fixw">#Param</div>'+':<div class="fres-int" style="color: '+ (obj.status == 'OK' ? 'var(--success);"' : 'var(--danger);') +'">'+ obj.status +'</div></li></ul>';
 
 	summdiv.appendChild(div);
 
 	div = document.createElement('div');
 	div.setAttribute('class', 'summ-div-col');
-	div.innerHTML = '<div class="fres-fixw">Cost</div>'+ ':<div class="fres-float">'+ parseFloat(obj.cost).toPrecision(4) +'</div><br />'+
-		'<div class="fres-fixw">&chi;<sup>2</sup><sub>red</sub></div>'+':<div class="fres-float">'+ parseFloat(obj.cost / obj.dof).toPrecision(4) +'</div><br />'+
-		'<div class="fres-fixw">Prob.</div>'+':<div class="fres-float">'+ Math.pow(10, parseFloat(obj.log10testprob)).toPrecision(4) +'</div><br />'+
-		'<div class="fres-fixw">Elapsed</div>'+':<div class="fres-float">'+ parseFloat(obj.elapsed).toPrecision(4) +'</div> s';
+	div.innerHTML = '<ul><li><div class="fres-fixw">Cost</div>'+ ':<div class="fres-float">'+ obj.cost.toPrecision(4) +'</div></li>'+
+		'<li><div class="fres-fixw" style="line-height: 1.3rem;">&chi;<sup>2</sup><sub>red</sub></div>'+':<div class="fres-float">'+ (obj.cost / obj.dof).toPrecision(4) +'</div></li>'+
+		'<li><div class="fres-fixw">Prob.</div>'+':<div class="fres-float">'+ Math.pow(10, obj.log10testprob).toPrecision(4) +'</div></li>'+
+		'<li><div class="fres-fixw">Elapsed</div>'+':<div class="fres-float">'+ obj.elapsed.toPrecision(4) +'</div> s</li></ul>';
 
 	summdiv.appendChild(div);
 
@@ -1384,7 +1396,7 @@ function updPredTab(obj) {
 		if (j == 0 || j == 4)   // "error" is a counter
 		  cell = parseInt(c[pcol[j]]);
 		else
-		  cell = parseFloat(c[pcol[j]]).toPrecision(4);
+		  cell = +c[pcol[j]].toPrecision(4);
 	    } else
 		cell = '';
 	    tabCell = tr.insertCell(-1);
@@ -1411,7 +1423,7 @@ function updPredTab(obj) {
 		if (j == 0 || j == 4)   // "error" is a counter
 		  cell = parseInt(c[pcol[j]]);
 		else
-		  cell = parseFloat(c[pcol[j]]).toPrecision(4);
+		  cell = +c[pcol[j]].toPrecision(4);
 	    } else
 		cell = '';
 	    tabCell = tr.insertCell(-1);

@@ -2,7 +2,7 @@
    GFit spectra viewer style file
  
    LN @ INAF-OAS, Sep. 2020
-   Last change: 14/10/2020
+   Last change: 15/10/2020
 */
 
 body {
@@ -291,7 +291,15 @@ div.summ-div {
 
 div.summ-div-col {
   display: inline-block;
-  margin-left: 3rem;
+  margin-left: 1rem;
+}
+
+div.summ-div-col ul {
+  list-style-type:none;
+}
+
+div.summ-div-col div {
+  line-height: 1.8rem;
 }
 
 .fres-fixw {
