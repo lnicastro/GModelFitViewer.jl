@@ -1180,6 +1180,7 @@ var tableFromJson = function(obj, type, tab_id) {
 	  tabCell = tr.insertCell(-1);
 	  tabCell.classList.add('al-right');
 	  tabCell.innerHTML = cell;
+//tabCell.title = par_tt;
 
 	  if (c.params[pname[0]].low === null && c.params[pname[0]].high === null)  // 5th is par. range
 		cell = ''
@@ -1288,7 +1289,6 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	  tabCell = tr.insertCell(-1);
 	  tabCell.innerHTML = cell;
-//tabCell.title = par_tt;
 
 	  for (var j = 0; j < ncol - 2; j++) {  // Third+ columns are par. values
 	    var cell = '';
