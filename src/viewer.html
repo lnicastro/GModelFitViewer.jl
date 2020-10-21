@@ -11,8 +11,8 @@
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
-  <meta name="version" content="0.1a" />
-  <meta name="date" content="2020-10-15" />
+  <meta name="version" content="0.1b" />
+  <meta name="date" content="2020-10-21" />
 
 <!-- @Remote
 -->
@@ -625,7 +625,8 @@ function creaDataSeries(isel) {
   sdata.name = 'data';  // chart_data.meta.data.label;
   sdata.strokeWidth = 2;
   sdata.minBulletDistance = 5;
-  sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
+  sdata.legendSettings.valueText = '{valueY}';
+  //sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
 
 
 // User selected color?
@@ -937,6 +938,7 @@ am4core.ready(function() {
   var lt = chart.legend.valueLabels.template;
   lt.background.fill = am4core.color("#efefef");
   lt.background.fillOpacity = 1;
+  lt.width *= 1.1;  // This fixes width change at run time
 
   chart.legend.itemContainers.template.events.on("over", function(event) {
     var segments = event.target.dataItem.dataContext.segments;
@@ -988,6 +990,10 @@ am4core.ready(function() {
   creaDataSeries();
   creaCompSeries();
 
+// Pre-zoom the chart (%)
+  //xAxis.start = 0;
+  //xAxis.end = 0.5;
+  //xAxis.keepSelection = true;
 
 });  // end am4core.ready()
 

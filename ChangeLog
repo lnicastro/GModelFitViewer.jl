@@ -1,0 +1,3 @@
+2020-10-21 LN, ver. 0.1b
+	- Remove +/- error from data value in legend.valueLabels.
+	- Increase by 10% the legend.valueLabels to keep width fixed at run time.
