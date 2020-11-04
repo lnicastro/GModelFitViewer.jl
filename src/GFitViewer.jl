@@ -7,6 +7,7 @@ export viewer
 function add_default_meta!(model::Model)
     for i in 1:length(model.preds)
         meta = metadict(model, i)
+        haskey(meta, :rebin)   ||  (meta[:rebin] = GFit.todict_opt[:rebin])
         haskey(meta, :label)   ||  (meta[:label] = "Prediction $i")
         haskey(meta, :label_x) ||  (meta[:label_x] = "")
         haskey(meta, :scale_x) ||  (meta[:scale_x] =  1)
@@ -18,7 +19,7 @@ function add_default_meta!(model::Model)
         for (cname, comp) in model.comps
             meta = metadict(model, cname)
             haskey(meta, :label)    ||  (meta[:label] = string(cname))
-            haskey(meta, :visible)  ||  (meta[:visible] = false)
+            haskey(meta, :visible)  ||  (meta[:visible] = GFit.todict_opt[:addcomps])
             haskey(meta, :color)    ||  (meta[:color] = "auto")
             for (pname, param) in GFit.getparams(comp)
                 meta = param.meta
