@@ -54,7 +54,10 @@ function save_html(path::AbstractString,
                    model::Model,
                    data::Union{Nothing, Vector{GFit.Measures_1D}}=nothing,
                    bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
-                   rebin=1)
+                   rebin::Int=1, addcomps::Bool=false)
+
+    GFit.todict_opt[:rebin] = rebin
+    GFit.todict_opt[:addcomps] = addcomps
 
     add_default_meta!(model)
     if !isnothing(data)
@@ -64,11 +67,11 @@ function save_html(path::AbstractString,
     end
 
     if isnothing(data)
-        d = GFit.todict(model, rebin=rebin)
+        d = GFit.todict(model)
     elseif isnothing(bestfit)
-        d = GFit.todict(model, data, rebin=rebin)
+        d = GFit.todict(model, data)
     else
-        d = GFit.todict(model, data, bestfit, rebin=rebin)
+        d = GFit.todict(model, data, bestfit)
     end
 
     io = open(path, "w")
