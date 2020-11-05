@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1b" />
-  <meta name="date" content="2020-10-21" />
+  <meta name="date" content="2020-11-05" />
 
 <!-- @Remote
 -->
@@ -118,15 +118,14 @@
 	def_flx_units_s = -17,  // Flux units exponent
 	def_lum_scale = 1;      // Luminosity scale factor wrt 1e42
 
-  var c_ipre = 0,	 // Currently plotted prediction index
-	fitlog_vis_state = 0, // Visibility state of the fit summary table 
-	comp_table_vis_state = 0, // Visibility state of the components table 
-	chart = {},      // The amchart object
-	sdata = [],      // The data series to plot (with errors)
-	resid = [],      // The residuals
-	aux = {},        // The metadata information read from the json file and more,
-	valueAxis2,      // The residuals right axis object
-	range, range2,   // Used to highlight +/- 3 sigma residuals. (TODO)
+  var c_ipre = 0,	// Currently plotted prediction index
+	n_sigma = 3,	// Highlight residuals region within this +/- sigma
+	chart = {},	// The amchart object
+	sdata = [],	// The data series to plot (with errors)
+	resid = [],	// The residuals
+	aux = {},	// The metadata information read from the json file and more,
+	valueAxis2,	// The residuals right axis object
+	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
 	i;
   var xAxis, valueAxis;
 
@@ -203,6 +202,13 @@ pRange = function(low, high, np) {
     v += ':'+ v2;
   }
   return v;
+}
+
+
+// Hidden object?
+
+function isHidden(e) {
+	return (e.offsetParent === null)
 }
 
 
@@ -358,6 +364,10 @@ function createAllCompSeries() {  // Unused!
   for (var i = 0; i < aux.preinfo[c_ipre].n_comps; i++) {
     var cname =  aux.preinfo[c_ipre].components[i];
     var component = p.components[cname];
+
+    if ( !component.meta.visible )  // Component has data?
+	continue;
+
     var series = chart.series.push(new am4charts.LineSeries());
 
     series.dataFields.categoryX = 'x';
@@ -462,7 +472,8 @@ var getauxinfo = function() {  // TODO
     desc += '</strong> &minus; ';
 //if (  aux.z !== '' ) desc += ':  &nbsp;&nbsp; z: '+ aux.z +', E(B-V): '+ aux.e_bv;
 
-    desc += chart_data.predictions[i].meta.label;
+    desc += chart_data.predictions[i].meta.label +' &minus; Rebin: '+
+	    chart_data.predictions[i].meta.rebin;
 
     x_lab = chart_data.predictions[i].meta.label_x;
     if ( x_lab !== '' ) {
@@ -518,8 +529,9 @@ var getauxinfo = function() {  // TODO
   
   for (i = 0; i < aux.n_d; i++) {
 	aux.datinfo.push({
-	resid_visible: chart_data.data[i].meta.resid_visible,
-	resid_color: chart_data.data[i].meta.resid_color});  // TODO
+	  resid_visible: chart_data.data[i].meta.resid_visible,
+	  resid_color: (chart_data.data[i].meta.resid_color || rcolor.hex)}
+	);  // TODO
   }
 
   document.getElementById('p_title').innerHTML = aux.preinfo[c_ipre].title;
@@ -550,11 +562,14 @@ console.log('isel:', isel);
 
 	for (var j = 0; j < aux.preinfo[isel].n_reds; j++)  // Reducers
 	  //if ( p.reducers[rnames[j]].y[i] > 0 )
-	    vals[rnames[j]] = p.reducers[rnames[j]].y[i];
+	  vals[rnames[j]] = p.reducers[rnames[j]].y[i];
 
-	for (var j = 0; j < aux.preinfo[isel].n_comps; j++)  // Components
+	for (var j = 0; j < aux.preinfo[isel].n_comps; j++) { // Components
+          if ( !p.components[cnames[j]].meta.visible )
+		continue;
 	  //if ( p.components[cnames[j]].y[i] > 0 )
-	    vals[cnames[j]] = p.components[cnames[j]].y[i];
+	  vals[cnames[j]] = p.components[cnames[j]].y[i];
+	}
 
 	mydata.push(vals);
   }
@@ -624,7 +639,7 @@ function creaDataSeries(isel) {
   sdata.dataFields.valueY = 'y';
   sdata.name = 'data';  // chart_data.meta.data.label;
   sdata.strokeWidth = 2;
-  sdata.minBulletDistance = 5;
+  sdata.minBulletDistance = 3;  // Error visible if points are not closer than 3 pixels
   sdata.legendSettings.valueText = '{valueY}';
   //sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
 
@@ -696,6 +711,7 @@ function creaDataSeries(isel) {
 	valueAxis2.renderer.grid.template.strokeOpacity = 1;
     } else {
 	valueAxis2.visible = false;  // TODO
+	valueAxis2.cursorTooltipEnabled = false;
 	resid.hidden = true;
 
 	range.grid.strokeOpacity = 0;
@@ -738,6 +754,9 @@ function creaCompSeries(isel) {
 	cname = aux.preinfo[isel].components[i];
 	component = p.components[cname];
     
+	if ( !component.meta.visible )  // Component has data?
+	  continue;
+
 console.log('Create component:', cname);
     
 	var series = chart.series.push(new am4charts.LineSeries());
@@ -903,8 +922,8 @@ am4core.ready(function() {
     // +/- 3 sigma shaded area with invisible strokes
     range2 = valueAxis2.axisRanges.create();
     range2.grid.stroke = am4core.color("#ff6478");
-    range2.value = -3;
-    range2.endValue = 3;
+    range2.value = -n_sigma;
+    range2.endValue = n_sigma;
     range2.grid.strokeOpacity = 0;
   }
 
@@ -913,7 +932,7 @@ am4core.ready(function() {
   //chart.scrollbarX.series.push(sdata);
 
 // Increase contrast by taking every second color
-  chart.colors.step = 2;
+  //chart.colors.step = 2;
 
 
 // Cursor
@@ -938,7 +957,7 @@ am4core.ready(function() {
   var lt = chart.legend.valueLabels.template;
   lt.background.fill = am4core.color("#efefef");
   lt.background.fillOpacity = 1;
-  lt.width *= 1.1;  // This fixes width change at run time
+  lt.minWidth = lt.width * 1.2;  // 20% increase. This fixes width change at run time
 
   chart.legend.itemContainers.template.events.on("over", function(event) {
     var segments = event.target.dataItem.dataContext.segments;
@@ -969,11 +988,15 @@ am4core.ready(function() {
 		range2.axisFill.fillOpacity = 0.1;
 		valueAxis2.renderer.grid.template.strokeOpacity = 1;
 		valueAxis2.visible = true;  // TODO
+		valueAxis2.cursorTooltipEnabled = true;
+		valueAxis.renderer.grid.template.strokeOpacity = 0;
 	} else {
 		range.grid.strokeOpacity = 0;
 		range2.axisFill.fillOpacity = 0;
 		valueAxis2.renderer.grid.template.strokeOpacity = 0;
 		valueAxis2.visible = false;  // TODO
+		valueAxis2.cursorTooltipEnabled = false;
+		valueAxis.renderer.grid.template.strokeOpacity = 0.15;
 	}
     }
   });
@@ -1002,37 +1025,60 @@ am4core.ready(function() {
 // -- Show/hide the fit log tables
 
 function fitlog_toggle() {
-  if (fitlog_vis_state) {
-    document.getElementById('fitlog_sect').className = 'view_div-sect';
-    document.getElementById('fitlog_div').className = 'div-hide';
+  var e = document.getElementById('fitlog_div');
+  if ( ! isHidden(e) ) {
+    e.className = 'div-hide';
+    document.getElementById('fitlog_sect').className = 'toggle_table-hdr';
     document.getElementById('view_fitlog_angle').className = 'fas fa-angle-down ud-angle';
-    fitlog_vis_state = 0;
   } else {
-    document.getElementById('fitlog_sect').className = 'view_div-sect div-selected';
-    document.getElementById('fitlog_div').className = 'div-show';
+    e.className = 'div-show';
+    document.getElementById('fitlog_sect').className = 'toggle_table-hdr div-selected';
     document.getElementById('view_fitlog_angle').className = 'fas fa-angle-up ud-angle';
-    fitlog_vis_state = 1;
   }
 }
 
 
 //
-// -- Show/hide the components log tables
+// -- Show/hide the components / predictions / reducers log tables
 
 function comp_table_toggle() {
-  if (comp_table_vis_state) {
-    document.getElementById('comp_table_sect').className = 'view_div-sect';
-    document.getElementById('comp_table').className = 'div-hide';
+  var e = document.getElementById('comp_table');
+  if ( ! isHidden(e) ) {
+    e.className = 'out_table div-hide';
+    document.getElementById('comp_table_sect').className = 'toggle_table-hdr';
     document.getElementById('view_comp_table_angle').className = 'fas fa-angle-down ud-angle';
-    comp_table_vis_state = 0;
   } else {
-    document.getElementById('comp_table_sect').className = 'view_div-sect div-selected';
-    document.getElementById('comp_table').className = 'div-show';
+    e.className = 'out_table div-show';
+    document.getElementById('comp_table_sect').className = 'toggle_table-hdr div-selected';
     document.getElementById('view_comp_table_angle').className = 'fas fa-angle-up ud-angle';
-    comp_table_vis_state = 1;
   }
 }
 
+function pred_table_toggle() {
+  var e = document.getElementById('pred_table');
+  if ( ! isHidden(e) ) {
+    e.className = 'out_table div-hide';
+    document.getElementById('pred_table_sect').className = 'toggle_table-hdr';
+    document.getElementById('view_pred_table_angle').className = 'fas fa-angle-down ud-angle';
+  } else {
+    e.className = 'out_table div-show';
+    document.getElementById('pred_table_sect').className = 'toggle_table-hdr div-selected';
+    document.getElementById('view_pred_table_angle').className = 'fas fa-angle-up ud-angle';
+  }
+}
+
+function red_table_toggle() {
+  var e = document.getElementById('red_table');
+  if ( ! isHidden(e) ) {
+    e.className = 'out_table div-hide';
+    document.getElementById('red_table_sect').className = 'toggle_table-hdr';
+    document.getElementById('view_red_table_angle').className = 'fas fa-angle-down ud-angle';
+  } else {
+    e.className = 'out_table div-show';
+    document.getElementById('red_table_sect').className = 'toggle_table-hdr div-selected';
+    document.getElementById('view_red_table_angle').className = 'fas fa-angle-up ud-angle';
+  }
+}
 
 //
 // -- Download the full original JSON data
@@ -1058,7 +1104,7 @@ function savejsonobj(filename, obj) {
 //    tab_id: the (html) id to give to the created table
 
 var tableFromJson = function(obj, type, tab_id) {
-  var col = [], tlab = document.createElement("h3");
+  var col = [], tlab = document.createElement("div");
 
 //console.log(obj);
 // Components or reducers? (TODO)
@@ -1078,22 +1124,31 @@ var tableFromJson = function(obj, type, tab_id) {
 // Define header from type
   switch (type) {
     case 0:
-	title = '<i id="view_comp_table_angle" class="fas fa-angle-down ud-angle"></i>Components'
+	title = '<i id="view_comp_table_angle" class="fas fa-angle-down ud-angle"></i>View Components'
 	tlab.setAttribute('id', 'comp_table_sect');
-	tlab.setAttribute('class', 'view_div-sect');
+	tlab.setAttribute('class', 'toggle_table-hdr');
 	tlab.setAttribute('onclick', 'comp_table_toggle()');
 	col = ['Component', 'Type', 'Param.', 'Value', 'Range'];	
 	break;
     case 1:
-	title = 'Prediction'
+	//title = 'Prediction'
+	title = '<i id="view_pred_table_angle" class="fas fa-angle-down ud-angle"></i>View Prediction'
+	tlab.setAttribute('id', 'pred_table_sect');
+	tlab.setAttribute('class', 'toggle_table-hdr');
+	tlab.setAttribute('onclick', 'pred_table_toggle()');
 	col = ['Component', 'Counter', 'Min', 'Max', 'Mean', 'NaN/Inf'];	
 	break;
     case 2:
-	title = 'Reducer'
+	//title = 'Reducer'
+	title = '<i id="view_red_table_angle" class="fas fa-angle-down ud-angle"></i>View Reducer'
+	tlab.setAttribute('id', 'red_table_sect');
+	tlab.setAttribute('class', 'toggle_table-hdr');
+	tlab.setAttribute('onclick', 'red_table_toggle()');
 	col = ['Component', 'Counter', 'Min', 'Max', 'Mean', 'NaN/Inf'];	
 	break;
     case 3:
-	title = 'Best Fit results'
+	title = 'Best Fit results';
+	tlab.setAttribute('class', 'header-lab');
 	col = ['Component', 'Param.', 'Value', 'Uncert.', 'Fixed', 'Patched'];	
 	break;
 
@@ -1111,9 +1166,9 @@ var tableFromJson = function(obj, type, tab_id) {
   tab = document.createElement('table');
   if ( tab_id !== undefined )
 	tab.setAttribute('id', tab_id);
-  if ( type == 0 ) {  // Components hidden by default
+  if ( type == 0 || type == 1 || type == 2 ) {  // Components / prediction / reducer hidden by default
 	tab.setAttribute('class', 'div-hide');
-	tab.style.border = '0';
+	//tab.style.border = '0';
   }
   tabdiv.appendChild(tab);
 
@@ -1165,7 +1220,7 @@ var tableFromJson = function(obj, type, tab_id) {
 
 // Add cell with tooltip text.
 	  tabCell = tr.insertCell(-1);
-	  tabCell.innerHTML = '<div class="partip"><span class="partiptext">'+ par_tt + '</span>'+
+	  tabCell.innerHTML = '<div class="partip"><span class="partiptext">'+ par_tt +'</span>'+
 			cell + '</div>';
 //tabCell.title = par_tt;
 
@@ -1440,12 +1495,12 @@ function updPredTab(obj) {
 </script>
 
 
-<div class="view_div-sect" id="fitlog_sect" onclick="fitlog_toggle()">
-  <h2><i id="view_fitlog_angle" class="fas fa-angle-down ud-angle"></i>View GFit report</h2>
+<div class="toggle_table-hdr" id="fitlog_sect" onclick="fitlog_toggle()">
+  <i id="view_fitlog_angle" class="fas fa-angle-down ud-angle"></i>View GFit report
 </div>
 
 <div id="fitlog_div" class="div-hide">
-  <p id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</p>
+  <div id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</div>
 </div>
 
 <script>
