@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1b" />
-  <meta name="date" content="2020-10-21" />
+  <meta name="date" content="2020-11-05" />
 
 <!-- @Remote
 -->
@@ -98,13 +98,21 @@
     </div>
   </div>
 
-  <p><span id="p_title">GFitViewer info here...</span> <span id="spe_size"></span></p>
+  <p>
+	<span id="p_title">GFitViewer info here...</span> <span id="spe_size"></span>
+
+	<span style="display: inline-block; float: right; margin-left: 2em; background: #efefef; border: 1px solid #ddd; border-radius: 4px;"><label>Resid. &pm; N&sigma;
+	<input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" />
+	</label></span>
+  </p>
+
 
 
   <div id="chartdiv"></div>
 
 
 <hr class="style-one"></hr>
+
 
   <script>
     var chart_data;
@@ -120,15 +128,14 @@
 	def_flx_units_s = -17,  // Flux units exponent
 	def_lum_scale = 1;      // Luminosity scale factor wrt 1e42
 
-  var c_ipre = 0,	 // Currently plotted prediction index
-	fitlog_vis_state = 0, // Visibility state of the fit summary table 
-	comp_table_vis_state = 0, // Visibility state of the components table 
-	chart = {},      // The amchart object
-	sdata = [],      // The data series to plot (with errors)
-	resid = [],      // The residuals
-	aux = {},        // The metadata information read from the json file and more,
-	valueAxis2,      // The residuals right axis object
-	range, range2,   // Used to highlight +/- 3 sigma residuals. (TODO)
+  var c_ipre = 0,	// Currently plotted prediction index
+	n_sigma = 3,	// Highlight residuals region within this +/- sigma
+	chart = {},	// The amchart object
+	sdata = [],	// The data series to plot (with errors)
+	resid = [],	// The residuals
+	aux = {},	// The metadata information read from the json file and more,
+	valueAxis2,	// The residuals right axis object
+	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
 	i;
   var xAxis, valueAxis;
 
@@ -208,6 +215,13 @@ pRange = function(low, high, np) {
 }
 
 
+// Hidden object?
+
+function isHidden(e) {
+	return (e.offsetParent === null)
+}
+
+
 // -- Open the file load modal div
 
 function openLoadDiv() {
@@ -232,7 +246,7 @@ function openLoadDiv() {
 // When the user clicks anywhere outside of the modal, hide it
   window.onclick = function(event) {
     var modal = document.getElementById('myModal');
-    if (event.target == modal)
+    if ( event.target == modal )
 	hideLoadDiv();
   }
 }
@@ -280,7 +294,7 @@ window.onload = function() {
 
 document.getElementById('selfile').addEventListener('change', (e) => {
 	const file = document.getElementById('selfile').files[0];
-	if (file)
+	if ( file )
 	  processFile(file);
 });
 
@@ -328,10 +342,10 @@ const fileInfo = (file) => {
 	document.getElementById('progress-bar').value = 100;
 	changeStatus('Loaded!');
 	var fname, size_info = 'Loaded <strong>';
-	if (typeof file === 'object') {
+	if ( typeof file === 'object' ) {
 		document.getElementById('json_info').innerHTML = file.name;
 		size_info += numberWithCommas(chart.data.length) +'</strong> elements, <strong>'+ numberWithCommas(file.size) +'</strong> bytes';
-	} else if (typeof file === 'string') {
+	} else if ( typeof file === 'string' ) {
 		document.getElementById('json_info').innerHTML = file.split('/').reverse()[0];
 		size_info = numberWithCommas(chart.dataSource.data.length) +'</strong> elements array';
 	}
@@ -360,6 +374,10 @@ function createAllCompSeries() {  // Unused!
   for (var i = 0; i < aux.preinfo[c_ipre].n_comps; i++) {
     var cname =  aux.preinfo[c_ipre].components[i];
     var component = p.components[cname];
+
+    if ( !component.meta.use_in_plot )  // Component has data?
+	continue;
+
     var series = chart.series.push(new am4charts.LineSeries());
 
     series.dataFields.categoryX = 'x';
@@ -379,7 +397,7 @@ function createAllCompSeries() {  // Unused!
     }
 
 // Component to hide?
-    if ( !component.meta.visible )
+    if ( !component.meta.default_visible )
       series.hidden = true;
 
 // Highlight when cursor on legend item
@@ -419,7 +437,7 @@ console.log('Create reducer:', rname);
       series.fill = mycolors[aux.preinfo[c_ipre].n_comps + i].hex;
     }
 
-    if ( !reducer.meta.visible )  // Reducer to hide?
+    if ( !reducer.meta.default_visible )  // Reducer to hide?
       series.hidden = true;
 
 // Highlight when cursor on legend item
@@ -464,7 +482,8 @@ var getauxinfo = function() {  // TODO
     desc += '</strong> &minus; ';
 //if (  aux.z !== '' ) desc += ':  &nbsp;&nbsp; z: '+ aux.z +', E(B-V): '+ aux.e_bv;
 
-    desc += chart_data.predictions[i].meta.label;
+    desc += chart_data.predictions[i].meta.label +' &minus; Rebin: '+
+	    chart_data.predictions[i].meta.rebin;
 
     x_lab = chart_data.predictions[i].meta.label_x;
     if ( x_lab !== '' ) {
@@ -520,8 +539,9 @@ var getauxinfo = function() {  // TODO
   
   for (i = 0; i < aux.n_d; i++) {
 	aux.datinfo.push({
-	resid_visible: chart_data.data[i].meta.resid_visible,
-	resid_color: chart_data.data[i].meta.resid_color});  // TODO
+	  resid_visible: chart_data.data[i].meta.resid_visible,
+	  resid_color: (chart_data.data[i].meta.resid_color || rcolor.hex)}
+	);  // TODO
   }
 
   document.getElementById('p_title').innerHTML = aux.preinfo[c_ipre].title;
@@ -532,7 +552,7 @@ var getauxinfo = function() {  // TODO
 // -- From custom "data/components/reducers" structures to default amchart data structure.
 
 var mydata2chart = function(isel) {
-  if (isel === undefined)
+  if ( isel === undefined )
     isel = c_ipre;
 
 console.log('isel:', isel);
@@ -552,11 +572,14 @@ console.log('isel:', isel);
 
 	for (var j = 0; j < aux.preinfo[isel].n_reds; j++)  // Reducers
 	  //if ( p.reducers[rnames[j]].y[i] > 0 )
-	    vals[rnames[j]] = p.reducers[rnames[j]].y[i];
+	  vals[rnames[j]] = p.reducers[rnames[j]].y[i];
 
-	for (var j = 0; j < aux.preinfo[isel].n_comps; j++)  // Components
+	for (var j = 0; j < aux.preinfo[isel].n_comps; j++) { // Components
+          if ( !p.components[cnames[j]].meta.use_in_plot )
+		continue;
 	  //if ( p.components[cnames[j]].y[i] > 0 )
-	    vals[cnames[j]] = p.components[cnames[j]].y[i];
+	  vals[cnames[j]] = p.components[cnames[j]].y[i];
+	}
 
 	mydata.push(vals);
   }
@@ -570,7 +593,7 @@ console.log('isel:', isel);
 //    If xsc_series=true, use it also for the X window scrolling. 
 
 function creaMainReducer(isel, xsc_series) {
-  if (isel === undefined)
+  if ( isel === undefined )
     isel = c_ipre;
 
   var rname = aux.preinfo[isel].main_reducer;
@@ -594,7 +617,7 @@ console.log('Create main reducer:', rname);
     series.fill = mcolor.hex;
   }
 
-  if ( !reducer.meta.visible )  // Reducer to hide?
+  if ( !reducer.meta.default_visible )  // Reducer to hide?
     series.hidden = true;
 
 // Highlight when cursor on legend item
@@ -626,13 +649,13 @@ function creaDataSeries(isel) {
   sdata.dataFields.valueY = 'y';
   sdata.name = 'data';  // chart_data.meta.data.label;
   sdata.strokeWidth = 2;
-  sdata.minBulletDistance = 5;
-  //sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
+  sdata.minBulletDistance = 3;  // Error visible if points are not closer than 3 pixels
   sdata.legendSettings.valueText = '{valueY}';
+  //sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
 
 
 // User selected color?
-  if (chart_data.data[isel].meta.color !== 'auto') {
+  if ( chart_data.data[isel].meta.color !== 'auto' ) {
     sdata.stroke = chart_data.data[isel].meta.color;
     sdata.fill = chart_data.data[isel].meta.color;
   } else {
@@ -691,13 +714,14 @@ function creaDataSeries(isel) {
     sdata.resid_visible = aux.datinfo[isel].resid_visible;
 
 //if (chart_data.data[isel].meta.resid_visible) {
-    if (sdata.resid_visible) {
+    if ( sdata.resid_visible ) {
 	range.grid.strokeOpacity = 0.5;
 	range2.axisFill.fillOpacity = 0.1;
 	valueAxis.renderer.grid.template.strokeOpacity = 0;
 	valueAxis2.renderer.grid.template.strokeOpacity = 1;
     } else {
 	valueAxis2.visible = false;  // TODO
+	valueAxis2.cursorTooltipEnabled = false;
 	resid.hidden = true;
 
 	range.grid.strokeOpacity = 0;
@@ -726,7 +750,7 @@ function creaDataSeries(isel) {
 // -- Create series for each component and reducer of a prediction
 
 function creaCompSeries(isel) {
-  if (isel === undefined)
+  if ( isel === undefined )
     isel = c_ipre;
 
   var	p = chart_data.predictions[isel],
@@ -740,6 +764,9 @@ function creaCompSeries(isel) {
 	cname = aux.preinfo[isel].components[i];
 	component = p.components[cname];
     
+	if ( !component.meta.use_in_plot )  // Component has data?
+	  continue;
+
 console.log('Create component:', cname);
     
 	var series = chart.series.push(new am4charts.LineSeries());
@@ -758,7 +785,7 @@ console.log('Create component:', cname);
 	  series.fill = mycolors[i % n_myc].hex;
 	}
 
-	if ( !component.meta.visible )  // Component to hide?
+	if ( !component.meta.default_visible )  // Component to hide?
 	  series.hidden = true;
 
 // Highlight when cursor on legend item
@@ -795,7 +822,7 @@ console.log('Create reducer:', rname);
       series.fill = mycolors[(aux.preinfo[isel].n_comps + i) % n_myc].hex;
     }
 
-    if ( !reducer.meta.visible )  // Reducer to hide?
+    if ( !reducer.meta.default_visible )  // Reducer to hide?
       series.hidden = true;
 
 // Highlight when cursor on legend item
@@ -810,7 +837,7 @@ console.log('Create reducer:', rname);
 // -- Select current prediction from multi-predictions list
 
 function p_select(isel) {
-  if (isel === undefined)
+  if ( isel === undefined )
 	isel = 0;
 
 // First clear all series
@@ -846,7 +873,7 @@ am4core.ready(function() {
 
   chart = am4core.create("chartdiv", am4charts.XYChart);
 
-  if (chart_data !== undefined) {
+  if ( chart_data !== undefined ) {
     var modal = document.getElementById('myModal');
     modal.className = 'modal modal-hide';
 
@@ -894,7 +921,7 @@ am4core.ready(function() {
     valueAxis2.renderer.grid.template.strokeOpacity = 0;
 
  
-// The +/- 3 sigma shaded region with the (dashed) 0 level. Visibility management is TODO.
+// The +/- N sigma shaded region with the (dashed) 0 level. Visibility management is TODO.
     // 0 level dashed line
     range = valueAxis2.axisRanges.create();
     range.value = 0;
@@ -902,11 +929,11 @@ am4core.ready(function() {
     range.grid.strokeWidth = 2;
     range.grid.strokeDasharray = "4";
 
-    // +/- 3 sigma shaded area with invisible strokes
+    // +/- N sigma shaded area with invisible strokes
     range2 = valueAxis2.axisRanges.create();
     range2.grid.stroke = am4core.color("#ff6478");
-    range2.value = -3;
-    range2.endValue = 3;
+    range2.value = -n_sigma;
+    range2.endValue = n_sigma;
     range2.grid.strokeOpacity = 0;
   }
 
@@ -915,7 +942,7 @@ am4core.ready(function() {
   //chart.scrollbarX.series.push(sdata);
 
 // Increase contrast by taking every second color
-  chart.colors.step = 2;
+  //chart.colors.step = 2;
 
 
 // Cursor
@@ -940,7 +967,7 @@ am4core.ready(function() {
   var lt = chart.legend.valueLabels.template;
   lt.background.fill = am4core.color("#efefef");
   lt.background.fillOpacity = 1;
-  lt.width *= 1.1;  // This fixes width change at run time
+  lt.minWidth = lt.width * 1.2;  // 20% increase. This fixes width change at run time
 
   chart.legend.itemContainers.template.events.on("over", function(event) {
     var segments = event.target.dataItem.dataContext.segments;
@@ -966,16 +993,23 @@ am4core.ready(function() {
     if ( name == 'residuals' ) {  // TODO
 	sdata.resid_visible = ! field.isHidden;
 	resid.hidden = ! field.isHidden;
-	if (field.isHidden) {
+	if ( field.isHidden ) {
+		n_sigma = document.getElementById('n_sigma').value;
+		range2.value = -n_sigma;
+		range2.endValue = n_sigma;
 		range.grid.strokeOpacity = 0.5;
 		range2.axisFill.fillOpacity = 0.1;
 		valueAxis2.renderer.grid.template.strokeOpacity = 1;
 		valueAxis2.visible = true;  // TODO
+		valueAxis2.cursorTooltipEnabled = true;
+		valueAxis.renderer.grid.template.strokeOpacity = 0;
 	} else {
 		range.grid.strokeOpacity = 0;
 		range2.axisFill.fillOpacity = 0;
 		valueAxis2.renderer.grid.template.strokeOpacity = 0;
 		valueAxis2.visible = false;  // TODO
+		valueAxis2.cursorTooltipEnabled = false;
+		valueAxis.renderer.grid.template.strokeOpacity = 0.15;
 	}
     }
   });
@@ -1004,37 +1038,60 @@ am4core.ready(function() {
 // -- Show/hide the fit log tables
 
 function fitlog_toggle() {
-  if (fitlog_vis_state) {
-    document.getElementById('fitlog_sect').className = 'view_div-sect';
-    document.getElementById('fitlog_div').className = 'div-hide';
+  var e = document.getElementById('fitlog_div');
+  if ( ! isHidden(e) ) {
+    e.className = 'div-hide';
+    document.getElementById('fitlog_sect').className = 'toggle_table-hdr';
     document.getElementById('view_fitlog_angle').className = 'fas fa-angle-down ud-angle';
-    fitlog_vis_state = 0;
   } else {
-    document.getElementById('fitlog_sect').className = 'view_div-sect div-selected';
-    document.getElementById('fitlog_div').className = 'div-show';
+    e.className = 'div-show';
+    document.getElementById('fitlog_sect').className = 'toggle_table-hdr div-selected';
     document.getElementById('view_fitlog_angle').className = 'fas fa-angle-up ud-angle';
-    fitlog_vis_state = 1;
   }
 }
 
 
 //
-// -- Show/hide the components log tables
+// -- Show/hide the components / predictions / reducers log tables
 
 function comp_table_toggle() {
-  if (comp_table_vis_state) {
-    document.getElementById('comp_table_sect').className = 'view_div-sect';
-    document.getElementById('comp_table').className = 'div-hide';
+  var e = document.getElementById('comp_table');
+  if ( ! isHidden(e) ) {
+    e.className = 'out_table div-hide';
+    document.getElementById('comp_table_sect').className = 'toggle_table-hdr';
     document.getElementById('view_comp_table_angle').className = 'fas fa-angle-down ud-angle';
-    comp_table_vis_state = 0;
   } else {
-    document.getElementById('comp_table_sect').className = 'view_div-sect div-selected';
-    document.getElementById('comp_table').className = 'div-show';
+    e.className = 'out_table div-show';
+    document.getElementById('comp_table_sect').className = 'toggle_table-hdr div-selected';
     document.getElementById('view_comp_table_angle').className = 'fas fa-angle-up ud-angle';
-    comp_table_vis_state = 1;
   }
 }
 
+function pred_table_toggle() {
+  var e = document.getElementById('pred_table');
+  if ( ! isHidden(e) ) {
+    e.className = 'out_table div-hide';
+    document.getElementById('pred_table_sect').className = 'toggle_table-hdr';
+    document.getElementById('view_pred_table_angle').className = 'fas fa-angle-down ud-angle';
+  } else {
+    e.className = 'out_table div-show';
+    document.getElementById('pred_table_sect').className = 'toggle_table-hdr div-selected';
+    document.getElementById('view_pred_table_angle').className = 'fas fa-angle-up ud-angle';
+  }
+}
+
+function red_table_toggle() {
+  var e = document.getElementById('red_table');
+  if ( ! isHidden(e) ) {
+    e.className = 'out_table div-hide';
+    document.getElementById('red_table_sect').className = 'toggle_table-hdr';
+    document.getElementById('view_red_table_angle').className = 'fas fa-angle-down ud-angle';
+  } else {
+    e.className = 'out_table div-show';
+    document.getElementById('red_table_sect').className = 'toggle_table-hdr div-selected';
+    document.getElementById('view_red_table_angle').className = 'fas fa-angle-up ud-angle';
+  }
+}
 
 //
 // -- Download the full original JSON data
@@ -1060,13 +1117,13 @@ function savejsonobj(filename, obj) {
 //    tab_id: the (html) id to give to the created table
 
 var tableFromJson = function(obj, type, tab_id) {
-  var col = [], tlab = document.createElement("h3");
+  var col = [], tlab = document.createElement("div");
 
 //console.log(obj);
 // Components or reducers? (TODO)
   var tabdiv, tab, tb, hdr, tr, tabCell, comp, cname, nc, red, rname, nr, ncol, title, tab_id;
 
-  if (type !== 2) {
+  if ( type !== 2 ) {
 	comp = obj.components;
 	cname = Object.keys(comp);  // comp. names
 	nc = cname.length;
@@ -1080,22 +1137,31 @@ var tableFromJson = function(obj, type, tab_id) {
 // Define header from type
   switch (type) {
     case 0:
-	title = '<i id="view_comp_table_angle" class="fas fa-angle-down ud-angle"></i>Components'
+	title = '<i id="view_comp_table_angle" class="fas fa-angle-down ud-angle"></i>View Components'
 	tlab.setAttribute('id', 'comp_table_sect');
-	tlab.setAttribute('class', 'view_div-sect');
+	tlab.setAttribute('class', 'toggle_table-hdr');
 	tlab.setAttribute('onclick', 'comp_table_toggle()');
 	col = ['Component', 'Type', 'Param.', 'Value', 'Range'];	
 	break;
     case 1:
-	title = 'Prediction'
+	//title = 'Prediction'
+	title = '<i id="view_pred_table_angle" class="fas fa-angle-down ud-angle"></i>View Prediction'
+	tlab.setAttribute('id', 'pred_table_sect');
+	tlab.setAttribute('class', 'toggle_table-hdr');
+	tlab.setAttribute('onclick', 'pred_table_toggle()');
 	col = ['Component', 'Counter', 'Min', 'Max', 'Mean', 'NaN/Inf'];	
 	break;
     case 2:
-	title = 'Reducer'
+	//title = 'Reducer'
+	title = '<i id="view_red_table_angle" class="fas fa-angle-down ud-angle"></i>View Reducer'
+	tlab.setAttribute('id', 'red_table_sect');
+	tlab.setAttribute('class', 'toggle_table-hdr');
+	tlab.setAttribute('onclick', 'red_table_toggle()');
 	col = ['Component', 'Counter', 'Min', 'Max', 'Mean', 'NaN/Inf'];	
 	break;
     case 3:
-	title = 'Best Fit results'
+	title = 'Best Fit results';
+	tlab.setAttribute('class', 'header-lab');
 	col = ['Component', 'Param.', 'Value', 'Uncert.', 'Fixed', 'Patched'];	
 	break;
 
@@ -1113,9 +1179,9 @@ var tableFromJson = function(obj, type, tab_id) {
   tab = document.createElement('table');
   if ( tab_id !== undefined )
 	tab.setAttribute('id', tab_id);
-  if ( type == 0 ) {  // Components hidden by default
+  if ( type == 0 || type == 1 || type == 2 ) {  // Components / prediction / reducer hidden by default
 	tab.setAttribute('class', 'div-hide');
-	tab.style.border = '0';
+	//tab.style.border = '0';
   }
   tabdiv.appendChild(tab);
 
@@ -1155,11 +1221,11 @@ var tableFromJson = function(obj, type, tab_id) {
 	  var cell = pname[0];  // 3rd column is par. names
 	  par_tt = '<strong>'+ cname[i] +'</strong><br />'+ pname[0] +' (unit: '+ chart_data.components[cname[i]].params[pname[0]].meta.unit +' note: '+ chart_data.components[cname[i]].params[pname[0]].meta.note +')';
 
-	  if (c.params[pname[0]].fixed == true)
+	  if ( c.params[pname[0]].fixed == true )
 		cell += ' (FIXED)';
 	  for (var k = 1; k < pname.length; k++) {
 	    cell += '<br />'+ pname[k];
-	    if (c.params[pname[k]].fixed == true)
+	    if ( c.params[pname[k]].fixed == true )
 		cell += ' (FIXED)';
 	    par_tt += '<br />'+ pname[k] +' (unit: '+ chart_data.components[cname[i]].params[pname[k]].meta.unit +' note: '+ chart_data.components[cname[i]].params[pname[k]].meta.note +')';
 	  }
@@ -1167,7 +1233,7 @@ var tableFromJson = function(obj, type, tab_id) {
 
 // Add cell with tooltip text.
 	  tabCell = tr.insertCell(-1);
-	  tabCell.innerHTML = '<div class="partip"><span class="partiptext">'+ par_tt + '</span>'+
+	  tabCell.innerHTML = '<div class="partip"><span class="partiptext">'+ par_tt +'</span>'+
 			cell + '</div>';
 //tabCell.title = par_tt;
 
@@ -1188,13 +1254,13 @@ var tableFromJson = function(obj, type, tab_id) {
 	  tabCell.innerHTML = cell;
 //tabCell.title = par_tt;
 
-	  if (c.params[pname[0]].low === null && c.params[pname[0]].high === null)  // 5th is par. range
+	  if ( c.params[pname[0]].low === null && c.params[pname[0]].high === null )  // 5th is par. range
 		cell = ''
 	  else
 		cell = pRange(c.params[pname[0]].low, c.params[pname[0]].high, 4);
 
 	  for (var k = 1; k < pname.length; k++) {
-		if (c.params[pname[k]].low === null && c.params[pname[k]].high === null)
+		if ( c.params[pname[k]].low === null && c.params[pname[k]].high === null )
 			v = ''
 		else
 			v = pRange(c.params[pname[k]].low, c.params[pname[k]].high, 4);
@@ -1221,7 +1287,7 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	  for (var j = 0; j < pcol.length; j++) {
 	    if ( typeof c[pcol[j]] == 'number' ) {
-		if (j == 0 || j == 4)  // "error" is a counter
+		if ( j == 0 || j == 4 )  // "error" is a counter
 		  cell = parseInt(c[pcol[j]]);
 		else
 		  cell = +c[pcol[j]].toPrecision(4);
@@ -1251,7 +1317,7 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	  for (var j = 0; j < pcol.length; j++) {
 	    if ( typeof c[pcol[j]] == 'number' ) {
-		if (j == 0 || j == 4)  // "error" is a counter
+		if ( j == 0 || j == 4 )  // "error" is a counter
 		  cell = parseInt(c[pcol[j]]);
 		else
 		  cell = +c[pcol[j]].toPrecision(4);
@@ -1292,7 +1358,6 @@ var tableFromJson = function(obj, type, tab_id) {
 	    cell += '<br />'+ pname[k];
 	  }
 
-
 	  tabCell = tr.insertCell(-1);
 	  tabCell.innerHTML = cell;
 
@@ -1304,10 +1369,10 @@ var tableFromJson = function(obj, type, tab_id) {
 		np_fit++;
 		if ( pkname[j] == 'patched' && v !== +c[pname[0]]['val'].toPrecision(4) )
 			v = '<span style="background: var(--danger); color: #fff;  padding-left: 5px;">'+ v +'</span>';
-	    } else if (pkname[j] == 'unc') {  // null
+	    } else if ( pkname[j] == 'unc' ) {  // null
 			v = '';
-	    } else if (pkname[j] == 'fixed') {
-		if (v)
+	    } else if ( pkname[j] == 'fixed' ) {
+		if ( v )
 			v = 'fixed';
 		else
 			v = '';
@@ -1320,10 +1385,10 @@ var tableFromJson = function(obj, type, tab_id) {
 		  np_fit++;
 		  if ( pkname[j] == 'patched' && v !== +c[pname[k]]['val'].toPrecision(4) )
 			v = '<span style="background: var(--danger); color: #fff;  padding-left: 5px;">'+ v +'</span>';
-		} else if (pkname[j] == 'unc') {  // null
+		} else if ( pkname[j] == 'unc' ) {  // null
 			v = '';
-		} else if (pkname[j] == 'fixed') {
-		  if (v)
+		} else if ( pkname[j] == 'fixed' ) {
+		  if ( v )
 			v = 'fixed';
 		  else
 			v = '';
@@ -1343,18 +1408,18 @@ var tableFromJson = function(obj, type, tab_id) {
 	var div = document.createElement('div');
 	div.setAttribute('class', 'summ-div-col');
 	div.innerHTML = '<ul><li><div class="fres-fixw">#Data</div>'+ ':<div class="fres-int">'+ obj.ndata +'</div></li>'+
-		'<li><div class="fres-fixw">#Param</div>'+':<div class="fres-int">'+ np_fit +'</div></li>'+
-		'<li><div class="fres-fixw">DOF</div>'+':<div class="fres-int">'+ obj.dof +'</div></li>'+
-		'<li><div class="fres-fixw">#Param</div>'+':<div class="fres-int" style="color: '+ (obj.status == 'OK' ? 'var(--success);"' : 'var(--danger);') +'">'+ obj.status +'</div></li></ul>';
+ 	'<li><div class="fres-fixw">#Param</div>'+':<div class="fres-int">'+ np_fit +'</div></li>'+
+	'<li><div class="fres-fixw">DOF</div>'+':<div class="fres-int">'+ obj.dof +'</div></li>'+
+	'<li><div class="fres-fixw">#Param</div>'+':<div class="fres-int" style="color: '+ (obj.status == 'OK' ? 'var(--success);"' : 'var(--danger);') +'">'+ obj.status +'</div></li></ul>';
 
 	summdiv.appendChild(div);
 
 	div = document.createElement('div');
 	div.setAttribute('class', 'summ-div-col');
 	div.innerHTML = '<ul><li><div class="fres-fixw">Cost</div>'+ ':<div class="fres-float">'+ obj.cost.toPrecision(4) +'</div></li>'+
-		'<li><div class="fres-fixw" style="line-height: 1.3rem;">&chi;<sup>2</sup><sub>red</sub></div>'+':<div class="fres-float">'+ (obj.cost / obj.dof).toPrecision(4) +'</div></li>'+
-		'<li><div class="fres-fixw">Prob.</div>'+':<div class="fres-float">'+ Math.pow(10, obj.log10testprob).toPrecision(4) +'</div></li>'+
-		'<li><div class="fres-fixw">Elapsed</div>'+':<div class="fres-float">'+ obj.elapsed.toPrecision(4) +'</div> s</li></ul>';
+	'<li><div class="fres-fixw" style="line-height: 1.3rem;">&chi;<sup>2</sup><sub>red</sub></div>'+':<div class="fres-float">'+ (obj.cost / obj.dof).toPrecision(4) +'</div></li>'+
+	'<li><div class="fres-fixw">Prob.</div>'+':<div class="fres-float">'+ Math.pow(10, obj.log10testprob).toPrecision(4) +'</div></li>'+
+	'<li><div class="fres-fixw">Elapsed</div>'+':<div class="fres-float">'+ obj.elapsed.toPrecision(4) +'</div> s</li></ul>';
 
 	summdiv.appendChild(div);
 
@@ -1399,7 +1464,7 @@ function updPredTab(obj) {
 
 	  for (var j = 0; j < pcol.length; j++) {
 	    if ( typeof c[pcol[j]] == 'number' ) {
-		if (j == 0 || j == 4)   // "error" is a counter
+		if ( j == 0 || j == 4 )   // "error" is a counter
 		  cell = parseInt(c[pcol[j]]);
 		else
 		  cell = +c[pcol[j]].toPrecision(4);
@@ -1426,7 +1491,7 @@ function updPredTab(obj) {
 
 	  for (var j = 0; j < pcol.length; j++) {
 	    if ( typeof c[pcol[j]] == 'number' ) {
-		if (j == 0 || j == 4)   // "error" is a counter
+		if ( j == 0 || j == 4 )   // "error" is a counter
 		  cell = parseInt(c[pcol[j]]);
 		else
 		  cell = +c[pcol[j]].toPrecision(4);
@@ -1443,12 +1508,12 @@ function updPredTab(obj) {
 </script>
 
 
-<div class="view_div-sect" id="fitlog_sect" onclick="fitlog_toggle()">
-  <h2><i id="view_fitlog_angle" class="fas fa-angle-down ud-angle"></i>View GFit report</h2>
+<div class="toggle_table-hdr" id="fitlog_sect" onclick="fitlog_toggle()">
+  <i id="view_fitlog_angle" class="fas fa-angle-down ud-angle"></i>View GFit report
 </div>
 
 <div id="fitlog_div" class="div-hide">
-  <p id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</p>
+  <div id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</div>
 </div>
 
 <script>
