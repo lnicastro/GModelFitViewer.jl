@@ -18,9 +18,10 @@ function add_default_meta!(model::Model)
 
         for (cname, comp) in model.comps
             meta = metadict(model, cname)
-            haskey(meta, :label)    ||  (meta[:label] = string(cname))
-            haskey(meta, :visible)  ||  (meta[:visible] = GFit.todict_opt[:addcomps])
-            haskey(meta, :color)    ||  (meta[:color] = "auto")
+            haskey(meta, :label)            ||  (meta[:label] = string(cname))
+            haskey(meta, :use_in_plot)      ||  (meta[:use_in_plot] = GFit.todict_opt[:addcomps])
+            haskey(meta, :default_visible)  ||  (meta[:default_visible] = false)
+            haskey(meta, :color)            ||  (meta[:color] = "auto")
             for (pname, param) in GFit.getparams(comp)
                 meta = param.meta
                 haskey(meta, :scale)   ||  (meta[:unit] =  1)
@@ -32,18 +33,20 @@ function add_default_meta!(model::Model)
         for pred in model.preds
             for (rname, reval) in pred.revals
                 meta = metadict(model, rname)
-                haskey(meta, :label)    ||  (meta[:label] = string(rname))
-                haskey(meta, :visible)  ||  (meta[:visible] = true)
-                haskey(meta, :color)    ||  (meta[:color] = "auto")
+                haskey(meta, :label)            ||  (meta[:label] = string(rname))
+                haskey(meta, :color)            ||  (meta[:color] = "auto")
+                haskey(meta, :use_in_plot)      ||  (meta[:use_in_plot] = true)
+                haskey(meta, :default_visible)  ||  (meta[:default_visible] = true)
             end
         end
     end
 end
 
 function add_default_meta!(data::GFit.Measures_1D)
-    haskey(data.meta, :label)    ||  (data.meta[:label] = "Empirical data")
-    haskey(data.meta, :visible)  ||  (data.meta[:visible] = true)
-    haskey(data.meta, :color)    ||  (data.meta[:color] = "auto")
+    haskey(data.meta, :label)            ||  (data.meta[:label] = "Empirical data")
+    haskey(data.meta, :use_in_plot)      ||  (data.meta[:use_in_plot] = true)
+    haskey(data.meta, :default_visible)  ||  (data.meta[:default_visible] = true)
+    haskey(data.meta, :color)            ||  (data.meta[:color] = "auto")
 end
 
 
