@@ -1,8 +1,8 @@
 /*
-   GFit spectra viewer style file
+  GFitViewer style file
  
-   LN @ INAF-OAS, Sep. 2020
-   Last change: 15/10/2020
+  LN @ INAF-OAS, Sep. 2020
+  Last change: 15/10/2020
 */
 
 body {
@@ -645,33 +645,58 @@ hr.style-two {
 }
 
 
-#fitlog_div {
-  border: 3px dotted grey;
-  font-size: 1rem;
+#fitlog_sect {
+  font-size: 1.5em;
+  font-weight: 500;
 }
 
 #fitlog_tab {
   width: auto;
   white-space: nowrap;
-  margin: 1rem;
+  margin-left: 1rem;
   font-size: 1rem;
 }
 
-.al-right {
-  text-align: right;
+.header-lab {
+  font-size: 1em;
+  font-weight: bold;
+  padding: 1em 0;
 }
 
-.ud-angle {
-  margin-right: 2rem;
+.out_table {
+  border: 0;
+  border-left: 3px solid #ddd;
+  padding-left: 1em;
+  padding-top: 1em;
+}
+
+.toggle_table-hdr {
+  border-bottom: 1px solid #ddd;
+  /*background: #efefef;*/
+  padding: 1em;
+  font-size: 1.2em;
+}
+
+.toggle_table-hdr:hover {
+  background-color: #eaeaea;
+  cursor: pointer;
+  color: #069;
+  -webkit-transition: all 0.30s ease-in;
+     -moz-transition: all 0.30s ease-in;
+          transition: all 0.30s ease-in;
 }
 
 .view_div-sect {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
+  /*border-left: 3px solid #ddd;*/
   color: #666;
   background: #fff;
-  padding: 1rem;
   white-space: nowrap;
+  margin-bottom: 0;
+
+  padding: 1em;
+  font-size: 1.2em;
 }
 
 .view_div-sect:hover {
@@ -691,6 +716,7 @@ hr.style-two {
   animation: 1s linear 0s fadeIn;
   transition: height 1.5s 0.3s ease-in-out; 
   height: auto;
+  border-left: 3px solid #2d6ca2;
 }
 
 .div-hide {
@@ -701,13 +727,19 @@ hr.style-two {
 
 .div-selected {
   border-color: #069;
+  border-left: 3px solid #2d6ca2;
   border-bottom: 0;
+  background: #efefef;
 }
 
-
-#params-div {
-  margin-top: 4px;
+.al-right {
+  text-align: right;
 }
+
+.ud-angle {
+  margin-right: 2rem;
+}
+
 
 
 /* Add Animation */
