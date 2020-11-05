@@ -11,7 +11,7 @@
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
-  <meta name="version" content="0.1b" />
+  <meta name="version" content="0.1c" />
   <meta name="date" content="2020-11-05" />
 
 <!-- @Remote
@@ -101,11 +101,15 @@
   <p>
 	<span id="p_title">GFitViewer info here...</span> <span id="spe_size"></span>
 
-	<span style="display: inline-block; float: right; margin-left: 2em; background: #efefef; border: 1px solid #ddd; border-radius: 4px;"><label>Resid. &pm; N&sigma;
+	<span style="display: inline-block; float: right; margin-left: 2em; background: #efefef; border: 1px solid #ddd; border-radius: 4px; padding-left: .5em;" title="Set the highlighted resid. range">Resid. &pm; N&sigma;
 	<input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" />
-	</label></span>
+	</span>
   </p>
-
+  <div>
+	<span style="display: inline-block; margin-left: 1em; background: #efefef; border: 1px solid #ddd; border-radius: 4px; padding-right: .5em;" title="Toggle Y lin/log scale">
+	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()"/> Y log
+	</span>
+  </div>
 
 
   <div id="chartdiv"></div>
@@ -127,6 +131,7 @@
 
   var c_ipre = 0,	// Currently plotted prediction index
 	n_sigma = 3,	// Highlight residuals region within this +/- sigma
+	y_logscale = false,  // Y lin/log scale
 	chart = {},	// The amchart object
 	sdata = [],	// The data series to plot (with errors)
 	resid = [],	// The residuals
@@ -715,7 +720,7 @@ function creaDataSeries(isel) {
 	range.grid.strokeOpacity = 0.5;
 	range2.axisFill.fillOpacity = 0.1;
 	valueAxis.renderer.grid.template.strokeOpacity = 0;
-	valueAxis2.renderer.grid.template.strokeOpacity = 1;
+	valueAxis2.renderer.grid.template.strokeOpacity = 1.15;
     } else {
 	valueAxis2.visible = false;  // TODO
 	valueAxis2.cursorTooltipEnabled = false;
@@ -996,7 +1001,7 @@ am4core.ready(function() {
 		range2.endValue = n_sigma;
 		range.grid.strokeOpacity = 0.5;
 		range2.axisFill.fillOpacity = 0.1;
-		valueAxis2.renderer.grid.template.strokeOpacity = 1;
+		valueAxis2.renderer.grid.template.strokeOpacity = 0.15;
 		valueAxis2.visible = true;  // TODO
 		valueAxis2.cursorTooltipEnabled = true;
 		valueAxis.renderer.grid.template.strokeOpacity = 0;
@@ -1029,6 +1034,25 @@ am4core.ready(function() {
   //xAxis.keepSelection = true;
 
 });  // end am4core.ready()
+
+
+//
+// -- Toggle linear / logarithmic Y scale
+
+function y_linlog_toggle() {
+  y_log =  document.getElementById('y_log-cb').checked;
+
+  if ( y_log ) {
+	valueAxis.logarithmic = true;
+	valueAxis.precision = 3;
+//valueAxis.strictMinMax = true;
+
+	valueAxis.min = Math.max(1e-4, chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min * 0.95);
+  } else {
+	valueAxis.logarithmic = false;
+	valueAxis.precision = 0;
+  }
+}
 
 
 //
@@ -1089,6 +1113,7 @@ function red_table_toggle() {
     document.getElementById('view_red_table_angle').className = 'fas fa-angle-up ud-angle';
   }
 }
+
 
 //
 // -- Download the full original JSON data
