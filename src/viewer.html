@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1c" />
-  <meta name="date" content="2020-11-05" />
+  <meta name="date" content="2020-11-06" />
 
 <!-- @Remote
 -->
@@ -101,12 +101,12 @@
   <p>
 	<span id="p_title">GFitViewer info here...</span> <span id="spe_size"></span>
 
-	<span style="display: inline-block; float: right; margin-left: 2em; background: #efefef; border: 1px solid #ddd; border-radius: 4px; padding-left: .5em;" title="Set the highlighted resid. range">Resid. &pm; N&sigma;
+	<span class="box-in" style="float: right;" title="Set the highlighted resid. range">Resid. &pm; N&sigma;
 	<input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" />
 	</span>
   </p>
   <div>
-	<span style="display: inline-block; margin-left: 1em; background: #efefef; border: 1px solid #ddd; border-radius: 4px; padding-right: .5em;" title="Toggle Y lin/log scale">
+	<span class="box-cb" title="Toggle Y lin/log scale">
 	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()"/> Y log
 	</span>
   </div>
@@ -1167,7 +1167,7 @@ var tableFromJson = function(obj, type, tab_id) {
 	break;
     case 1:
 	//title = 'Prediction'
-	title = '<i id="view_pred_table_angle" class="fas fa-angle-down ud-angle"></i>View Prediction'
+	title = '<i id="view_pred_table_angle" class="fas fa-angle-down ud-angle"></i>View Prediction(s)'
 	tlab.setAttribute('id', 'pred_table_sect');
 	tlab.setAttribute('class', 'toggle_table-hdr');
 	tlab.setAttribute('onclick', 'pred_table_toggle()');

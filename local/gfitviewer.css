@@ -2,7 +2,7 @@
   GFitViewer style file
  
   LN @ INAF-OAS, Sep. 2020
-  Last change: 15/10/2020
+  Last change: 06/11/2020
 */
 
 body {
@@ -211,6 +211,7 @@ label {
 }
 
 .p_btn-selected {
+  color: #999;
   background-color: #fff;
 }
 
@@ -228,13 +229,31 @@ label {
 }
 
 
+.box-in {
+  display: inline-block;
+  margin-left: 1em;
+  padding-left: .5em;
+  background: #efefef;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.box-cb {
+  display: inline-block;
+  margin-left: 1em;
+  padding-right: .5em;
+  background: #efefef;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+
 #chartdiv {
   width : 98%;
   height: 640px;
   overflow: hidden;
   text-align: left;
 }
-
 
 
 section {
@@ -443,23 +462,18 @@ td.highlight_blue {
   max-height: 100vh;  /* screen.height * .80; */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 /*
-  -moz-animation-fill-mode: forwards;
-  -webkit-animation-fill-mode: forwards;
-  -ms-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
 */
 }
 
 .modal.modal-slidein {
-  /*display: block;*/
-  -webkit-animation: 1s linear 0s slidein;
-  animation: 1s linear 0s slidein;
-
+  animation-duration: 0.5s;
+  animation-name: slidein;
+  animation-timing-function: linear;
 }
 
 .modal.modal-slideout {
 /*
-  -webkit-animation: 2s ease-in-out 0.2s slideout;
   animation: 2s ease-in-out 0.2s slideout;
   box-shadow: none;
   top: -20px;
@@ -467,17 +481,23 @@ td.highlight_blue {
   background-color: rgba(255, 255, 255, 0.0);
   height: 0;
   overflow: hidden;
-  transition: height 1.5s 0.3s ease-in-out;
+  transition-property: all;
+  transition-duration: 0.5s;
+  transition-timing-function: ease-in-out;
+  transition-delay: 0s;
 }
 
 .modal.modal-hide {
   height: 0;
   overflow: hidden;
-  transition: height 0.5s 0s linear;
+  transition-property: all;
+  transition-duration: 1s;
+  transition-timing-function: ease-in-out;
+  transition-delay: 0.2s;
 }
 
 
-/* Modal Content */
+/* Modal content */
 .modal-content {
   position: relative;
   background-color: #fefefe;
@@ -490,13 +510,13 @@ td.highlight_blue {
 }
 
 .modal-content.modal-fadein {
-  -webkit-animation: 1s linear 1s fadeIn;
-  animation: 1s linear 1s fadeIn;
+  animation-duration: 0.5s;
+  animation-name: fadeIn;
 }
 
 .modal-content.modal-fadeout {
-  -webkit-animation: 1s linear 1s fadeout;
-  animation: 1s linear 1s fadeout;
+  animation-duration: 0.5s;
+  animation-name: fadeOut;
 }
 
 .modal-header {
@@ -543,7 +563,7 @@ td.highlight_blue {
 
 
 
-/* The Close Button */
+/* The Close button */
 .close {
   color: #fff;
   float: right;
@@ -686,27 +706,11 @@ hr.style-two {
           transition: all 0.30s ease-in;
 }
 
-.view_div-sect {
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-  /*border-left: 3px solid #ddd;*/
-  color: #666;
-  background: #fff;
-  white-space: nowrap;
-  margin-bottom: 0;
 
-  padding: 1em;
-  font-size: 1.2em;
-}
-
-.view_div-sect:hover {
-  cursor: pointer;
-  color: #069;
-  background: #eaeaea;
-  text-decoration: none;
-  -webkit-transition: all 0.30s ease-in;
-     -moz-transition: all 0.30s ease-in;
-          transition: all 0.30s ease-in;
+.div-hide {
+  display: none;
+  visibility: hidden;
+  height: 0;
 }
 
 .div-show {
@@ -717,12 +721,6 @@ hr.style-two {
   transition: height 1.5s 0.3s ease-in-out; 
   height: auto;
   border-left: 3px solid #2d6ca2;
-}
-
-.div-hide {
-  display: none;
-  visibility: hidden;
-  height: 0;
 }
 
 .div-selected {
