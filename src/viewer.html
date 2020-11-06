@@ -107,7 +107,7 @@
   </p>
   <div>
 	<span class="box-cb" title="Toggle Y lin/log scale">
-	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()"/> Y log
+	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()" /><label for="y_log-cb">Y log</label>
 	</span>
   </div>
 
@@ -1043,11 +1043,13 @@ function y_linlog_toggle() {
   y_log =  document.getElementById('y_log-cb').checked;
 
   if ( y_log ) {
+	var ymin = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
+	if ( chart_data.data[c_ipre] !== undefined )
+	  ymin = Math.min(ymin, Math.min(...(chart_data.data[c_ipre].y)));
+	valueAxis.min = Math.max(1e-4, ymin * 0.95);
 	valueAxis.logarithmic = true;
 	valueAxis.precision = 3;
 //valueAxis.strictMinMax = true;
-
-	valueAxis.min = Math.max(1e-4, chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min * 0.95);
   } else {
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;
