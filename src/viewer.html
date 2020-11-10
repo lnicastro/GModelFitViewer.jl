@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1c" />
-  <meta name="date" content="2020-11-07" />
+  <meta name="date" content="2020-11-10" />
 
 <!-- @Remote
 -->
@@ -576,13 +576,13 @@ console.log('isel:', isel);
 	vals['resid'] = chart_data.data[isel].residuals[i];
 
 	for (var j = 0; j < aux.preinfo[isel].n_reds; j++)  // Reducers
-	  //if ( p.reducers[rnames[j]].y[i] > 0 )
+	  if ( p.reducers[rnames[j]].y[i] > 0 )
 	  vals[rnames[j]] = p.reducers[rnames[j]].y[i];
 
 	for (var j = 0; j < aux.preinfo[isel].n_comps; j++) { // Components
           if ( !p.components[cnames[j]].meta.use_in_plot )
 		continue;
-	  //if ( p.components[cnames[j]].y[i] > 0 )
+	  if ( p.components[cnames[j]].y[i] > 0 )
 	  vals[cnames[j]] = p.components[cnames[j]].y[i];
 	}
 
@@ -851,7 +851,6 @@ function p_select(isel) {
     //chart.series.removeIndex( chart.series.indexOf(s) );
   });
 
-
 // Prediction selector buttons
   document.getElementById('pred_'+ c_ipre).className = 'p_btn';
   document.getElementById('pred_'+ isel).className = 'p_btn p_btn-selected';
@@ -1044,12 +1043,12 @@ am4core.ready(function() {
 // -- On data validation reset Y range for lin/log scale
 
   chart.events.on ('datavalidated', function(e) {
-console.log('Chart data changed. Y range:', valueAxis.min, valueAxis.max);
 	document.getElementById('y_log-cb').checked = false;
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;
-	y_range.lin = [valueAxis.min, valueAxis.max];
-	y_range.log = [null, null];
+console.log('Chart data changed. Y range was:', valueAxis.min, valueAxis.max);
+	set_y_range();
+console.log('Chart data changed. Y range is:', valueAxis.min, valueAxis.max);
   });
 
 });  // end am4core.ready()
@@ -1068,6 +1067,25 @@ function n_sigma_upd(e) {
 }
 
 
+function set_y_range() {
+	var ymin = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
+	var ymax = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].max;
+	if ( chart_data.data[c_ipre] !== undefined ) {
+	  ymin = Math.min(ymin, Math.min(...(chart_data.data[c_ipre].y)));
+	  ymax = Math.max(ymax, Math.max(...(chart_data.data[c_ipre].y)));
+	}
+
+console.log('Y range set to:', ymin, ymax);
+	y_range.lin[0] = ymin;
+	y_range.lin[1] = ymax;
+	(ymin > 0) ? y_range.log[0] = ymin * 0.95 : y_range.log[0] = 1e-4;  // TODO
+	y_range.log[1] = ymax;
+	valueAxis.min = ymin;
+	valueAxis.max = ymax;
+	valueAxis.extraMin = 0.1;
+}
+
+
 //
 // -- Toggle linear / logarithmic Y scale
 
@@ -1075,26 +1093,15 @@ function y_linlog_toggle() {
   y_log = document.getElementById('y_log-cb').checked;
 
   if ( y_log ) {  // From lin to log
-	if ( y_range.log[0] !== null )
-	  valueAxis.min = y_range.log[0];
-	else {
-	  var ymin = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
-	  if ( chart_data.data[c_ipre] !== undefined )
-	    ymin = Math.min(ymin, Math.min(...(chart_data.data[c_ipre].y)));
-
-	  (ymin > 0) ? valueAxis.min = ymin * 0.95 : valueAxis.min = 1e-4;
-	}
-
+	valueAxis.min = y_range.log[0];
+	valueAxis.max = y_range.log[1];
 	valueAxis.logarithmic = true;
-	valueAxis.precision = 3;
+//valueAxis.precision = 3;
 //valueAxis.strictMinMax = true;
 
   } else {  // From log to lin
-	if (y_range.log[0] == null) {
-	  y_range.log[0] = valueAxis.min;
-	  y_range.log[1] = valueAxis.max;
-	}
 	valueAxis.min = y_range.lin[0];
+	valueAxis.max = y_range.lin[1];
 
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;
