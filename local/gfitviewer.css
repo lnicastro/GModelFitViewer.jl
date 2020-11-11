@@ -2,7 +2,7 @@
   GFitViewer style file
  
   LN @ INAF-OAS, Sep. 2020
-  Last change: 06/11/2020
+  Last change: 11/11/2020
 */
 
 body {
@@ -10,7 +10,6 @@ body {
   color: #333;
   margin: 5px;
   text-rendering: optimizeLegibility !important;
-  /* line-height: 1.2; */
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
 }
@@ -247,6 +246,17 @@ label {
   border-radius: 4px;
 }
 
+.label-range-in {
+  margin-left: 0.5em;
+  margin-right: 0.2em;
+  font-size: inherit;
+}
+
+.range-in {
+  display: inline-block;
+  max-width: 4em;
+}
+
 
 #chartdiv {
   width : 98%;
@@ -255,6 +265,9 @@ label {
   text-align: left;
 }
 
+#range-selector-div {
+  margin-left: 1em;
+}
 
 section {
   overflow-x: scroll;
@@ -694,7 +707,8 @@ hr.style-two {
   border-bottom: 1px solid #ddd;
   /*background: #efefef;*/
   padding: 1em;
-  font-size: 1.2em;
+  font-size: 1.1em;
+  font-weight: 600;
 }
 
 .toggle_table-hdr:hover {

@@ -1,3 +1,7 @@
 2020-10-21 LN, ver. 0.1b
 	- Remove +/- error from data value in legend.valueLabels.
 	- Increase by 10% the legend.valueLabels to keep width fixed at run time.
+
+2020-11-10 LN, ver. 0.1c
+	- Added residuals Nsigma highlighted range selection
+	- Added lin / log Y-axis selection and management
