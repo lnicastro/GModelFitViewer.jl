@@ -228,6 +228,40 @@ label {
 }
 
 
+.simple_button {
+  padding: 3px 0;
+  margin-left: 1rem;
+  border: 1px solid #adadad;
+  border-radius: 4px;
+}
+
+.simple_button:hover {
+  background-color: #ddd;
+  background-image: none;
+
+  -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+          transition: all 0.3s ease-in-out;
+}
+
+.trasp_button {
+  padding: 6px 3px;
+  margin-left: 1rem;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  background-image: none;
+}
+
+.trasp_button:hover {
+  background-color: #eaeaea;
+  border-radius: 50%;
+
+  -webkit-transition: all 0.2s linear;
+     -moz-transition: all 0.2s linear;
+          transition: all 0.2s linear;
+}
+
 .box-in {
   display: inline-block;
   margin-left: 1em;
@@ -253,7 +287,6 @@ label {
 }
 
 .range-in {
-  display: inline-block;
   max-width: 4em;
 }
 
@@ -266,8 +299,11 @@ label {
 }
 
 #range-selector-div {
+  display: inline-block;
   margin-left: 1em;
 }
+
+
 
 section {
   overflow-x: scroll;
@@ -656,22 +692,6 @@ hr.style-two {
   background: #ddd;
   cursor: pointer;
   text-decoration: none;
-  -webkit-transition: all 0.30s ease-in;
-     -moz-transition: all 0.30s ease-in;
-          transition: all 0.30s ease-in;
-}
-
-
-#viewbutton {
-  padding: 3px;
-  margin-left: 1rem;
-  border: 1px solid #adadad;
-}
-
-#viewbutton:hover {
-  background-color: #ddd;
-  background-image: none;
-
   -webkit-transition: all 0.30s ease-in;
      -moz-transition: all 0.30s ease-in;
           transition: all 0.30s ease-in;
