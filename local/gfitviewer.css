@@ -2,7 +2,7 @@
   GFitViewer style file
  
   LN @ INAF-OAS, Sep. 2020
-  Last change: 11/11/2020
+  Last change: 12/11/2020
 */
 
 body {
@@ -244,9 +244,9 @@ label {
           transition: all 0.3s ease-in-out;
 }
 
-.trasp_button {
-  padding: 6px 3px;
-  margin-left: 1rem;
+.transp_button {
+  padding: 6px 4px;
+  margin-left: 0.5rem;
   border: none;
   border-radius: 50%;
   background-color: transparent;

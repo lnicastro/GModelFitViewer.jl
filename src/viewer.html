@@ -120,15 +120,15 @@
 	<span class="label-range-in" style="margin-left: 1em;">Y<sub>min</sub> </span><input name="ymin" type="text" class="range-in" value="" onchange="xy_range_set()" />
 	<span class="label-range-in">Y<sub>max</sub> </span><input name="ymax" type="text" class="range-in" value="" onchange="xy_range_set()" />
 
-	<button class="trasp_button" style="padding: 6px 0;" title="Replot with these ranges (2nd click to force Y range)" onclick="xy_range_set()">
-        <i class="far fa-eye" aria-hidden="true"></i>
+	<button class="transp_button" style="color: var(--success); padding: 7px 2px;" title="Replot with these ranges (2nd click to force Y range)" onclick="xy_range_set()">
+        <i class="far fa-check-circle" aria-hidden="true"></i>
 	</button>
 <!--
-	<button class="trasp_button" style="color: #1177d1;" title="Reset ranges" onclick="xy_range_reset()">
+	<button class="transp_button" style="color: #1177d1;" title="Reset ranges" onclick="xy_range_reset()">
         <i class="fas fa-times" aria-hidden="true"></i>
 	</button>
 -->
-	<button class="trasp_button" style="color: var(--danger);" title="Clear input" onclick="xy_rangein_reset()">
+	<button class="transp_button" style="color: var(--danger);" title="Clear input" onclick="xy_rangein_reset()">
         <i class="fas fa-times" aria-hidden="true"></i>
 	</button>
 	</div>
