@@ -5,3 +5,12 @@
 2020-11-10 LN, ver. 0.1c
 	- Added residuals Nsigma highlighted range selection
 	- Added lin / log Y-axis selection and management
+
+2020-11-11 LN, ver. 0.1c
+	- Better lin / log Y-axis plotting management
+
+2020-11-12 LN, ver. 0.1d
+	- Fixes for plots with reducers only (no original fitted data and residuals)
+	- Added X / Y plot range manual selection
+	- Residuals grid replaced with ticks
+	- Fit report restyling

@@ -11,8 +11,8 @@
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
-  <meta name="version" content="0.1c" />
-  <meta name="date" content="2020-11-10" />
+  <meta name="version" content="0.1d" />
+  <meta name="date" content="2020-11-12" />
 
 <!-- @Remote
 -->
@@ -57,8 +57,8 @@
   <div style="display: inline-block; padding-left: 0.5rem;">
     <div>
       <span id="json_info" style="font-weight: bold;">Data file info...</span> <span id="spe_size"></span>
-      <button id="viewbutton" onclick="savejsonobj('gfit_data.json', chart_data)">
-        <i class="fas fa-download"></i>Save JSON data</button>
+      <button id="viewbutton" class="simple_button" style="padding-right: 0.2rem;" onclick="savejsonobj('gfit_data.json', chart_data)">
+        <i class="fas fa-download" aria-hidden="true"></i>Save JSON data</button>
 	<div class="spe_sel-div">
 		Select prediction # <span id="p_selector"></span>
 	</div>
@@ -105,21 +105,28 @@
 	<input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" onchange="n_sigma_upd(this)" />
 	</span>
   </p>
-  <div>
-	<span class="box-cb" title="Toggle Y lin/log scale">
-	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()" /><label for="y_log-cb">Y log</label>
-	</span>
-  </div>
 
 
   <div id="chartdiv"></div>
 
-  <div id="range-selector-div">
-<span class="label-range-in">Xmin </span><input type="text" class="range-in" />
-<span class="label-range-in">Xmax </span><input type="text" class="range-in" />
-<span class="label-range-in" style="margin-left: 1em;">Ymin </span><input type="text" class="range-in" />
-<span class="label-range-in">Ymax </span><input type="text" class="range-in" />
-<span style="color: #999; font-weight: bold; margin-left: 2em;">TODO</span>
+  <div id="controls-div">
+	<span class="box-cb" title="Toggle Y lin/log scale">
+	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()" /><label for="y_log-cb">Y log</label>
+	</span>
+
+	<div id="range-selector-div">
+	<span class="label-range-in">X<sub>min</sub> </span><input name="xmin" type="text" class="range-in" value="" />
+	<span class="label-range-in">X<sub>max</sub> </span><input name="xmax" type="text" class="range-in" value="" />
+	<span class="label-range-in" style="margin-left: 1em;">Y<sub>min</sub> </span><input name="ymin" type="text" class="range-in" value="" />
+	<span class="label-range-in">Y<sub>max</sub> </span><input name="ymax" type="text" class="range-in" value="" />
+	<button class="trasp_button" style="padding: 6px 0;" title="Replot with these ranges (2nd click to force Y range)" onclick="xy_range_set()">
+        <i class="far fa-eye" aria-hidden="true"></i>
+	</button>
+	<button class="trasp_button" style="color: var(--blue);" title="Reset ranges" onclick="xy_range_reset()">
+        <i class="fas fa-times" aria-hidden="true"></i>
+	</button>
+	</div>
+
   </div>
 
 <hr class="style-one"></hr>
@@ -472,7 +479,7 @@ var getauxinfo = function() {  // TODO
 
 // Multiple predictions for the same "object" are allowed (TODO)
   aux.n_p = chart_data.predictions.length;
-  aux.n_d = chart_data.data.length;
+  (chart_data.data !== undefined) ? aux.n_d = chart_data.data.length : 0;
   aux.preinfo = [];
   aux.preinfo.length = 0;
   aux.datinfo = [];
@@ -487,7 +494,7 @@ var getauxinfo = function() {  // TODO
     n_x = chart_data.predictions[i].x.length;
 
     desc = 'Object/Data: <strong>';
-    if ( chart_data.data[i] !== undefined )
+    if ( aux.n_d > 0 && chart_data.data[i] !== undefined )
 	desc += chart_data.data[i].meta.label;
     else
 	desc += 'None';
@@ -578,18 +585,20 @@ console.log('isel:', isel);
   for (var i = 0; i < p.x.length; i++) {
 	vals = {};
 	vals['x'] = Math.round(p.x[i] * fscale) / fscale;
-	vals['y'] = chart_data.data[isel].y[i];
-	vals['error'] = chart_data.data[isel].err[i];
-	vals['resid'] = chart_data.data[isel].residuals[i];
+	if ( aux.n_d > 0 ) {
+	  vals['y'] = chart_data.data[isel].y[i];
+	  vals['error'] = chart_data.data[isel].err[i];
+	  vals['resid'] = chart_data.data[isel].residuals[i];
+	}
 
 	for (var j = 0; j < aux.preinfo[isel].n_reds; j++)  // Reducers
-	  if ( p.reducers[rnames[j]].y[i] > 0 )
+	  //if ( p.reducers[rnames[j]].y[i] > 0 )
 	  vals[rnames[j]] = p.reducers[rnames[j]].y[i];
 
 	for (var j = 0; j < aux.preinfo[isel].n_comps; j++) { // Components
           if ( !p.components[cnames[j]].meta.use_in_plot )
 		continue;
-	  if ( p.components[cnames[j]].y[i] > 0 )
+	  //if ( p.components[cnames[j]].y[i] > 0 )
 	  vals[cnames[j]] = p.components[cnames[j]].y[i];
 	}
 
@@ -649,7 +658,7 @@ function creaDataSeries(isel) {
     isel = c_ipre;
 
 // No data, just the model. Create and return.
-  if ( chart_data.data[isel] === undefined ) {
+  if ( aux.n_d == 0 ) {
     creaMainReducer(isel, true);
     return;
   }
@@ -730,7 +739,7 @@ function creaDataSeries(isel) {
 	range.grid.strokeOpacity = 0.5;
 	range2.axisFill.fillOpacity = 0.1;
 	valueAxis.renderer.grid.template.strokeOpacity = 0;
-	valueAxis2.renderer.grid.template.strokeOpacity = 1.15;
+	valueAxis2.renderer.ticks.template.strokeOpacity = 1;
     } else {
 	valueAxis2.visible = false;  // TODO
 	valueAxis2.cursorTooltipEnabled = false;
@@ -916,14 +925,16 @@ am4core.ready(function() {
   xAxis.dataFields.category = 'x';
 
 // Extend by the 2x x_step range
-  xAxis.min = aux.preinfo[c_ipre].x_min - 2 * aux.preinfo[c_ipre].x_step;
-  xAxis.max = aux.preinfo[c_ipre].x_max + 2 * aux.preinfo[c_ipre].x_step;
+  xAxis.min = aux.preinfo[c_ipre].x_min ; // - 2 * aux.preinfo[c_ipre].x_step;
+  xAxis.max = aux.preinfo[c_ipre].x_max ; //+ 2 * aux.preinfo[c_ipre].x_step;
 
   xAxis.renderer.minGridDistance = 120; // grid (TODO)
 
 // Create main Y-values axis
   valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
   valueAxis.title.fontSize = 18;
+  valueAxis.renderer.grid.template.stroke = am4core.color("#ddd");
+  valueAxis.renderer.grid.template.strokeOpacity = 1;
 
 
 // Eventually the second Y-value axis (for residuals). Note that it is only checked here!
@@ -932,9 +943,17 @@ am4core.ready(function() {
     valueAxis2.title.text = 'Residuals (\u03C3)';
     valueAxis2.renderer.opposite = true;
     valueAxis2.title.fontSize = 18;
-    valueAxis2.renderer.grid.template.strokeOpacity = 0;
+    valueAxis2.renderer.grid.template.disabled = true;  // No grid
 
  
+// Configure ticks
+    valueAxis2.renderer.ticks.template.disabled = false;
+    valueAxis2.renderer.ticks.template.strokeOpacity = 0;
+    valueAxis2.renderer.ticks.template.stroke = am4core.color("#495C43");
+    valueAxis2.renderer.ticks.template.strokeWidth = 2;
+    valueAxis2.renderer.ticks.template.length = -10;  // Inward
+
+
 // The +/- N sigma shaded region with the (dashed) 0 level. Visibility management is TODO.
     // 0 level dashed line
     range = valueAxis2.axisRanges.create();
@@ -1014,17 +1033,17 @@ am4core.ready(function() {
 		range2.endValue = n_sigma;
 		range.grid.strokeOpacity = 0.5;
 		range2.axisFill.fillOpacity = 0.1;
-		valueAxis2.renderer.grid.template.strokeOpacity = 0.15;
+		valueAxis2.renderer.ticks.template.strokeOpacity = 1;
 		valueAxis2.visible = true;  // TODO
 		valueAxis2.cursorTooltipEnabled = true;
-		valueAxis.renderer.grid.template.strokeOpacity = 0;
+//valueAxis.renderer.grid.template.strokeOpacity = 0;
 	} else {
 		range.grid.strokeOpacity = 0;
 		range2.axisFill.fillOpacity = 0;
-		valueAxis2.renderer.grid.template.strokeOpacity = 0;
+		valueAxis2.renderer.ticks.template.strokeOpacity = 0;
 		valueAxis2.visible = false;  // TODO
 		valueAxis2.cursorTooltipEnabled = false;
-		valueAxis.renderer.grid.template.strokeOpacity = 0.15;
+//valueAxis.renderer.grid.template.strokeOpacity = 1;
 	}
     }
   });
@@ -1053,9 +1072,7 @@ am4core.ready(function() {
 	document.getElementById('y_log-cb').checked = false;
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;
-console.log('Chart data changed. Y range was:', valueAxis.min, valueAxis.max);
 	set_y_range();
-console.log('Chart data changed. Y range is:', valueAxis.min, valueAxis.max);
   });
 
 });  // end am4core.ready()
@@ -1077,7 +1094,7 @@ function n_sigma_upd(e) {
 function set_y_range() {
 	var ymin = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
 	var ymax = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].max;
-	if ( chart_data.data[c_ipre] !== undefined ) {
+	if ( aux.n_d > 0 && chart_data.data[c_ipre] !== undefined ) {
 	  ymin = Math.min(ymin, Math.min(...(chart_data.data[c_ipre].y)));
 	  ymax = Math.max(ymax, Math.max(...(chart_data.data[c_ipre].y)));
 	}
@@ -1087,9 +1104,9 @@ console.log('Y range set to:', ymin, ymax);
 	y_range.lin[1] = ymax;
 	(ymin > 0) ? y_range.log[0] = ymin * 0.95 : y_range.log[0] = 1e-4;  // TODO
 	y_range.log[1] = ymax;
-	valueAxis.min = ymin;
-	valueAxis.max = ymax;
-	valueAxis.extraMin = 0.1;
+//valueAxis.extraMin = 0.05;  // Increase by 5% the Ymin
+
+	y_linlog_toggle();
 }
 
 
@@ -1103,16 +1120,44 @@ function y_linlog_toggle() {
 	valueAxis.min = y_range.log[0];
 	valueAxis.max = y_range.log[1];
 	valueAxis.logarithmic = true;
-//valueAxis.precision = 3;
-//valueAxis.strictMinMax = true;
-
+	valueAxis.precision = 3;
+	valueAxis.strictMinMax = true;
   } else {  // From log to lin
 	valueAxis.min = y_range.lin[0];
 	valueAxis.max = y_range.lin[1];
-
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;
+	valueAxis.strictMinMax = false;
   }
+}
+
+//
+// -- Set X and Y plot range to fixed ranges.
+
+function xy_range_set() {
+  var inputs = document.getElementById('range-selector-div').getElementsByTagName('input');
+
+// Note: need to parse to Float because Category axis wants "0.nnn" and not ".nnn"
+  var x_min = parseFloat(inputs.xmin.value !== '' ? inputs.xmin.value : xAxis.min);
+  var x_max = parseFloat(inputs.xmax.value !== '' ? inputs.xmax.value : xAxis.max);
+  var y_min = inputs.ymin.value !== '' ? inputs.ymin.value : valueAxis.min;
+  var y_max = inputs.ymax.value !== '' ? inputs.ymax.value : valueAxis.max;
+//console.log('y_min, y_max:', y_min, y_max);
+  xAxis.zoomToCategories(x_min.toString(), x_max.toString());
+  valueAxis.zoomToValues(y_min, y_max);
+
+  //valueAxis.strictMinMax = true;
+}
+
+
+// -- Reset X and Y plot range to initial values
+
+function xy_range_reset() {
+//set_y_range();
+//valueAxis.strictMinMax = false;
+//console.log('reset X, Y range:', xAxis.min, xAxis.max, valueAxis.min, valueAxis.max);
+  xAxis.zoomToCategories(xAxis.min, xAxis.max)
+  valueAxis.zoomToValues(valueAxis.min, valueAxis.max);
 }
 
 
@@ -1137,7 +1182,7 @@ function fitlog_toggle() {
 // -- Show/hide the components / predictions / reducers log tables
 
 function comp_table_toggle() {
-  var e = document.getElementById('comp_table');
+  var e = document.getElementById('comp_table-div');
   if ( ! isHidden(e) ) {
     e.className = 'out_table div-hide';
     document.getElementById('comp_table_sect').className = 'toggle_table-hdr';
@@ -1150,7 +1195,7 @@ function comp_table_toggle() {
 }
 
 function pred_table_toggle() {
-  var e = document.getElementById('pred_table');
+  var e = document.getElementById('pred_table-div');
   if ( ! isHidden(e) ) {
     e.className = 'out_table div-hide';
     document.getElementById('pred_table_sect').className = 'toggle_table-hdr';
@@ -1162,16 +1207,16 @@ function pred_table_toggle() {
   }
 }
 
-function red_table_toggle() {
-  var e = document.getElementById('red_table');
+function fitres_table_toggle() {
+  var e = document.getElementById('fitres_table-div');
   if ( ! isHidden(e) ) {
     e.className = 'out_table div-hide';
-    document.getElementById('red_table_sect').className = 'toggle_table-hdr';
-    document.getElementById('view_red_table_angle').className = 'fas fa-angle-down ud-angle';
+    document.getElementById('fitres_table_sect').className = 'toggle_table-hdr';
+    document.getElementById('view_fitres_table_angle').className = 'fas fa-angle-down ud-angle';
   } else {
     e.className = 'out_table div-show';
-    document.getElementById('red_table_sect').className = 'toggle_table-hdr div-selected';
-    document.getElementById('view_red_table_angle').className = 'fas fa-angle-up ud-angle';
+    document.getElementById('fitres_table_sect').className = 'toggle_table-hdr div-selected';
+    document.getElementById('view_fitres_table_angle').className = 'fas fa-angle-up ud-angle';
   }
 }
 
@@ -1204,7 +1249,7 @@ var tableFromJson = function(obj, type, tab_id) {
 
 //console.log(obj);
 // Components or reducers? (TODO)
-  var tabdiv, tab, tb, hdr, tr, tabCell, comp, cname, nc, red, rname, nr, ncol, title, tab_id;
+  var contentdiv, tabdiv, tab, tb, hdr, tr, tabCell, comp, cname, nc, red, rname, nr, ncol, title;
 
   if ( type !== 2 ) {
 	comp = obj.components;
@@ -1228,23 +1273,24 @@ var tableFromJson = function(obj, type, tab_id) {
 	break;
     case 1:
 	//title = 'Prediction'
-	title = '<i id="view_pred_table_angle" class="fas fa-angle-down ud-angle"></i>View Prediction(s)'
+	title = '<i id="view_pred_table_angle" class="fas fa-angle-down ud-angle"></i>View Prediction'
 	tlab.setAttribute('id', 'pred_table_sect');
 	tlab.setAttribute('class', 'toggle_table-hdr');
 	tlab.setAttribute('onclick', 'pred_table_toggle()');
 	col = ['Component', 'Counter', 'Min', 'Max', 'Mean', 'NaN/Inf'];	
 	break;
     case 2:
-	//title = 'Reducer'
-	title = '<i id="view_red_table_angle" class="fas fa-angle-down ud-angle"></i>View Reducer'
-	tlab.setAttribute('id', 'red_table_sect');
-	tlab.setAttribute('class', 'toggle_table-hdr');
-	tlab.setAttribute('onclick', 'red_table_toggle()');
+	title = 'Reducer'
+	tlab.setAttribute('class', 'header-lab');
 	col = ['Component', 'Counter', 'Min', 'Max', 'Mean', 'NaN/Inf'];	
 	break;
     case 3:
-	title = 'Best Fit results';
-	tlab.setAttribute('class', 'header-lab');
+	//title = 'Best Fit results';
+	//tlab.setAttribute('class', 'header-lab');
+	title = '<i id="view_fitres_table_angle" class="fas fa-angle-down ud-angle"></i>View Best Fit results'
+	tlab.setAttribute('id', 'fitres_table_sect');
+	tlab.setAttribute('class', 'toggle_table-hdr');
+	tlab.setAttribute('onclick', 'fitres_table_toggle()');
 	col = ['Component', 'Param.', 'Value', 'Uncert.', 'Fixed', 'Patched'];	
 	break;
 
@@ -1259,14 +1305,17 @@ var tableFromJson = function(obj, type, tab_id) {
 
   tabdiv = document.createElement('div');
   tabdiv.appendChild(tlab);
-  tab = document.createElement('table');
+
+  contentdiv = document.createElement('div');
+  tabdiv.appendChild(contentdiv);
+
   if ( tab_id !== undefined )
-	tab.setAttribute('id', tab_id);
-  if ( type == 0 || type == 1 || type == 2 ) {  // Components / prediction / reducer hidden by default
-	tab.setAttribute('class', 'div-hide');
-	//tab.style.border = '0';
-  }
-  tabdiv.appendChild(tab);
+	contentdiv.setAttribute('id', tab_id);
+  if ( type == 0 || type == 1 )  // Components / prediction + reducer hidden by default
+	contentdiv.setAttribute('class', 'div-hide');
+
+  tab = document.createElement('table');
+  contentdiv.appendChild(tab);
 
 // Create table header row using the extracted headers above
   hdr = tab.createTHead();
@@ -1530,7 +1579,7 @@ function updPredTab(obj) {
 	rname = Object.keys(red);  // red. names
 	nr = rname.length;
 
-	tab = document.getElementById('pred_table');  // predictions
+	tab = document.getElementById('pred_table-div');  // predictions
 	tb = tab.getElementsByTagName("tbody")[0];
 	tb.innerHTML = '';
 
@@ -1560,7 +1609,7 @@ function updPredTab(obj) {
 
 	}
 
-	tab = document.getElementById('red_table');  // reducers
+	tab = document.getElementById('red_table-div');  // reducers
 	tb = tab.getElementsByTagName("tbody")[0];
 	tb.innerHTML = '';
 
@@ -1603,17 +1652,20 @@ function updPredTab(obj) {
   var divShowData = document.getElementById('fitlog_tab');
   divShowData.innerHTML = "";
 
-  tabdiv = tableFromJson(chart_data, 0, 'comp_table');
+  tabdiv = tableFromJson(chart_data, 0, 'comp_table-div');
   divShowData.appendChild(tabdiv); // Add the components table to the container
 
 // Current prediction/reducer tables
-  tabdiv = tableFromJson(chart_data.predictions[c_ipre], 1, 'pred_table');
+  tabdiv = tableFromJson(chart_data.predictions[c_ipre], 1, 'pred_table-div');
   divShowData.appendChild(tabdiv); // Add the prediction table to the container
-  tabdiv = tableFromJson(chart_data.predictions[c_ipre], 2, 'red_table');
-  divShowData.appendChild(tabdiv); // Add the reducer table to the container
+
+// Add the reducer table to the prediction container
+  tabdiv = tableFromJson(chart_data.predictions[c_ipre], 2, 'red_table-div');
+//  divShowData.appendChild(tabdiv);
+  document.getElementById('pred_table-div').appendChild(tabdiv);
 
   if ( chart_data.bestfit !== undefined && chart_data.bestfit !== null ) {
-    tabdiv = tableFromJson(chart_data.bestfit, 3, 'fitres_table');
+    tabdiv = tableFromJson(chart_data.bestfit, 3, 'fitres_table-div');
     divShowData.appendChild(tabdiv); // Add the fit_res table to the container
   }
 </script>
