@@ -115,10 +115,11 @@
 	</span>
 
 	<div id="range-selector-div">
-	<span class="label-range-in">X<sub>min</sub> </span><input name="xmin" type="text" class="range-in" value="" />
-	<span class="label-range-in">X<sub>max</sub> </span><input name="xmax" type="text" class="range-in" value="" />
-	<span class="label-range-in" style="margin-left: 1em;">Y<sub>min</sub> </span><input name="ymin" type="text" class="range-in" value="" />
-	<span class="label-range-in">Y<sub>max</sub> </span><input name="ymax" type="text" class="range-in" value="" />
+	<span class="label-range-in">X<sub>min</sub> </span><input name="xmin" type="text" class="range-in" value="" onchange="xy_range_set()" />
+	<span class="label-range-in">X<sub>max</sub> </span><input name="xmax" type="text" class="range-in" value="" onchange="xy_range_set()" />
+	<span class="label-range-in" style="margin-left: 1em;">Y<sub>min</sub> </span><input name="ymin" type="text" class="range-in" value="" onchange="xy_range_set()" />
+	<span class="label-range-in">Y<sub>max</sub> </span><input name="ymax" type="text" class="range-in" value="" onchange="xy_range_set()" />
+
 	<button class="trasp_button" style="padding: 6px 0;" title="Replot with these ranges (2nd click to force Y range)" onclick="xy_range_set()">
         <i class="far fa-eye" aria-hidden="true"></i>
 	</button>
