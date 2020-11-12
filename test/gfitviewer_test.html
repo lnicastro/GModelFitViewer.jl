@@ -126,6 +126,9 @@
 	<button class="trasp_button" style="color: var(--blue);" title="Reset ranges" onclick="xy_range_reset()">
         <i class="fas fa-times" aria-hidden="true"></i>
 	</button>
+	<button class="trasp_button" style="color: var(--danger);" title="Clear input" onclick="xy_rangein_reset()">
+        <i class="fas fa-times" aria-hidden="true"></i>
+	</button>
 	</div>
 
   </div>
@@ -929,8 +932,8 @@ am4core.ready(function() {
   xAxis.dataFields.category = 'x';
 
 // Extend by the 2x x_step range
-  xAxis.min = aux.preinfo[c_ipre].x_min ; // - 2 * aux.preinfo[c_ipre].x_step;
-  xAxis.max = aux.preinfo[c_ipre].x_max ; //+ 2 * aux.preinfo[c_ipre].x_step;
+  xAxis.min = aux.preinfo[c_ipre].x_min; // - 2 * aux.preinfo[c_ipre].x_step;
+  xAxis.max = aux.preinfo[c_ipre].x_max; //+ 2 * aux.preinfo[c_ipre].x_step;
 
   xAxis.renderer.minGridDistance = 120; // grid (TODO)
 
@@ -1070,13 +1073,15 @@ am4core.ready(function() {
   //xAxis.keepSelection = true;
 
 
-// -- On data validation reset Y range for lin/log scale
+// -- On data validation reset X / Y range for lin/log scale, Also clear input fields.
 
-  chart.events.on ('datavalidated', function(e) {
+  chart.events.on('datavalidated', function(e) {
 	document.getElementById('y_log-cb').checked = false;
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;
+	set_x_range();
 	set_y_range();
+	xy_rangein_reset();  // Clear manual range input fields
   });
 
 });  // end am4core.ready()
@@ -1095,6 +1100,20 @@ function n_sigma_upd(e) {
 }
 
 
+//
+// -- Initial X range set
+
+function set_x_range() {
+  xAxis.min = aux.preinfo[c_ipre].x_min;
+  xAxis.max = aux.preinfo[c_ipre].x_max;
+  xAxis.zoomToIndexes(0, chart_data.predictions[c_ipre].x.length - 1);
+console.log('X range set to:', xAxis.min, xAxis.max);
+}
+
+
+//
+// -- Initial Y range set
+
 function set_y_range() {
 	var ymin = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
 	var ymax = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].max;
@@ -1108,7 +1127,6 @@ console.log('Y range set to:', ymin, ymax);
 	y_range.lin[1] = ymax;
 	(ymin > 0) ? y_range.log[0] = ymin * 0.95 : y_range.log[0] = 1e-4;  // TODO
 	y_range.log[1] = ymax;
-//valueAxis.extraMin = 0.05;  // Increase by 5% the Ymin
 
 	y_linlog_toggle();
 }
@@ -1126,31 +1144,46 @@ function y_linlog_toggle() {
 	valueAxis.logarithmic = true;
 	valueAxis.precision = 3;
 	valueAxis.strictMinMax = true;
+	valueAxis.extraMin = 0;
   } else {  // From log to lin
 	valueAxis.min = y_range.lin[0];
 	valueAxis.max = y_range.lin[1];
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;
 	valueAxis.strictMinMax = false;
+	valueAxis.extraMin = 0.05;  // Increase by 5% the Ymin
   }
 }
 
 //
-// -- Set X and Y plot range to fixed ranges.
+// -- Set X and Y plot range to fixed ranges
 
 function xy_range_set() {
   var inputs = document.getElementById('range-selector-div').getElementsByTagName('input');
 
-// Note: need to parse to Float because Category axis wants "0.nnn" and not ".nnn"
-  var x_min = parseFloat(inputs.xmin.value !== '' ? inputs.xmin.value : xAxis.min);
-  var x_max = parseFloat(inputs.xmax.value !== '' ? inputs.xmax.value : xAxis.max);
+// Note: need to parse to Float and use getPositionLabel because Category axis is string type.
+// It also wants "0.nnn" and not ".nnn"
+  var x_size = xAxis.max - xAxis.min;
+  if ( x_size <= 0 )
+	 x_size = aux.preinfo[c_ipre].x_step;
+
+  var x_min = (parseFloat(inputs.xmin.value !== '' ? inputs.xmin.value : xAxis.min) - xAxis.min) / x_size;
+  var x_max = (parseFloat(inputs.xmax.value !== '' ? inputs.xmax.value : xAxis.max) - xAxis.min) / x_size;
   var y_min = inputs.ymin.value !== '' ? inputs.ymin.value : valueAxis.min;
   var y_max = inputs.ymax.value !== '' ? inputs.ymax.value : valueAxis.max;
-//console.log('y_min, y_max:', y_min, y_max);
-  xAxis.zoomToCategories(x_min.toString(), x_max.toString());
-  valueAxis.zoomToValues(y_min, y_max);
 
-  //valueAxis.strictMinMax = true;
+// Some checks (range checks are done in getPositionLabel)
+  if ( x_min > x_max ) {
+	var tmp = x_max;
+	x_max = x_min;
+	x_min = tmp;
+  } else if ( x_min == x_max )
+	x_max = x_min + aux.preinfo[c_ipre].x_step / x_size; 
+
+  xAxis.zoomToCategories(xAxis.getPositionLabel(x_min), xAxis.getPositionLabel(x_max));
+  valueAxis.zoomToValues(y_min, y_max);
+//console.log('x_min, x_max:', xAxis.getPositionLabel(x_min), xAxis.getPositionLabel(x_max));
+//console.log('y_min, y_max:', y_min, y_max);
 }
 
 
@@ -1160,8 +1193,20 @@ function xy_range_reset() {
 //set_y_range();
 //valueAxis.strictMinMax = false;
 //console.log('reset X, Y range:', xAxis.min, xAxis.max, valueAxis.min, valueAxis.max);
-  xAxis.zoomToCategories(xAxis.min, xAxis.max)
+  xAxis.zoomToCategories(xAxis.min, xAxis.max);
   valueAxis.zoomToValues(valueAxis.min, valueAxis.max);
+}
+
+
+// -- Clear range input fields
+
+function xy_rangein_reset() {
+  var inputs = document.getElementById('range-selector-div').getElementsByTagName('input');
+
+  inputs.xmin.value = '';
+  inputs.xmax.value = '';
+  inputs.ymin.value = '';
+  inputs.ymax.value = '';
 }
 
 
