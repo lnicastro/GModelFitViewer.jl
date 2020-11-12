@@ -157,8 +157,7 @@
 	aux = {},	// The metadata information read from the json file and more,
 	valueAxis2,	// The residuals right axis object
 	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
-	i;
-  var xAxis, valueAxis;
+	xAxis, valueAxis;
 
 
 // A set of 18 colors + white + black (grey, blue and darkblue removed and used by def. for the data, main reducer and residuals array)
@@ -483,7 +482,7 @@ var getauxinfo = function() {  // TODO
 
 // Multiple predictions for the same "object" are allowed (TODO)
   aux.n_p = chart_data.predictions.length;
-  (chart_data.data !== undefined) ? aux.n_d = chart_data.data.length : 0;
+  aux.n_d = (chart_data.data !== undefined) ? chart_data.data.length : 0;
   aux.preinfo = [];
   aux.preinfo.length = 0;
   aux.datinfo = [];
@@ -491,7 +490,7 @@ var getauxinfo = function() {  // TODO
 
   var cnames, rnames, desc, x_lab, y_lab, n_x, x_step;
 
-  for (i = 0; i < aux.n_p; i++) {
+  for (var i = 0; i < aux.n_p; i++) {
     cnames = Object.keys(chart_data.predictions[i].components);
     rnames = Object.keys(chart_data.predictions[i].reducers);
 
@@ -550,7 +549,7 @@ var getauxinfo = function() {  // TODO
   var b, ss = document.getElementById('p_selector');
   ss.innerHTML = '';
 
-  for (i = 0; i < aux.n_p; i++) {
+  for (var i = 0; i < aux.n_p; i++) {
 	b = document.createElement('button');
 	b.setAttribute('type', 'button');
 	b.setAttribute('class', 'p_btn');
@@ -560,7 +559,7 @@ var getauxinfo = function() {  // TODO
  	ss.appendChild(b);
   }
   
-  for (i = 0; i < aux.n_d; i++) {
+  for (var i = 0; i < aux.n_d; i++) {
 	aux.datinfo.push({
 	  resid_visible: chart_data.data[i].meta.resid_visible,
 	  resid_color: (chart_data.data[i].meta.resid_color || rcolor.hex)}
