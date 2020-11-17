@@ -11,7 +11,7 @@
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
-  <meta name="version" content="0.1e" />
+  <meta name="version" content="0.1d" />
   <meta name="date" content="2020-11-16" />
 
 <!-- @Remote
@@ -162,7 +162,6 @@
 	aux = {},	// The metadata information read from the json file and more,
 	valueAxis2,	// The residuals right axis object
 	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
-vxAxis,
 	xAxis, valueAxis;
 
 
@@ -634,7 +633,6 @@ console.log('Create main reducer:', rname);
     
   var series = chart.series.push(new am4charts.LineSeries());
   series.dataFields.categoryX = 'x';
-//series.dataFields.valueX = 'x';
   series.dataFields.valueY = rname;
 
   series.name = rname;
@@ -678,7 +676,6 @@ function creaDataSeries(isel) {
   sdata = [];
   sdata = chart.series.push(new am4charts.LineSeries());
   sdata.dataFields.categoryX = 'x';
-//sdata.dataFields.valueX = 'x';
   sdata.dataFields.valueY = 'y';
   sdata.name = 'data';  // chart_data.meta.data.label;
   sdata.strokeWidth = 2;
@@ -940,34 +937,7 @@ am4core.ready(function() {
   xAxis.min = aux.preinfo[c_ipre].x_min; // - 2 * aux.preinfo[c_ipre].x_step;
   xAxis.max = aux.preinfo[c_ipre].x_max; //+ 2 * aux.preinfo[c_ipre].x_step;
 
-//xAxis.strictMinMax = true;
-  xAxis.startLocation = 0.5;
-  xAxis.endLocation = 0.5;
-
-//xAxis.renderer.minGridDistance = 120; // grid (TODO)
-
-// No labels and grid for CategoryAxis
-  xAxis.renderer.labels.template.disabled = true;
-  xAxis.renderer.grid.template.disabled = true;
-//xAxis.renderer.grid.template.strokeOpacity = 0;
-//xAxis.renderer.baseGrid.disabled=false;
-
-// Additional X axis as ValueAxis
-  vxAxis = chart.xAxes.push(new am4charts.ValueAxis());
-  vxAxis.dataFields.valueX = 'x';
-  vxAxis.renderer.grid.template.stroke = am4core.color("#ddd");
-  vxAxis.renderer.grid.template.strokeOpacity = 1;
-  vxAxis.min = aux.preinfo[c_ipre].x_min;
-  vxAxis.max = aux.preinfo[c_ipre].x_max;
-  vxAxis.strictMinMax = true;  // This is required
-
-// No cursor Tolltip for ValueAxis
-  vxAxis.cursorTooltipEnabled = false;
-
-//vxAxis.renderer.grid.template.dx=5;
-//vxAxis.renderer.labels.template.dx=5;
-//--
-
+  xAxis.renderer.minGridDistance = 120; // grid (TODO)
 
 // Create main Y-values axis
   valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
@@ -1020,20 +990,7 @@ am4core.ready(function() {
 // Cursor
   chart.cursor = new am4charts.XYCursor();
   chart.cursor.behavior = 'zoomXY';
-
-// Need to manage manually the Y zoom (animation issue?)
-  chart.cursor.events.on("zoomended", function(ev) {
-    var range = ev.target.yRange;
-    var axis = ev.target.chart.yAxes.getIndex(0);
-    var y_min = axis.getPositionLabel(axis.toAxisPosition(range.start));
-    var y_max = axis.getPositionLabel(axis.toAxisPosition(range.end));
-console.log("Cursor selected from "+ y_min +" to "+ y_max);
-
-// A delay is necessary to have the Y zoom
-    setTimeout(function() {
-	valueAxis.zoomToValues(y_min, y_max);
-    }, 1000);
-  });
+//chart.cursor.snapToSeries = s[0];
 
 
 // Legend
@@ -1117,8 +1074,6 @@ console.log("Cursor selected from "+ y_min +" to "+ y_max);
   //xAxis.end = 0.5;
   //xAxis.keepSelection = true;
 
-// It seems this only works on first call (see set_x_range)
-  vxAxis.zoomToValues(aux.preinfo[c_ipre].x_min, aux.preinfo[c_ipre].x_max + aux.preinfo[c_ipre].x_step / 2);
 
 // -- On data validation reset X / Y range for lin/log scale, Also clear input fields.
 
@@ -1155,13 +1110,6 @@ function set_x_range() {
   xAxis.max = aux.preinfo[c_ipre].x_max;
   xAxis.zoomToIndexes(0, chart_data.predictions[c_ipre].x.length - 1);
 console.log('X range set to:', xAxis.min, xAxis.max);
-
-// This is not set immediately and causes problems to the zoom below!
-  vxAxis.min = aux.preinfo[c_ipre].x_min;
-  vxAxis.max = aux.preinfo[c_ipre].x_max;
-
-// For some reason here we need a value higher than xAxis.max to force alignement
-//  vxAxis.zoomToValues(aux.preinfo[c_ipre].x_min, aux.preinfo[c_ipre].x_max + aux.preinfo[c_ipre].x_step / 2);
 }
 
 
@@ -1221,40 +1169,32 @@ function xy_range_set() {
   if ( x_size <= 0 )
 	 x_size = aux.preinfo[c_ipre].x_step;
 
-  var vx_min = parseFloat(inputs.xmin.value !== '' ? inputs.xmin.value : vxAxis.min);
-  var vx_max = parseFloat(inputs.xmax.value !== '' ? inputs.xmax.value : vxAxis.max);
-
-  var x_min = (vx_min - xAxis.min) / x_size;
-  var x_max = (vx_max - xAxis.min) / x_size;
+  var x_min = (parseFloat(inputs.xmin.value !== '' ? inputs.xmin.value : xAxis.min) - xAxis.min) / x_size;
+  var x_max = (parseFloat(inputs.xmax.value !== '' ? inputs.xmax.value : xAxis.max) - xAxis.min) / x_size;
   var y_min = inputs.ymin.value !== '' ? inputs.ymin.value : valueAxis.min;
   var y_max = inputs.ymax.value !== '' ? inputs.ymax.value : valueAxis.max;
 
 // Some checks (range checks are done in getPositionLabel)
   if ( x_min > x_max ) {
-	var tmp = vx_max;
-	vx_max = vx_min;
-	vx_min = tmp;
-	tmp = x_max;
+	var tmp = x_max;
 	x_max = x_min;
 	x_min = tmp;
-  } else if ( x_min == x_max ) {
-	vx_max = vx_min + aux.preinfo[c_ipre].x_step; 
+  } else if ( x_min == x_max )
 	x_max = x_min + aux.preinfo[c_ipre].x_step / x_size; 
-  }
 
   xAxis.zoomToCategories(xAxis.getPositionLabel(x_min), xAxis.getPositionLabel(x_max));
-  vxAxis.zoomToValues(vx_min, vx_max);
   valueAxis.zoomToValues(y_min, y_max);
+//console.log('x_min, x_max:', xAxis.getPositionLabel(x_min), xAxis.getPositionLabel(x_max));
+//console.log('y_min, y_max:', y_min, y_max);
 }
 
 
-// -- Reset X and Y plot range to initial values. Unused.
+// -- Reset X and Y plot range to initial values
 
 function xy_range_reset() {
 //set_y_range();
 //valueAxis.strictMinMax = false;
 //console.log('reset X, Y range:', xAxis.min, xAxis.max, valueAxis.min, valueAxis.max);
-  vxAxis.zoomToCategories(vxAxis.min, vxAxis.max);
   xAxis.zoomToCategories(xAxis.min, xAxis.max);
   valueAxis.zoomToValues(valueAxis.min, valueAxis.max);
 }
