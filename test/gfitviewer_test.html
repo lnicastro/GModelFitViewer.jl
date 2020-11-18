@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1e" />
-  <meta name="date" content="2020-11-16" />
+  <meta name="date" content="2020-11-18" />
 
 <!-- @Remote
 -->
@@ -57,8 +57,8 @@
   <div style="display: inline-block; padding-left: 0.5rem;">
     <div>
       <span id="json_info" style="font-weight: bold;">Data file info...</span> <span id="spe_size"></span>
-      <button id="viewbutton" class="simple_button" style="padding-right: 0.2rem;" onclick="savejsonobj('gfit_data.json', chart_data)">
-        <i class="fas fa-download" aria-hidden="true"></i>Save JSON data</button>
+      <button id="viewbutton" class="simple_button" style="padding-right: 0.2rem;" title="Retrieve full JSON data" onclick="savejsonobj('gfit_data.json', chart_data)">
+        <i class="fas fa-download" aria-hidden="true"></i>JSON data</button>
 	<div class="spe_sel-div">
 		Select prediction # <span id="p_selector"></span>
 	</div>
@@ -115,24 +115,27 @@
 	</span>
 
 	<div id="range-selector-div">
-	<span class="label-range-in">X<sub>min</sub> </span><input name="xmin" type="text" class="range-in" value="" onchange="xy_range_set()" />
-	<span class="label-range-in">X<sub>max</sub> </span><input name="xmax" type="text" class="range-in" value="" onchange="xy_range_set()" />
-	<span class="label-range-in" style="margin-left: 1em;">Y<sub>min</sub> </span><input name="ymin" type="text" class="range-in" value="" onchange="xy_range_set()" />
-	<span class="label-range-in">Y<sub>max</sub> </span><input name="ymax" type="text" class="range-in" value="" onchange="xy_range_set()" />
+	  <span class="label-range-in">X<sub>min</sub> </span><input name="xmin" type="text" class="range-in" value="" onchange="xy_range_set()" />
+	  <span class="label-range-in">X<sub>max</sub> </span><input name="xmax" type="text" class="range-in" value="" onchange="xy_range_set()" />
+	  <span class="label-range-in" style="margin-left: 1em;">Y<sub>min</sub> </span><input name="ymin" type="text" class="range-in" value="" onchange="xy_range_set()" />
+	  <span class="label-range-in">Y<sub>max</sub> </span><input name="ymax" type="text" class="range-in" value="" onchange="xy_range_set()" />
 
-	<button class="transp_button" style="color: var(--success);" title="Replot with these ranges (2nd click to force Y range)" onclick="xy_range_set()">
-        <i class="far fa-check-circle" aria-hidden="true"></i>
-	</button>
+	  <button class="transp_button" style="color: var(--success);" title="Replot with these ranges (2nd click to force Y range)" onclick="xy_range_set()">
+          <i class="far fa-check-circle" aria-hidden="true"></i>
+	  </button>
 <!--
 	<button class="transp_button" style="color: #1177d1;" title="Reset ranges" onclick="xy_range_reset()">
         <i class="fas fa-times" aria-hidden="true"></i>
 	</button>
 -->
-	<button class="transp_button" style="color: var(--danger);" title="Clear input" onclick="xy_rangein_reset()">
-        <i class="fas fa-times" aria-hidden="true"></i>
-	</button>
+	  <button class="transp_button" style="color: var(--danger);" title="Clear input" onclick="xy_rangein_reset()">
+	  <i class="fas fa-times" aria-hidden="true"></i>
+	  </button>
 	</div>
 
+<div class="inline" style="display: inline-block; margin-left: 2em; vertical-align: bottom; color: #999;">
+plot made using <a href="https://amCharts.com/" target="_new">amCharts</a>
+</div>
   </div>
 
 <hr class="style-one"></hr>
@@ -908,6 +911,9 @@ am4core.ready(function() {
 
   chart = am4core.create('chartdiv', am4charts.XYChart);
 
+// Disable logo
+  chart.logo.disabled = true;
+
   if ( chart_data !== undefined ) {
     var modal = document.getElementById('myModal');
     modal.className = 'modal modal-hide';
@@ -1009,9 +1015,8 @@ am4core.ready(function() {
     range2.grid.strokeOpacity = 0;
   }
 
-// Scrollbar
+// Scrollbar disabling labels and grid
   chart.scrollbarX = new am4charts.XYChartScrollbar();
-  //chart.scrollbarX.series.push(sdata);
 
 // Increase contrast by taking every second color
   //chart.colors.step = 2;
@@ -1120,9 +1125,14 @@ console.log("Cursor selected from "+ y_min +" to "+ y_max);
 // It seems this only works on first call (see set_x_range)
   vxAxis.zoomToValues(aux.preinfo[c_ipre].x_min, aux.preinfo[c_ipre].x_max + aux.preinfo[c_ipre].x_step / 2);
 
-// -- On data validation reset X / Y range for lin/log scale, Also clear input fields.
+// -- On data validation reset X / Y range for lin/log scale and clear input fields.
+// -- Also disable scrollbar labels and grid. Need to be done after series push.
 
   chart.events.on('datavalidated', function(e) {
+	var scrollAxis = chart.scrollbarX.scrollbarChart.xAxes.getIndex(0);
+	scrollAxis.renderer.labels.template.disabled = true;
+	scrollAxis.renderer.grid.template.disabled = true;
+
 	document.getElementById('y_log-cb').checked = false;
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;

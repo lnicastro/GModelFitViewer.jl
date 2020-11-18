@@ -19,3 +19,7 @@
 	- Use an extra X ValueAxis to plot axis labels and grid
 	- Several changes to account for the previous item
 	- Some style changes
+
+2020-11-18 LN, ver. 0.1e
+	- Removed labels and grid from X scrollbar
+	- Removed amCharts logo and added acknowledgment
