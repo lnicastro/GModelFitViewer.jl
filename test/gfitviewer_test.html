@@ -59,7 +59,7 @@
       <span id="json_info" style="font-weight: bold;">Data file info...</span> <span id="spe_size"></span>
       <button id="viewbutton" class="simple_button" style="padding-right: 0.2rem;" title="Retrieve full JSON data" onclick="savejsonobj('gfit_data.json', chart_data)">
         <i class="fas fa-download" aria-hidden="true"></i>JSON data</button>
-	<div class="spe_sel-div">
+	<div id="pre_sel-div">
 		Select prediction # <span id="p_selector"></span>
 	</div>
     </div>
@@ -555,10 +555,17 @@ var getauxinfo = function() {  // TODO
   }  // end for
 
 // The prediction selector
-  var b, ss = document.getElementById('p_selector');
+  var b, ss = document.getElementById('p_selector'),
+	d = document.getElementById('pre_sel-div');
   ss.innerHTML = '';
 
-  for (var i = 0; i < aux.n_p; i++) {
+// Create only if more than one prediction
+  if ( aux.n_p < 2 )
+    d.setAttribute('class', 'div-hide');
+
+  else {
+    d.setAttribute('class', 'div-show');
+    for (var i = 0; i < aux.n_p; i++) {
 	b = document.createElement('button');
 	b.setAttribute('type', 'button');
 	b.setAttribute('class', 'p_btn');
@@ -566,6 +573,7 @@ var getauxinfo = function() {  // TODO
 	b.setAttribute('id', 'pred_'+ i);
 	b.innerHTML = ' '+ (i+1).toString() +' ';
  	ss.appendChild(b);
+    }
   }
   
   for (var i = 0; i < aux.n_d; i++) {
@@ -882,9 +890,11 @@ function p_select(isel) {
     //chart.series.removeIndex( chart.series.indexOf(s) );
   });
 
-// Prediction selector buttons
-  document.getElementById('pred_'+ c_ipre).className = 'p_btn';
-  document.getElementById('pred_'+ isel).className = 'p_btn p_btn-selected';
+// Prediction selector buttons, if more than one
+  if ( aux.n_p > 1 ) {
+    document.getElementById('pred_'+ c_ipre).className = 'p_btn';
+    document.getElementById('pred_'+ isel).className = 'p_btn p_btn-selected';
+  }
 
   c_ipre = isel;  // Set index of selected prediction
 
@@ -1292,7 +1302,7 @@ function fitlog_toggle() {
     document.getElementById('fitlog_sect').className = 'toggle_table-hdr';
     document.getElementById('view_fitlog_angle').className = 'fas fa-angle-down ud-angle';
   } else {
-    e.className = 'div-show';
+    e.className = 'rep_div-show';
     document.getElementById('fitlog_sect').className = 'toggle_table-hdr div-selected';
     document.getElementById('view_fitlog_angle').className = 'fas fa-angle-up ud-angle';
   }
@@ -1309,7 +1319,7 @@ function comp_table_toggle() {
     document.getElementById('comp_table_sect').className = 'toggle_table-hdr';
     document.getElementById('view_comp_table_angle').className = 'fas fa-angle-down ud-angle';
   } else {
-    e.className = 'out_table div-show';
+    e.className = 'out_table rep_div-show';
     document.getElementById('comp_table_sect').className = 'toggle_table-hdr div-selected';
     document.getElementById('view_comp_table_angle').className = 'fas fa-angle-up ud-angle';
   }
@@ -1322,7 +1332,7 @@ function pred_table_toggle() {
     document.getElementById('pred_table_sect').className = 'toggle_table-hdr';
     document.getElementById('view_pred_table_angle').className = 'fas fa-angle-down ud-angle';
   } else {
-    e.className = 'out_table div-show';
+    e.className = 'out_table rep_div-show';
     document.getElementById('pred_table_sect').className = 'toggle_table-hdr div-selected';
     document.getElementById('view_pred_table_angle').className = 'fas fa-angle-up ud-angle';
   }
@@ -1335,7 +1345,7 @@ function fitres_table_toggle() {
     document.getElementById('fitres_table_sect').className = 'toggle_table-hdr';
     document.getElementById('view_fitres_table_angle').className = 'fas fa-angle-down ud-angle';
   } else {
-    e.className = 'out_table div-show';
+    e.className = 'out_table rep_div-show';
     document.getElementById('fitres_table_sect').className = 'toggle_table-hdr div-selected';
     document.getElementById('view_fitres_table_angle').className = 'fas fa-angle-up ud-angle';
   }

@@ -2,7 +2,7 @@
   GFitViewer style file
  
   LN @ INAF-OAS, Sep. 2020
-  Last change: 16/11/2020
+  Last change: 18/11/2020
 */
 
 body {
@@ -454,11 +454,12 @@ td.highlight_blue {
 }
 
 
-.spe_sel-div {
+#pre_sel-div {
   display: inline-block;
   font-size: 1rem;
   font-weight: bold;
   margin-left: 1rem;
+  height: 0;
 }
 
 
@@ -728,7 +729,6 @@ hr.style-two {
 
 .toggle_table-hdr {
   border-bottom: 1px solid #ddd;
-  /*background: #efefef;*/
   padding: 1em;
   font-size: 1.1em;
   font-weight: 600;
@@ -753,10 +753,23 @@ hr.style-two {
 .div-show {
   display: block;
   visibility: visible;
-  -webkit-animation: 1s linear 0s fadeIn;
+  height: auto;
+}
+
+.div-show_anim {
+  display: block;
+  visibility: visible;
+  height: auto;
+  animation: 1s linear 0s fadeIn;
+  transition: height 1s 0.2s ease-in-out; 
+}
+
+.rep_div-show {
+  display: block;
+  visibility: visible;
+  height: auto;
   animation: 1s linear 0s fadeIn;
   transition: height 1.5s 0.3s ease-in-out; 
-  height: auto;
   border-left: 3px solid #2d6ca2;
 }
 
@@ -778,55 +791,22 @@ hr.style-two {
 
 
 /* Add Animation */
-@-webkit-keyframes slidein {
-  from {top: -300px; visibility: hidden;} 
-  to {top: 0; visibility: visible;}
-}
-
 @keyframes slidein {
   from {top: -300px; visibility: hidden;}
   to {top: 0; visibility: visible;}
 }
 
-@-webkit-keyframes slideout {
-  from { transform: translateY(0); visibility: visible;}
-  to   { transform: translateY(-300px); visibility: hidden;}
-}
 @keyframes slideout {
   from { transform: translateY(0); visibility: visible;}
   to   { transform: translateY(-300px); visibility: hidden;}
 }
 
-  @-moz-keyframes fadeIn {
+@keyframes fadeIn {
    0% { opacity: 0; visibility: hidden; }
  100% { opacity: 1; visibility: visible; }
-  }
-  @-webkit-keyframes fadeIn {
-   0% { opacity: 0; visibility: hidden; }
- 100% { opacity: 1; visibility: visible; }
-  }
-  @-ms-keyframes fadeIn {
-   0% { opacity: 0; visibility: hidden; }
- 100% { opacity: 1; visibility: visible; }
-  }
-  @-keyframes fadeIn {
-   0% { opacity: 0; visibility: hidden; }
- 100% { opacity: 1; visibility: visible; }
-  }
+}
 
-  @-moz-keyframes fadeOut {
+@keyframes fadeOut {
     0% { opacity: 1; visibility: visible; }
   100% { opacity: 0; visibility: hidden; width: 100%; }
-  }
-  @-webkit-keyframes fadeOut {
-    0% { opacity: 1; visibility: visible; }
-  100% { opacity: 0; visibility: hidden; width: 100%; }
-  }
-  @-ms-keyframes fadeOut {
-    0% { opacity: 1; visibility: visible; }
-  100% { opacity: 0; visibility: hidden; width: 100px; }
-  }
-  @-keyframes fadeOut {
-    0% { opacity: 1; visibility: visible; }
-  100% { opacity: 0; visibility: hidden; width: 100%; }
-  }
+}

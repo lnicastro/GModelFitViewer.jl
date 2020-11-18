@@ -23,3 +23,4 @@
 2020-11-18 LN, ver. 0.1e
 	- Removed labels and grid from X scrollbar
 	- Removed amCharts logo and added acknowledgment
+	- Prediction selector shown only if more than one
