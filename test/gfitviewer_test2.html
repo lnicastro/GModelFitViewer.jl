@@ -44,7 +44,7 @@
   <div style="line-height: 48px;">
     <span style="vertical-align: middle; font-size: larger">GFitViewer</span>
 &minus;
-    <span style="font-size: 1rem; font-style: italic; color: #ccc; vertical-align: middle;">Version 0.1a</span>
+    <span style="font-size: 1rem; font-style: italic; color: #ccc; vertical-align: middle;">Version 0.1f</span>
   </div>
 </div>
 
@@ -84,7 +84,7 @@
 
 	      <div id="dropzone">
 		    <div>
-		      Drag &amp; drop a GFitViewer file here...
+			Drag &amp; drop a GFit file here...
 		      <br />or<br />
 		      <label for="selfile" class="custom-file-select"><i class="fas fa-search" style="padding-right: .5rem;"></i>Browse ...</label>
 		      <input id="selfile" type="file" accept=".json" />
@@ -133,10 +133,11 @@
 	  </button>
 	</div>
 
-<div class="inline" style="display: inline-block; margin-left: 2em; vertical-align: bottom; color: #999;">
-plot made using <a href="https://amCharts.com/" target="_new">amCharts</a>
-</div>
-  </div>
+	<div style="display: inline-block; margin-left: 2em; vertical-align: bottom; color: #999;">
+	plot made using <a href="https://amCharts.com/" target="_new">amCharts</a>
+	</div>
+
+  </div> <!-- controls-div -->
 
 <hr class="style-one"></hr>
 
@@ -151,10 +152,6 @@ plot made using <a href="https://amCharts.com/" target="_new">amCharts</a>
 <script type="text/javascript">
 
 // Initialize metadata and local variables
-  const def_lum_units_s = 42,   // Luminosity units exponent
-	def_flx_units_s = -17,  // Flux units exponent
-	def_lum_scale = 1;      // Luminosity scale factor wrt 1e42
-
   var c_ipre = 0,	// Currently plotted prediction index
 	n_sigma = 3,	// Highlight residuals region within this +/- sigma
 	y_logscale = false,  // Y lin/log scale
@@ -165,11 +162,11 @@ plot made using <a href="https://amCharts.com/" target="_new">amCharts</a>
 	aux = {},	// The metadata information read from the json file and more,
 	valueAxis2,	// The residuals right axis object
 	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
-vxAxis,
-	xAxis, valueAxis;
+	vxAxis, xAxis, valueAxis;
 
 
-// A set of 18 colors + white + black (grey, blue and darkblue removed and used by def. for the data, main reducer and residuals array)
+// A set of 18 colors + white + black
+// grey, blue and darkblue removed and used by def. for the data, main reducer and residuals array
   var mycolors = [
         {'name':'Red', 'hex':'#e6194b', 'rgb':'(230, 25, 75)', 'rgba':'(230, 25, 75, 0.5)'},
         {'name':'Green', 'hex':'#3cb44b', 'rgb':'(60, 180, 75)', 'rgba':'(60, 180, 75, 0.5)'},
@@ -218,6 +215,7 @@ console.log('Plot interface type:', interface_type);
 
   if ( interface_type == 'fileio' )
 	document.getElementById('file_io-div').setAttribute('class', 'div-show-inline');
+
 
 // Format numbers > 1000 adding the "," separator
 
@@ -992,7 +990,7 @@ am4core.ready(function() {
   vxAxis.max = aux.preinfo[c_ipre].x_max;
   vxAxis.strictMinMax = true;  // This is required
 
-// No cursor Tolltip for ValueAxis
+// No cursor Tooltip for ValueAxis
   vxAxis.cursorTooltipEnabled = false;
 
 //vxAxis.renderer.grid.template.dx=5;

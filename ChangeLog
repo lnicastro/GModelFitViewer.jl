@@ -29,3 +29,4 @@
 	- Top bar for file I/O only visible if passed "type=fileio" param in the URL 
 	- Fix for prediction selector management
 	- Style changes
+	- Code cleaning
