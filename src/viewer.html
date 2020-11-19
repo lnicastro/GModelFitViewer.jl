@@ -11,8 +11,8 @@
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
-  <meta name="version" content="0.1e" />
-  <meta name="date" content="2020-11-18" />
+  <meta name="version" content="0.1f" />
+  <meta name="date" content="2020-11-19" />
 
 <!-- @Remote
 -->
@@ -52,18 +52,18 @@
 <section class="page_top_tbar">
 
 <div>
-  <button class="submit_grey" type="submit" onclick="openLoadDiv()" id="myBtn"><i class="fas fa-file-import"></i>Load file</button>
-
-  <div style="display: inline-block; padding-left: 0.5rem;">
-    <div>
-      <span id="json_info" style="font-weight: bold;">Data file info...</span> <span id="spe_size"></span>
-      <button id="viewbutton" class="simple_button" style="padding-right: 0.2rem;" title="Retrieve full JSON data" onclick="savejsonobj('gfit_data.json', chart_data)">
-        <i class="fas fa-download" aria-hidden="true"></i>JSON data</button>
-	<div id="pre_sel-div">
-		Select prediction # <span id="p_selector"></span>
-	</div>
-    </div>
+  <div id="pre_sel-div" class="div-hide">
+	Select prediction # <span id="p_selector"></span>
   </div>
+
+  <div id="file_io-div" class="div-hide">
+    <button class="submit_grey" type="submit" onclick="openLoadDiv()" id="myBtn"><i class="fas fa-file-import"></i>Load file</button>
+    <button id="viewbutton" class="simple_button" style="padding-right: 0.2rem;" title="Retrieve full JSON data" onclick="savejsonobj('gfit_data.json', chart_data)">
+      <i class="fas fa-download" aria-hidden="true"></i>JSON data
+    </button>
+    <span id="json_info" style="font-weight: bold;">Data file info...</span>
+  </div>
+
 </div>
 
 </section>
@@ -99,7 +99,7 @@
   </div>
 
   <p>
-	<span id="p_title">GFitViewer info here...</span> <span id="spe_size"></span>
+	<span id="p_title">GFitViewer info here...</span>
 
 	<span class="box-in" style="float: right;" title="Set the highlighted resid. range">Resid. &pm; N&sigma;
 	<input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" onchange="n_sigma_upd(this)" />
@@ -199,6 +199,22 @@ vxAxis,
 // Residuals color
   rcolor = {'name':'Darkblue', 'hex':'#386cb0', 'rgb':'(56,108,176)', 'rgba':'(56,108,176, 0.5)'};
 
+
+// Here we check for interface type: basic (default), fileio, more TODO
+  var interface_type = 'basic';
+
+  if ( window.location.search !== '' ) {
+    const urlParams = new URLSearchParams(window.location.search);
+
+  if ( urlParams.has('type') )
+	interface_type = urlParams.get('type');
+  }
+
+console.log('Plot interface type:', interface_type);
+
+
+  if ( interface_type == 'fileio' )
+	document.getElementById('file_io-div').setAttribute('class', 'div-show-inline');
 
 // Format numbers > 1000 adding the "," separator
 
@@ -370,12 +386,11 @@ const fileInfo = (file) => {
 	var fname, size_info = 'Loaded <strong>';
 	if ( typeof file === 'object' ) {
 		document.getElementById('json_info').innerHTML = file.name;
-		size_info += numberWithCommas(chart.data.length) +'</strong> elements, <strong>'+ numberWithCommas(file.size) +'</strong> bytes';
+		size_info += numberWithCommas(chart.data.length) +'</strong> elements';
 	} else if ( typeof file === 'string' ) {
 		document.getElementById('json_info').innerHTML = file.split('/').reverse()[0];
-		size_info = numberWithCommas(chart.dataSource.data.length) +'</strong> elements array';
+		size_info += numberWithCommas(chart.dataSource.data.length) +'</strong> elements array';
 	}
-	document.getElementById('spe_size').innerHTML = size_info;
 }
 
 
@@ -510,7 +525,8 @@ var getauxinfo = function() {  // TODO
     desc += '</strong> &minus; ';
 //if (  aux.z !== '' ) desc += ':  &nbsp;&nbsp; z: '+ aux.z +', E(B-V): '+ aux.e_bv;
 
-    desc += chart_data.predictions[i].meta.label +' &minus; Rebin: '+
+    desc += chart_data.predictions[i].meta.label +' &minus; '+
+	    numberWithCommas(n_x) +' points &minus; Rebin: '+
 	    chart_data.predictions[i].meta.rebin;
 
     x_lab = chart_data.predictions[i].meta.label_x;
@@ -561,7 +577,7 @@ var getauxinfo = function() {  // TODO
     d.setAttribute('class', 'div-hide');
 
   else {
-    d.setAttribute('class', 'div-show');
+    d.setAttribute('class', 'div-show-inline');
     for (var i = 0; i < aux.n_p; i++) {
 	b = document.createElement('button');
 	b.setAttribute('type', 'button');
@@ -929,12 +945,11 @@ am4core.ready(function() {
     getauxinfo();
     chart.data = mydata2chart(c_ipre); 
 
-    document.getElementById('json_info').innerHTML = aux.n_spe +' data. Current: '+ (aux.preinfo[0].n_comps - 1) +'</strong> components fit.';
-    size_info = '<strong>'+ numberWithCommas(chart.data.length) +'</strong> elements array';
-      document.getElementById('spe_size').innerHTML = size_info;
+    document.getElementById('json_info').innerHTML = aux.n_spe +' data. Current: '+ (aux.preinfo[0].n_comps) +'</strong> components fit.';
 
 // Highlight button for current prediction
-    document.getElementById('pred_'+ c_ipre).className = 'p_btn p_btn-selected';
+    if ( aux.n_p > 1 )
+      document.getElementById('pred_'+ c_ipre).className = 'p_btn p_btn-selected';
 
   } else {
     for (var j = 0; j < 2 * Math.PI; j += 0.1)
