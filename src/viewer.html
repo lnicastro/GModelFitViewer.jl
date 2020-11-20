@@ -11,8 +11,8 @@
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
-  <meta name="version" content="0.1f" />
-  <meta name="date" content="2020-11-19" />
+  <meta name="version" content="0.1g" />
+  <meta name="date" content="2020-11-20" />
 
 <!-- @Remote
 -->
@@ -58,10 +58,10 @@
 
   <div id="file_io-div" class="div-hide">
     <button class="submit_grey" type="submit" onclick="openLoadDiv()" id="myBtn"><i class="fas fa-file-import"></i>Load file</button>
-    <button id="viewbutton" class="simple_button" style="padding-right: 0.2rem;" title="Retrieve full JSON data" onclick="savejsonobj('gfit_data.json', chart_data)">
+    <button id="viewbutton" class="simple_button" style="padding-right: 0.2em;" title="Retrieve full JSON data" onclick="savejsonobj('gfit_data.json', chart_data)">
       <i class="fas fa-download" aria-hidden="true"></i>JSON data
     </button>
-    <span id="json_info" style="font-weight: bold;">Data file info...</span>
+    <span id="json_info" style="margin-left: 0.5em; font-weight: bold;">Data file info...</span>
   </div>
 
 </div>
@@ -71,7 +71,7 @@
 
 <div class="interface">
 
-  <div id="myModal" class="modal">
+  <div id="myModal" class="modal modal-hide">
 <!-- Modal content -->
     <div id="myModal_cont" class="modal-content">
 
@@ -203,15 +203,17 @@
   if ( window.location.search !== '' ) {
     const urlParams = new URLSearchParams(window.location.search);
 
-  if ( urlParams.has('type') )
-	interface_type = urlParams.get('type');
+  if ( urlParams.has('mode') )
+	interface_type = urlParams.get('mode');
   }
 
 console.log('Plot interface type:', interface_type);
 
 
-  if ( interface_type == 'fileio' )
+  if ( interface_type == 'fileio' ) {
 	document.getElementById('file_io-div').setAttribute('class', 'div-show-inline');
+	document.getElementById('myModal').className = 'modal';
+ }
 
 
 // Format numbers > 1000 adding the "," separator
@@ -936,14 +938,15 @@ am4core.ready(function() {
   chart.logo.disabled = true;
 
   if ( chart_data !== undefined ) {
-    var modal = document.getElementById('myModal');
-    modal.className = 'modal modal-hide';
+    if (interface_type == 'fileio' )
+      document.getElementById('myModal').className = 'modal modal-hide';
 
-// At startup view first prediction by default? (TODO)
+// At startup view first prediction by default
     getauxinfo();
     chart.data = mydata2chart(c_ipre); 
 
-    document.getElementById('json_info').innerHTML = aux.n_spe +' data. Current: '+ (aux.preinfo[0].n_comps) +'</strong> components fit.';
+    document.getElementById('json_info').innerHTML = aux.n_spe +' data. Current: '+
+	 (aux.preinfo[0].n_comps) +'</strong> components fit.';
 
 // Highlight button for current prediction
     if ( aux.n_p > 1 )
@@ -953,9 +956,11 @@ am4core.ready(function() {
     for (var j = 0; j < 2 * Math.PI; j += 0.1)
       chart.data.push({"lambda": parseInt(1000 + j*1500), "y": Math.sin(j)});
 
-// Open the file load div
+// Open the file load div (if I/O mode interface)
+  if ( interface_type == 'fileio' )
     openLoadDiv();
   }
+
 
 // Create X axis
   xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
