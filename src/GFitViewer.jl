@@ -5,10 +5,10 @@ using DataStructures, JSON, DefaultApplication, GFit
 export viewer
 
 function add_default_meta!(model::Model)
-    for i in 1:length(model.preds)
-        meta = metadict(model, i)
+    for id in 1:length(model.preds)
+        meta = metadict(model, id=id)
         haskey(meta, :rebin)   ||  (meta[:rebin] = GFit.todict_opt[:rebin])
-        haskey(meta, :label)   ||  (meta[:label] = "Prediction $i")
+        haskey(meta, :label)   ||  (meta[:label] = "Prediction $id")
         haskey(meta, :label_x) ||  (meta[:label_x] = "")
         haskey(meta, :scale_x) ||  (meta[:scale_x] =  1)
         haskey(meta, :unit_x ) ||  (meta[:unit_x]  = "")
