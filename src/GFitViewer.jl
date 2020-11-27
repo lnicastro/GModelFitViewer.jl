@@ -90,9 +90,9 @@ function save_html(path::AbstractString,
     end
     close(io)
 
-    # io = open(path * ".json", "w")
-    # JSON.print(io, d)
-    # close(io)
+    io = open(path * ".json", "w")
+    JSON.print(io, d)
+    close(io)
 
     # io = IOBuffer()
     # JSON.print(io, d)
