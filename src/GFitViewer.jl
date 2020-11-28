@@ -5,10 +5,10 @@ using DataStructures, JSON, DefaultApplication, GFit
 export viewer
 
 function add_default_meta!(model::Model)
-    for i in 1:length(model.preds)
-        meta = metadict(model, i)
+    for id in 1:length(model.preds)
+        meta = metadict(model, id=id)
         haskey(meta, :rebin)   ||  (meta[:rebin] = GFit.todict_opt[:rebin])
-        haskey(meta, :label)   ||  (meta[:label] = "Prediction $i")
+        haskey(meta, :label)   ||  (meta[:label] = "Prediction $id")
         haskey(meta, :label_x) ||  (meta[:label_x] = "")
         haskey(meta, :scale_x) ||  (meta[:scale_x] =  1)
         haskey(meta, :unit_x ) ||  (meta[:unit_x]  = "")
@@ -19,15 +19,15 @@ function add_default_meta!(model::Model)
         for (cname, comp) in model.comps
             meta = metadict(model, cname)
             haskey(meta, :label)            ||  (meta[:label] = string(cname))
-            haskey(meta, :use_in_plot)      ||  (meta[:use_in_plot] = GFit.todict_opt[:addcomps])
-            haskey(meta, :default_visible)  ||  (meta[:default_visible] = false)
             haskey(meta, :color)            ||  (meta[:color] = "auto")
+            haskey(meta, :default_visible)  ||  (meta[:default_visible] = false)
+            meta[:use_in_plot] = (GFit.todict_opt[:addcomps]  ||  (cname in GFit.todict_opt[:selcomps]))
             for (pname, param) in GFit.getparams(comp)
                 meta = param.meta
                 haskey(meta, :scale)   ||  (meta[:unit] =  1)
                 haskey(meta, :unit )   ||  (meta[:unit] = "")
                 haskey(meta, :note )   ||  (meta[:note] = "")
-            end            
+            end
         end
 
         for pred in model.preds
@@ -35,8 +35,8 @@ function add_default_meta!(model::Model)
                 meta = metadict(model, rname)
                 haskey(meta, :label)            ||  (meta[:label] = string(rname))
                 haskey(meta, :color)            ||  (meta[:color] = "auto")
-                haskey(meta, :use_in_plot)      ||  (meta[:use_in_plot] = true)
                 haskey(meta, :default_visible)  ||  (meta[:default_visible] = true)
+                meta[:use_in_plot] = true
             end
         end
     end
@@ -58,10 +58,11 @@ function save_html(path::AbstractString,
                    model::Model,
                    data::Union{Nothing, Vector{GFit.Measures_1D}}=nothing,
                    bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
-                   rebin::Int=1, addcomps::Bool=false)
+                   rebin::Int=1, addcomps::Bool=false, selcomps=Vector{Symbol}())
 
     GFit.todict_opt[:rebin] = rebin
     GFit.todict_opt[:addcomps] = addcomps
+    GFit.todict_opt[:selcomps] = selcomps
 
     add_default_meta!(model)
     if !isnothing(data)
@@ -87,6 +88,10 @@ function save_html(path::AbstractString,
     while !eof(input)
         write(io, readavailable(input))
     end
+    close(io)
+
+    io = open(path * ".json", "w")
+    JSON.print(io, d)
     close(io)
 
     # io = IOBuffer()
