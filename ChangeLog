@@ -34,3 +34,7 @@
 2020-11-20 LN, ver. 0.1g
 	- Modal screen removed if not I/O interface
 	- Code cleaning
+
+2020-11-28 LN, ver. 0.1g
+	- Removed limits in the manual Y range settings
+	- Style changes

@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1g" />
-  <meta name="date" content="2020-11-20" />
+  <meta name="date" content="2020-11-28" />
 
 <!-- @Remote
 -->
@@ -528,8 +528,8 @@ var getauxinfo = function() {  // TODO
     desc += '</strong> &minus; ';
 //if (  aux.z !== '' ) desc += ':  &nbsp;&nbsp; z: '+ aux.z +', E(B-V): '+ aux.e_bv;
 
-    desc += chart_data.predictions[i].meta.label +' &minus; '+
-	    numberWithCommas(n_x) +' points &minus; Rebin: '+
+    desc += '<span style="color: #69c;">'+ chart_data.predictions[i].meta.label +'</span> &minus; '+
+	    numberWithCommas(n_x) +' points &minus; rebin factor: '+
 	    chart_data.predictions[i].meta.rebin;
 
     x_lab = chart_data.predictions[i].meta.label_x;
@@ -1264,8 +1264,8 @@ function xy_range_set() {
 
   var x_min = (vx_min - xAxis.min) / x_size;
   var x_max = (vx_max - xAxis.min) / x_size;
-  var y_min = inputs.ymin.value !== '' ? inputs.ymin.value : valueAxis.min;
-  var y_max = inputs.ymax.value !== '' ? inputs.ymax.value : valueAxis.max;
+  var y_min = inputs.ymin.value !== '' ? parseFloat(inputs.ymin.value) : valueAxis.min;
+  var y_max = inputs.ymax.value !== '' ? parseFloat(inputs.ymax.value) : valueAxis.max;
 
 // Some checks (range checks are done in getPositionLabel)
   if ( x_min > x_max ) {
@@ -1280,9 +1280,33 @@ function xy_range_set() {
 	x_max = x_min + aux.preinfo[c_ipre].x_step / x_size; 
   }
 
-  xAxis.zoomToCategories(xAxis.getPositionLabel(x_min), xAxis.getPositionLabel(x_max));
-  vxAxis.zoomToValues(vx_min, vx_max);
-  valueAxis.zoomToValues(y_min, y_max);
+  if ( y_min > y_max ) {
+        var tmp = y_max;
+        y_max = y_min;
+        y_min = tmp;
+  } else if ( y_min == y_max )
+        return false;
+
+  if ( y_min != valueAxis.min || y_max != valueAxis.max ) {
+	valueAxis.strictMinMax = true;
+	if ( y_min != valueAxis.min )
+	  valueAxis.min = y_min;
+
+	if ( y_max != valueAxis.max )
+	  valueAxis.max = y_max;
+  }
+
+
+  if ( vx_min != vxAxis.min || vx_max != vxAxis.max ) {
+	xAxis.zoomToCategories(xAxis.getPositionLabel(x_min), xAxis.getPositionLabel(x_max));
+	vxAxis.zoomToValues(vx_min, vx_max);
+  }
+
+// A delay is necessary to have the Y zoom
+    setTimeout(function() {
+	valueAxis.zoomToValues(y_min, y_max);
+    }, 1000);
+
 }
 
 
@@ -1307,6 +1331,8 @@ function xy_rangein_reset() {
   inputs.xmax.value = '';
   inputs.ymin.value = '';
   inputs.ymax.value = '';
+
+  valueAxis.strictMinMax = false;
 }
 
 
