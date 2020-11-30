@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1g" />
-  <meta name="date" content="2020-11-28" />
+  <meta name="date" content="2020-11-30" />
 
 <!-- @Remote
 -->
@@ -42,9 +42,10 @@
 
 <div class="hdrdiv2">
   <div style="line-height: 48px;">
-    <span style="vertical-align: middle; font-size: larger">GFitViewer</span>
+<img src="https://qsfit.inaf.it/GFitViewer/local/inaf_logo_plain_simple.svg" style="width: 102.2px; height: 40px;">
+    <span style="margin-left: 1em; vertical-align: middle; font-size: larger">GFitViewer</span>
 &minus;
-    <span style="font-size: 1rem; font-style: italic; color: #ccc; vertical-align: middle;">Version 0.1f</span>
+    <span style="font-size: 1rem; font-style: italic; color: #ccc; vertical-align: middle;">Version 0.1g</span>
   </div>
 </div>
 
@@ -523,7 +524,6 @@ var getauxinfo = function() {  // TODO
     else
 	desc += 'None';
     desc += '</strong> &minus; ';
-//if (  aux.z !== '' ) desc += ':  &nbsp;&nbsp; z: '+ aux.z +', E(B-V): '+ aux.e_bv;
 
     desc += '<span style="color: #69c;">'+ chart_data.predictions[i].meta.label +'</span> &minus; '+
 	    numberWithCommas(n_x) +' points &minus; rebin factor: '+
@@ -565,7 +565,10 @@ var getauxinfo = function() {  // TODO
 	n_reds: rnames.length,
 	main_reducer: chart_data.predictions[i].main_reducer  // TODO
     });
+// Equidistance check (TODO)
+    aux.preinfo[i].x_equi = Math.abs((aux.preinfo[i].x_max - aux.preinfo[i].x_min)/(n_x-1) - x_step) < 0.001;
   }  // end for
+
 
 // The prediction selector
   var b, ss = document.getElementById('p_selector'),
@@ -977,9 +980,10 @@ am4core.ready(function() {
 
 //xAxis.renderer.minGridDistance = 120; // grid (TODO)
 
-// No labels and grid for CategoryAxis
-  xAxis.renderer.labels.template.disabled = true;
-  xAxis.renderer.grid.template.disabled = true;
+// No labels and grid for CategoryAxis (checked via x_axis_render)
+  //xAxis.renderer.labels.template.disabled = true;
+  //xAxis.renderer.grid.template.disabled = true;
+
 //xAxis.renderer.grid.template.strokeOpacity = 0;
 //xAxis.renderer.baseGrid.disabled=false;
 
@@ -1154,6 +1158,7 @@ console.log("Cursor selected from "+ y_min +" to "+ y_max);
 // -- Also disable scrollbar labels and grid. Need to be done after series push.
 
   chart.events.on('datavalidated', function(e) {
+	x_axis_renderer();
 	var scrollAxis = chart.scrollbarX.scrollbarChart.xAxes.getIndex(0);
 	scrollAxis.renderer.labels.template.disabled = true;
 	scrollAxis.renderer.grid.template.disabled = true;
@@ -1183,6 +1188,24 @@ function n_sigma_upd(e) {
 
 
 //
+// -- X axis renderer: visible axis labels and grid depends on equi or not-equispaced values
+
+function x_axis_renderer() {
+  if ( aux.preinfo[c_ipre].x_equi ) {  // Equispaced: valueAxis is visble
+	vxAxis.renderer.labels.template.disabled = false;
+	vxAxis.renderer.grid.template.disabled = false;
+	xAxis.renderer.labels.template.disabled = true;
+	xAxis.renderer.grid.template.disabled = true;
+  } else {  // Not-equispaced: categoryAxis is visible
+	vxAxis.renderer.labels.template.disabled = true;
+	vxAxis.renderer.grid.template.disabled = true;
+	xAxis.renderer.labels.template.disabled = false;
+	xAxis.renderer.grid.template.disabled = false;
+  }
+
+}
+
+//
 // -- Initial X range set
 
 function set_x_range() {
@@ -1204,20 +1227,20 @@ console.log('X range set to:', xAxis.min, xAxis.max);
 // -- Initial Y range set
 
 function set_y_range() {
-	var ymin = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
-	var ymax = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].max;
-	if ( aux.n_d > 0 && chart_data.data[c_ipre] !== undefined ) {
-	  ymin = Math.min(ymin, Math.min(...(chart_data.data[c_ipre].y)));
-	  ymax = Math.max(ymax, Math.max(...(chart_data.data[c_ipre].y)));
-	}
+  var ymin = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
+  var ymax = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].max;
+  if ( aux.n_d > 0 && chart_data.data[c_ipre] !== undefined ) {
+	ymin = Math.min(ymin, Math.min(...(chart_data.data[c_ipre].y)));
+	ymax = Math.max(ymax, Math.max(...(chart_data.data[c_ipre].y)));
+  }
 
 console.log('Y range set to:', ymin, ymax);
-	y_range.lin[0] = ymin;
-	y_range.lin[1] = ymax;
-	(ymin > 0) ? y_range.log[0] = ymin * 0.95 : y_range.log[0] = 1e-4;  // TODO
-	y_range.log[1] = ymax;
+  y_range.lin[0] = ymin;
+  y_range.lin[1] = ymax;
+  (ymin > 0) ? y_range.log[0] = ymin * 0.95 : y_range.log[0] = 1e-4;  // TODO
+  y_range.log[1] = ymax;
 
-	y_linlog_toggle();
+  y_linlog_toggle();
 }
 
 

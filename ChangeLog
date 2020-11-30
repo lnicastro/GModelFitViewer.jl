@@ -38,3 +38,6 @@
 2020-11-28 LN, ver. 0.1g
 	- Removed limits in the manual Y range settings
 	- Style changes
+
+2020-11-30 LN, ver. 0.1g
+	- Check if X values are equispaced or not to decide visible axis (valueAxis or categoryAxis)
