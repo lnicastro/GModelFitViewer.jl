@@ -77,35 +77,35 @@
     <div id="myModal_cont" class="modal-content">
 
 	    <div class="modal-header">
-        <span class="close" title="Close">&times;</span>
-        <h3 class="modal-header-text">GFitViewer file selector ...</h3>
+		<span class="close" title="Close">&times;</span>
+		<h3 class="modal-header-text">GFitViewer file selector ...</h3>
 	    </div>
 
 	    <div id="modal-logdiv" class="modal-body">
 
-	      <div id="dropzone">
-		    <div>
+		<div id="dropzone">
+		  <div>
 			Drag &amp; drop a GFit file here...
-		      <br />or<br />
-		      <label for="selfile" class="custom-file-select"><i class="fas fa-search" style="padding-right: .5rem;"></i>Browse ...</label>
-		      <input id="selfile" type="file" accept=".json" />
-		    </div>
-	      </div>
+			<br />or<br />
+			<label for="selfile" class="custom-file-select"><i class="fas fa-search" style="padding-right: .5rem;"></i>Browse ...</label>
+			<input id="selfile" type="file" accept=".json" />
+		  </div>
+		</div>
 
-	      <progress value="0" max="100" id="progress-bar"></progress>
-	      <div id="status" style="display: inline-block;"></div>
+		<progress value="0" max="100" id="progress-bar"></progress>
+		<div id="f_status"></div>
 	    </div>
 
     </div>
   </div>
 
-  <p>
+  <section style="margin-top: 0.5em;">
 	<span id="p_title">GFitViewer info here...</span>
 
 	<span class="box-in" style="float: right;" title="Set the highlighted resid. range">Resid. &pm; N&sigma;
-	<input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" onchange="n_sigma_upd(this)" />
+	<input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" onchange="n_sigma_update(this)" />
 	</span>
-  </p>
+  </section>
 
 
   <div id="chartdiv"></div>
@@ -141,6 +141,14 @@
   </div> <!-- controls-div -->
 
 <hr class="style-one"></hr>
+
+<div class="toggle_table-hdr" id="fitlog_sect" onclick="fitlog_toggle()">
+  <i id="view_fitlog_angle" class="fas fa-angle-down ud-angle"></i>View GFit report
+</div>
+
+<div id="fitlog_div" class="div-hide">
+  <div id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</div>
+</div>
 
 
   <script>
@@ -276,7 +284,7 @@ function openLoadDiv() {
 
 // Clean progress bar and load status message
   document.getElementById('progress-bar').value = 0;
-  changeStatus('');
+  f_changeStatus('');
 
 // Get the <span> element that hides the modal
   var span = document.getElementsByClassName('close')[0];
@@ -344,22 +352,22 @@ document.getElementById('selfile').addEventListener('change', (e) => {
 
 // A basic error handler for FileReader
 
-const errorHandler = (e) => {
-	changeStatus("Error: "+ e.target.error.name);
+const f_errorHandler = (e) => {
+	f_changeStatus("Error: "+ e.target.error.name);
 }
 
 
 // Updates the value of the progress bar
 
-const setProgress = (e) => {
+const f_setProgress = (e) => {
 // The target is the file reader
 	const fr = e.target;
 	const loadingPercentage = 100 * e.loaded / e.total;
 	document.getElementById('progress-bar').value = loadingPercentage;
 }
 
-const changeStatus = (status) => {
-	document.getElementById('status').innerHTML = status;
+const f_changeStatus = (status) => {
+	document.getElementById('f_status').innerHTML = status;
 }
 
 
@@ -368,11 +376,11 @@ const changeStatus = (status) => {
 const processFile = (file) => {
 	const fr = new FileReader();
 	fr.readAsText(file);
-	fr.onprogress = setProgress;
-	fr.onerror = errorHandler;
-	fr.onabort = () => changeStatus('Start Loading');
-	fr.onloadstart = () => changeStatus('Start Loading');
-	fr.onload = loadedok;
+	fr.onprogress = f_setProgress;
+	fr.onerror = f_errorHandler;
+	fr.onabort = () => f_changeStatus('Start Loading');
+	fr.onloadstart = () => f_changeStatus('Start Loading');
+	fr.onload = f_loadedOk;
 	fr.onloadend = () => fileInfo(file);
 
 // At this point we can also perform some operations on the data asynchronously
@@ -383,7 +391,7 @@ const processFile = (file) => {
 
 const fileInfo = (file) => {
 	document.getElementById('progress-bar').value = 100;
-	changeStatus('Loaded!');
+	f_changeStatus('Loaded!');
 	var fname, size_info = 'Loaded <strong>';
 	if ( typeof file === 'object' ) {
 		document.getElementById('json_info').innerHTML = file.name;
@@ -397,12 +405,12 @@ const fileInfo = (file) => {
 
 // Loading completed successfully; pass the data to chart
 
-const loadedok = (e) => {
+const f_loadedOk = (e) => {
 	const fr = e.target;
 	chart_data = JSON.parse(fr.result);
 	getauxinfo();
 
-	p_select(0);
+	p_select(0, true);
 	hideLoadDiv();
 }
 
@@ -565,6 +573,7 @@ var getauxinfo = function() {  // TODO
 	n_reds: rnames.length,
 	main_reducer: chart_data.predictions[i].main_reducer  // TODO
     });
+
 // Equidistance check (TODO)
     aux.preinfo[i].x_equi = Math.abs((aux.preinfo[i].x_max - aux.preinfo[i].x_min)/(n_x-1) - x_step) < 0.001;
   }  // end for
@@ -649,7 +658,7 @@ console.log('isel:', isel);
 // -- Create series for the the main reducer of a prediction.
 //    If xsc_series=true, use it also for the X window scrolling. 
 
-function creaMainReducer(isel, xsc_series) {
+function createMainReducer(isel, xsc_series) {
   if ( isel === undefined )
     isel = c_ipre;
 
@@ -691,13 +700,13 @@ console.log('Create main reducer:', rname);
 //
 // -- The data series
 
-function creaDataSeries(isel) {
-  if (isel === undefined)
+function createDataSeries(isel) {
+  if ( isel === undefined )
     isel = c_ipre;
 
 // No data, just the model. Create and return.
   if ( aux.n_d == 0 ) {
-    creaMainReducer(isel, true);
+    createMainReducer(isel, true);
     return;
   }
 
@@ -735,10 +744,10 @@ function creaDataSeries(isel) {
 
 
 // Adapter adjusts height of a bullet
-  errorBullet.adapter.add("pixelHeight", function (pixelHeight, target) {
+  errorBullet.adapter.add("pixelHeight", function(pixelHeight, target) {
     var dataItem = target.dataItem;
 
-    if (dataItem) {
+    if ( dataItem ) {
 	var value = dataItem.valueY;
 	var errorTopValue = value + dataItem.dataContext.error;
 	var errorTopY = valueAxis.valueToPoint(errorTopValue).y;
@@ -756,12 +765,12 @@ function creaDataSeries(isel) {
 
 // -- Main Reducer always first (and before resisuals and the components)
 
-  creaMainReducer(isel);
+  createMainReducer(isel);
 
 
-// Residuals
+// -- Residuals, if they exist
 
-  if ( typeof sdata.residuals !== undefined ) {  // TODO
+  if ( typeof sdata.residuals !== undefined ) {
     resid = chart.series.push(new am4charts.LineSeries());
     resid.dataFields.categoryX = 'x';
     resid.dataFields.valueY = 'resid';
@@ -773,7 +782,6 @@ function creaDataSeries(isel) {
 // Visible?
     sdata.resid_visible = aux.datinfo[isel].resid_visible;
 
-//if (chart_data.data[isel].meta.resid_visible) {
     if ( sdata.resid_visible ) {
 	range.grid.strokeOpacity = 0.5;
 	range2.axisFill.fillOpacity = 0.1;
@@ -809,7 +817,7 @@ function creaDataSeries(isel) {
 //
 // -- Create series for each component and reducer of a prediction
 
-function creaCompSeries(isel) {
+function createCompSeries(isel) {
   if ( isel === undefined )
     isel = c_ipre;
 
@@ -896,9 +904,12 @@ console.log('Create reducer:', rname);
 //
 // -- Select current prediction from multi-predictions list
 
-function p_select(isel) {
+function p_select(isel, new_file) {
   if ( isel === undefined )
 	isel = 0;
+
+  if ( new_file === undefined )
+	new_file = false;
 
 // First clear all series
   chart.series.each(function() {
@@ -915,12 +926,15 @@ function p_select(isel) {
   c_ipre = isel;  // Set index of selected prediction
 
   chart.data = mydata2chart(isel);
-  creaDataSeries();
-  creaCompSeries();
+  createDataSeries();
+  createCompSeries();
 
-// TODO: change plot labels
+// Change plot labels
   document.getElementById('p_title').innerHTML = aux.preinfo[c_ipre].title;
-  updPredTab(chart_data.predictions[c_ipre]);
+
+// On new file read, fit log tables are created by createFitLogTabs
+  if ( ! new_file )
+    updatePredTabs(chart_data.predictions[c_ipre]);
 }
 
 
@@ -1143,8 +1157,8 @@ console.log("Cursor selected from "+ y_min +" to "+ y_max);
 
 
 // The series
-  creaDataSeries();
-  creaCompSeries();
+  createDataSeries();
+  createCompSeries();
 
 // Pre-zoom the chart (%)
   //xAxis.start = 0;
@@ -1158,6 +1172,8 @@ console.log("Cursor selected from "+ y_min +" to "+ y_max);
 // -- Also disable scrollbar labels and grid. Need to be done after series push.
 
   chart.events.on('datavalidated', function(e) {
+	createFitLogTabs();  // The fit log tables
+
 	x_axis_renderer();
 	var scrollAxis = chart.scrollbarX.scrollbarChart.xAxes.getIndex(0);
 	scrollAxis.renderer.labels.template.disabled = true;
@@ -1177,7 +1193,7 @@ console.log("Cursor selected from "+ y_min +" to "+ y_max);
 //
 // -- Update residuals Nsigma shaded range
 
-function n_sigma_upd(e) {
+function n_sigma_update(e) {
   if ( resid.hidden )
 	return;
 
@@ -1191,7 +1207,7 @@ function n_sigma_upd(e) {
 // -- X axis renderer: visible axis labels and grid depends on equi or not-equispaced values
 
 function x_axis_renderer() {
-  if ( aux.preinfo[c_ipre].x_equi ) {  // Equispaced: valueAxis is visble
+  if ( aux.preinfo[c_ipre].x_equi ) {  // Equispaced: valueAxis is visible
 	vxAxis.renderer.labels.template.disabled = false;
 	vxAxis.renderer.grid.template.disabled = false;
 	xAxis.renderer.labels.template.disabled = true;
@@ -1763,9 +1779,9 @@ var tableFromJson = function(obj, type, tab_id) {
 
 
 //
-// -- Update the prediction+reducer table with current data (TODO)
+// -- Update the prediction+reducer tables with current data
 
-function updPredTab(obj) {
+function updatePredTabs(obj) {
   var tab, tb, tr, tabCell, comp, cname, nc, red, rname, nr;
 	comp = obj.components;
 	cname = Object.keys(comp);  // comp. names
@@ -1832,27 +1848,20 @@ function updPredTab(obj) {
 	}
 }
 
-</script>
 
+//
+// -- The fit log tables sections
 
-<div class="toggle_table-hdr" id="fitlog_sect" onclick="fitlog_toggle()">
-  <i id="view_fitlog_angle" class="fas fa-angle-down ud-angle"></i>View GFit report
-</div>
-
-<div id="fitlog_div" class="div-hide">
-  <div id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</div>
-</div>
-
-<script>
+function createFitLogTabs() {
   var divShowData = document.getElementById('fitlog_tab');
   divShowData.innerHTML = "";
 
   tabdiv = tableFromJson(chart_data, 0, 'comp_table-div');
-  divShowData.appendChild(tabdiv); // Add the components table to the container
+  divShowData.appendChild(tabdiv);  // Add the components table to the container
 
 // Current prediction/reducer tables
   tabdiv = tableFromJson(chart_data.predictions[c_ipre], 1, 'pred_table-div');
-  divShowData.appendChild(tabdiv); // Add the prediction table to the container
+  divShowData.appendChild(tabdiv);  // Add the prediction table to the container
 
 // Add the reducer table to the prediction container
   tabdiv = tableFromJson(chart_data.predictions[c_ipre], 2, 'red_table-div');
@@ -1861,8 +1870,9 @@ function updPredTab(obj) {
 
   if ( chart_data.bestfit !== undefined && chart_data.bestfit !== null ) {
     tabdiv = tableFromJson(chart_data.bestfit, 3, 'fitres_table-div');
-    divShowData.appendChild(tabdiv); // Add the fit_res table to the container
+    divShowData.appendChild(tabdiv);  // Add the fit_res table to the container
   }
+}
 </script>
 
 </div>

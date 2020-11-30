@@ -41,3 +41,5 @@
 
 2020-11-30 LN, ver. 0.1g
 	- Check if X values are equispaced or not to decide visible axis (valueAxis or categoryAxis)
+	- Fit log tables recreated on new file read
+	- Code cleaning

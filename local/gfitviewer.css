@@ -2,7 +2,7 @@
   GFitViewer style file
  
   LN @ INAF-OAS, Sep. 2020
-  Last change: 28/11/2020
+  Last change: 30/11/2020
 */
 
 body {
@@ -300,7 +300,7 @@ label {
   margin-top: 0.5em;
 }
 
-#range-selector-div {
+#f_status, #range-selector-div {
   display: inline-block;
   margin-left: 1em;
 }
