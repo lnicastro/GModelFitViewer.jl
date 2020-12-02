@@ -43,3 +43,10 @@
 	- Check if X values are equispaced or not to decide visible axis (valueAxis or categoryAxis)
 	- Fit log tables recreated on new file read
 	- Code cleaning
+
+2020-12-02 LN, ver. 0.2a
+	- First version with categoryAxis no longer used; only valueAxis
+	- Y error bars disabled
+	- X lin / log selector added
+	- CSS style file included in viewer.html
+	- Several style changes
