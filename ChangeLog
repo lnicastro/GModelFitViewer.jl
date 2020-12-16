@@ -50,3 +50,9 @@
 	- X lin / log selector added
 	- CSS style file included in viewer.html
 	- Several style changes
+
+2020-12-16 LN, ver. 0.1
+	- Version change for consistency
+	- Y range calculated using all the data
+	- Colors table changes
+	- Several style changes

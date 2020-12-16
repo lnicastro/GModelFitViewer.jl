@@ -11,8 +11,8 @@
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
-  <meta name="version" content="0.2a" />
-  <meta name="date" content="2020-12-02" />
+  <meta name="version" content="0.1" />
+  <meta name="date" content="2020-12-16" />
 
 <!-- @Remote
 -->
@@ -165,24 +165,6 @@ label {
   box-shadow:         3px 3px 5px 6px #ccc;
 }
 
-
-.hdrdiv {
-  width : 100%;
-  text-align: left;
-  padding: 48px 60px;
-  background-color: #186680; /* #19526F; */
-  color: #fff;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-.hdrdiv p {
-  margin-bottom: 15px;
-  font-size: 20px;
-  font-weight: 300;
-}
-
 .hdrdiv2 {
   width : 100%;
   text-align: left;
@@ -195,6 +177,13 @@ label {
   box-sizing: border-box;
 }
 
+.contact-info {
+  float: right;
+  font-size: 1rem;
+  position: relative;
+  top: 40px;
+  right: 1em;
+}
 
 .submit_grey {
   font-weight: normal;
@@ -331,17 +320,8 @@ label {
 }
 
 
-
 section {
   overflow-x: hidden;
-}
-
-section.flex {
-  width: 99%;
-  display: -webkit-flex; /* Safari */
-  -webkit-flex-wrap: wrap; /* Safari 6.1+ */
-  display: flex;
-  flex-wrap: wrap;
 }
 
 div.row {
@@ -357,26 +337,6 @@ div.section {
   font-size: 110%;
   color: #444;
 }
-
-div.section_left {
-  float: left;
-  border: 0px;
-  padding: 0px 8px;
-  font-size: 110%;
-  color: #999;
-  margin: 4px;
-  border-right: 1px solid #666;
-}
-
-div.section_right {
-  float: right;
-  padding: 0px 8px;
-  font-size: 110%;
-  color: #999;
-  margin: 4px;
-  border-left: 1px solid #666;
-}
-
 
 div.summ-div {
   margin-top: 1rem;
@@ -463,16 +423,6 @@ td.highlight_blue {
   color: blue;
 }
 
-
-#urlfile {
-  width: 20rem;
-  font-size: 1.3rem;
-  vertical-align: middle;
-}
-
-#urlimport {
-  vertical-align: middle;
-}
 
 
 #pre_sel-div {
@@ -865,26 +815,24 @@ hr.style-two {
 <body>
 
 <div class="hdrdiv2">
-  <div>
-<img src="https://qsfit.inaf.it/GFitViewer/local/logo_inaf-left_t_h126px.png" alt="INAF logo" id="inaf-logo" />
+  <img src="https://qsfit.inaf.it/GFitViewer/local/logo_inaf-left_t_h126px.png" alt="INAF logo" id="inaf-logo" />
+
   <div class="inline-div">
-    <div class="inline"><strong>GFitViewer</strong> &minus;
-      <span style="font-size: 1rem; font-style: italic; color: #ccc; vertical-align: middle;">Version 0.2a</span>
+    <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GFitViewer.jl" target="_new">GFitViewer</a> &minus;
+      <span style="font-size: 1rem; font-style: italic; color: #ccc;">Version 0.1</span>
     </div>
 
-    <div style="font-size: 1rem; margin-top: 0.5em;">
-	A viewer for GFit results (1D) (
-<a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a> &amp; <a style="color: #ccc;"  href="mailto:giorgio.calderone@inaf.it">G. Calderone</a> 2020 )
-    </div>
+    <div style="font-size: 1rem; margin-top: 0.5em;"> A viewer for <strong>GFit</strong> 1D results </div>
 
   </div>
-  </div>
+
+  <div class="contact-info"><a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a> &amp; <a style="color: #ccc;"  href="mailto:giorgio.calderone@inaf.it">G. Calderone</a> 2020</div> 
+
 </div>
 
 
 <section class="page_top_tbar">
 
-<div>
   <div id="pre_sel-div" class="div-hide">
 	Select dataset # <span id="p_selector"></span>
   </div>
@@ -896,8 +844,6 @@ hr.style-two {
     </button>
     <span id="json_info" style="margin-left: 0.5em; font-weight: bold;">Data file info...</span>
   </div>
-
-</div>
 
 </section>
 
@@ -991,7 +937,6 @@ hr.style-two {
   <div id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</div>
 </div>
 
-
   <script>
     var chart_data = JSON_DATA;
   </script>
@@ -1008,7 +953,8 @@ hr.style-two {
 	chart = {},	// The amchart object
 	sdata = [],	// The data series to plot (with errors)
 	resid = [],	// The residuals
-	aux = {},	// The metadata information read from the json file and more,
+	aux = {},	// The metadata information read from the JSON file and more,
+	am_anim = false,  // Animation theme ?
 	valueAxis2,	// The residuals right axis object
 	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
 	vxAxis, valueAxis, errorBullet;
@@ -1019,22 +965,25 @@ hr.style-two {
   var mycolors = [
         {'name':'Red', 'hex':'#e6194b', 'rgb':'(230, 25, 75)', 'rgba':'(230, 25, 75, 0.5)'},
         {'name':'Green', 'hex':'#3cb44b', 'rgb':'(60, 180, 75)', 'rgba':'(60, 180, 75, 0.5)'},
-        {'name':'Yellow', 'hex':'#ff7518', 'rgb':'(255, 117, 24)', 'rgba':'(255, 117, 24, 0.5)'},
-        {'name':'Orange', 'hex':'#f0ad4e', 'rgb':'(240, 173, 78)', 'rgba':'(240, 143, 78, 0.5)'},
         {'name':'Purple', 'hex':'#911eb4', 'rgb':'(145, 30, 180)', 'rgba':'(145, 30, 180, 0.5)'},
-        {'name':'Cyan', 'hex':'#46f0f0', 'rgb':'(70, 240, 240)', 'rgba':'(70, 240, 240, 0.5)'},
+        {'name':'Orange', 'hex':'#f0ad4e', 'rgb':'(240, 173, 78)', 'rgba':'(240, 143, 78, 0.5)'},
         {'name':'Magenta', 'hex':'#f032e6', 'rgb':'(240, 50, 230)', 'rgba':'(240, 50, 230, 0.5)'},
-        {'name':'Lime', 'hex':'#d2f53c', 'rgb':'(210, 245, 60)', 'rgba':'(210, 245, 60, 0.5)'},
-        {'name':'Pink', 'hex':'#fabebe', 'rgb':'(250, 190, 190)', 'rgba':'(250, 190, 190, 0.5)'},
         {'name':'Teal', 'hex':'#008080', 'rgb':'(0, 128, 128)', 'rgba':'(0, 128, 128, 0.5)'},
+        {'name':'Orange2', 'hex':'#ff7518', 'rgb':'(255, 117, 24)', 'rgba':'(255, 117, 24, 0.5)'},
         {'name':'Lavender', 'hex':'#e6beff', 'rgb':'(230, 190, 255)', 'rgba':'(230, 190, 255, 0.5)'},
         {'name':'Brown', 'hex':'#aa6e28', 'rgb':'(170, 110, 40)', 'rgba':'(170, 110, 40, 0.5)'},
-        {'name':'Beige', 'hex':'#fffac8', 'rgb':'(255, 250, 200)', 'rgba':'(255, 250, 200, 0.5)'},
         {'name':'Maroon', 'hex':'#800000', 'rgb':'(128, 0, 0)', 'rgba':'(128, 0, 0, 0.5)'},
-        {'name':'Mint', 'hex':'#aaffc3', 'rgb':'(170, 255, 195)', 'rgba':'(170, 255, 195, 0.5)'},
         {'name':'Olive', 'hex':'#808000', 'rgb':'(128, 128, 0)', 'rgba':'(128, 128, 0, 0.5)'},
         {'name':'Coral', 'hex':'#ffd8b1', 'rgb':'(255, 215, 180)', 'rgba':'(255, 215, 180, 0.5)'},
         {'name':'Navy', 'hex':'#000080', 'rgb':'(0, 0, 128)', 'rgba':'(0, 0, 128, 0.5)'},
+
+        {'name':'Pink2', 'hex':'#F0AAAA', 'rgb':'(240, 170, 170)', 'rgba':'(240, 170, 170, 0.5)'},
+        {'name':'Mint2', 'hex':'#96E6B4', 'rgb':'(150, 230, 180)', 'rgba':'(150, 230, 180, 0.5)'},
+        {'name':'Yellow', 'hex':'#FFD700', 'rgb':'(255, 215, 0)', 'rgba':'(255, 215, 0, 0.5)'},
+        {'name':'Cyan2', 'hex':'#60C8E8', 'rgb':'(96, 200, 232)', 'rgba':'(96, 200, 232, 0.5)'},
+        {'name':'Beige2', 'hex':'#E6D7B4', 'rgb':'(230, 215, 180)', 'rgba':'(230, 215, 180, 0.5)'},
+        {'name':'Lime2', 'hex':'#C3E61E', 'rgb':'(195, 230, 30)', 'rgba':'(195, 230, 30, 0.5)'},
+
         {'name':'White', 'hex':'#FFFFFF', 'rgb':'(255, 255, 255)', 'rgba':'(255, 255, 255, 0.5)'},
         {'name':'Black', 'hex':'#000000', 'rgb':'(0, 0, 0)', 'rgba':'(0, 0, 0, 0.5)'}
   ], n_myc = 18,
@@ -1257,87 +1206,6 @@ const f_loadedOk = (e) => {
 	hideLoadDiv();
 }
 
-
-//
-// -- Create all the component series
-
-function createAllCompSeries() {  // Unused!
-  var p = chart_data.predictions[c_ipre], hs;
-
-  for (var i = 0; i < aux.preinfo[c_ipre].n_comps; i++) {
-    var cname =  aux.preinfo[c_ipre].components[i];
-    var component = p.components[cname];
-
-    if ( !component.meta.use_in_plot )  // Component has data?
-	continue;
-
-    var series = chart.series.push(new am4charts.LineSeries());
-
-    series.dataFields.valueX = 'x';
-    series.dataFields.valueY = cname;
-
-    series.name = cname;
-    series.strokeWidth = 2;
-    series.legendSettings.valueText = "{valueY}";
-
-// User selected color?
-    if ( component.meta.color !== 'auto' ) {
-      series.stroke = component.meta.color;
-      series.fill = component.meta.color;
-    } else {
-      series.stroke = mycolors[i % n_myc].hex;
-      series.fill = mycolors[i].hex;
-    }
-
-// Component to hide?
-    if ( !component.meta.default_visible )
-      series.hidden = true;
-
-// Highlight when cursor on legend item
-    hs = series.segments.template.states.create("hover");
-    hs.properties.strokeWidth = 5;
-  }
-
-}
-
-
-//
-// -- Reducers
-
-function createAllRedSeries() {  // Unused!
-  var p = chart_data.predictions[c_ipre], hs;
-
-  for (var i = 0; i < aux.preinfo[c_ipre].n_reds; i++) {
-    var rname = aux.preinfo[c_ipre].reducers[i];
-console.log('Create reducer:', rname);
-    var reducer = p.reducers[rname];
-    
-    var series = chart.series.push(new am4charts.LineSeries());
-    series.dataFields.valueX = 'x';
-    series.dataFields.valueY = rname;
-
-    series.name = rname;
-    series.strokeWidth = 2;
-    series.legendSettings.valueText = "{valueY}";
-
-
-    if ( reducer.meta.color !== 'auto' ) {  // User selected color?
-      series.stroke = reducer.meta.color;
-      series.fill = reducer.meta.color;
-    } else {
-      // Skip colors used for components
-      series.stroke = mycolors[aux.preinfo[c_ipre].n_comps + i].hex;
-      series.fill = mycolors[aux.preinfo[c_ipre].n_comps + i].hex;
-    }
-
-    if ( !reducer.meta.default_visible )  // Reducer to hide?
-      series.hidden = true;
-
-// Highlight when cursor on legend item
-    hs = series.segments.template.states.create("hover");
-    hs.properties.strokeWidth = 5;
-  }
-}
 
 
 //
@@ -1663,7 +1531,7 @@ function createCompSeries(isel) {
     isel = c_ipre;
 
   var	p = chart_data.predictions[isel],
-	data = [], cname, rname, component, reducer, hs;
+	data = [], cname, rname, component, reducer, hs, icol = 0;
 
   vxAxis.title.text = aux.preinfo[isel].x_label;
   valueAxis.title.text = aux.preinfo[isel].y_label;
@@ -1690,8 +1558,10 @@ console.log('Create component:', cname);
 	  series.stroke = component.meta.color;
 	  series.fill = component.meta.color;
 	} else {
-	  series.stroke = mycolors[i % n_myc].hex;
-	  series.fill = mycolors[i % n_myc].hex;
+	  series.stroke = mycolors[icol % n_myc].hex;
+	  series.fill = mycolors[icol % n_myc].hex;
+console.log('  color:', mycolors[icol % n_myc].name, mycolors[icol % n_myc].hex);
+	  icol++;
 	}
 
 	if ( !component.meta.default_visible )  // Component to hide?
@@ -1727,8 +1597,9 @@ console.log('Create reducer:', rname);
       series.fill = reducer.meta.color;
     } else {
       // Skip colors used for components
-      series.stroke = mycolors[(aux.preinfo[isel].n_comps + i) % n_myc].hex;
-      series.fill = mycolors[(aux.preinfo[isel].n_comps + i) % n_myc].hex;
+      series.stroke = mycolors[(icol + i) % n_myc].hex;
+      series.fill = mycolors[(icol + i) % n_myc].hex;
+console.log('  color:', mycolors[(icol + i) % n_myc].name, mycolors[(icol + i) % n_myc].hex);
     }
 
     if ( !reducer.meta.default_visible )  // Reducer to hide?
@@ -1775,7 +1646,7 @@ function p_select(isel, new_file) {
 
 // On new file read, fit log tables are created by createFitLogTabs
   if ( ! new_file )
-    updatePredTabs(chart_data.predictions[c_ipre]);
+	updatePredTabs(chart_data.predictions[c_ipre]);
 }
 
 
@@ -1785,7 +1656,8 @@ function p_select(isel, new_file) {
 am4core.ready(function() {
 
 // Theme animated
- // am4core.useTheme(am4themes_animated);
+  if ( am_anim )
+	am4core.useTheme(am4themes_animated);
 
 // Sample series if points are closer than 3 pixels
   //am4core.options.minPolylineStep = 3;
@@ -1797,26 +1669,26 @@ am4core.ready(function() {
 
   if ( chart_data !== undefined ) {
     if (interface_type == 'fileio' )
-      document.getElementById('myModal').className = 'modal modal-hide';
+	document.getElementById('myModal').className = 'modal modal-hide';
 
 // At startup view first prediction by default
     getauxinfo();
     chart.data = mydata2chart(c_ipre); 
 
     document.getElementById('json_info').innerHTML = aux.n_spe +' data. Current: '+
-	 (aux.preinfo[0].n_comps) +'</strong> components fit.';
+	(aux.preinfo[0].n_comps) +'</strong> components fit.';
 
 // Highlight button for current prediction
     if ( aux.n_p > 1 )
-      document.getElementById('pred_'+ c_ipre).className = 'p_btn p_btn-selected';
+	document.getElementById('pred_'+ c_ipre).className = 'p_btn p_btn-selected';
 
   } else {
     for (var j = 0; j < 2 * Math.PI; j += 0.1)
-      chart.data.push({"lambda": parseInt(1000 + j*1500), "y": Math.sin(j)});
+	chart.data.push({"lambda": parseInt(1000 + j*1500), "y": Math.sin(j)});
 
 // Open the file load div (if I/O mode interface)
   if ( interface_type == 'fileio' )
-    openLoadDiv();
+	openLoadDiv();
   }
 
 
@@ -1892,18 +1764,20 @@ vxAxis.precision = 3;
   chart.cursor.behavior = 'zoomXY';
 
 // Need to manage manually the Y zoom (animation issue?)
-  chart.cursor.events.on("zoomended", function(ev) {
-    var range = ev.target.yRange;
-    var axis = ev.target.chart.yAxes.getIndex(0);
-    var y_min = axis.getPositionLabel(axis.toAxisPosition(range.start));
-    var y_max = axis.getPositionLabel(axis.toAxisPosition(range.end));
-console.log("Cursor selected from "+ y_min +" to "+ y_max);
+  if ( am_anim ) {
+    chart.cursor.events.on("zoomended", function(ev) {
+	var range = ev.target.yRange;
+	var axis = ev.target.chart.yAxes.getIndex(0);
+	var y_min = axis.getPositionLabel(axis.toAxisPosition(range.start));
+	var y_max = axis.getPositionLabel(axis.toAxisPosition(range.end));
+console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 
-// A delay is necessary to have the Y zoom
-    setTimeout(function() {
-	valueAxis.zoomToValues(y_min, y_max);
-    }, 1000);
-  });
+// If animation is on, a delay is necessary to have the Y zoom
+	setTimeout(function() {
+		valueAxis.zoomToValues(y_min, y_max);
+	}, 700);
+    });
+  }
 
 
 // Legend
@@ -2034,7 +1908,7 @@ function x_axis_renderer() {
 }
 
 //
-// -- Initial X range set
+// -- Set initial X range
 
 function set_x_range() {
 // This is not set immediately and causes problems to the zoom below!
@@ -2047,14 +1921,28 @@ function set_x_range() {
 
 
 //
-// -- Initial Y range set
+// -- Set initial Y range
 
 function set_y_range() {
+// Main reducer
   var ymin = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
   var ymax = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].max;
+
+// Then data, if exist
   if ( aux.n_d > 0 && chart_data.data[c_ipre] !== undefined ) {
 	ymin = Math.min(ymin, Math.min(...(chart_data.data[c_ipre].y)));
 	ymax = Math.max(ymax, Math.max(...(chart_data.data[c_ipre].y)));
+  }
+
+// All the other reducers
+  for (var i = 0; i < aux.preinfo[c_ipre].n_reds; i++) {  // Reducers in a prediction
+    var rname = aux.preinfo[c_ipre].reducers[i];
+
+    if ( rname.indexOf(aux.preinfo[c_ipre].main_reducer) == 0 )  // This is the main reducers: skip
+	continue;
+
+    ymin = Math.min(ymin, chart_data.predictions[c_ipre].reducers[rname].min);
+    ymax = Math.max(ymax, chart_data.predictions[c_ipre].reducers[rname].max);
   }
 
 console.log('Y range set to:', ymin, ymax);
@@ -2146,9 +2034,8 @@ function xy_range_set() {
 	var tmp = vx_max;
 	vx_max = vx_min;
 	vx_min = tmp;
-  } else if ( vx_min == vx_max ) {
+  } else if ( vx_min == vx_max )
 	vx_max = vx_min + aux.preinfo[c_ipre].x_step; 
-  }
 
   if ( y_min > y_max ) {
         var tmp = y_max;
@@ -2167,14 +2054,13 @@ function xy_range_set() {
   }
 
 
-  if ( vx_min != vxAxis.min || vx_max != vxAxis.max ) {
+  if ( vx_min != vxAxis.min || vx_max != vxAxis.max )
 	vxAxis.zoomToValues(vx_min, vx_max);
-  }
 
 // A delay is necessary to have the Y zoom
-    setTimeout(function() {
+  setTimeout(function() {
 	valueAxis.zoomToValues(y_min, y_max);
-    }, 1000);
+  }, 600);
 
 }
 
