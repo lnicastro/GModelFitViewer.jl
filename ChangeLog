@@ -56,3 +56,6 @@
 	- Y range calculated using all the data
 	- Colors table changes
 	- Several style changes
+
+2020-12-17 LN, ver. 0.1
+	- Added Y error range shaded area
