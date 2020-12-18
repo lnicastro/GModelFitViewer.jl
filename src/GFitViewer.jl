@@ -6,7 +6,7 @@ export viewer
 
 function add_default_meta!(model::Model)
     for id in 1:length(model.preds)
-        meta = metadict(model, id=id)
+        meta = model.meta[id]
         haskey(meta, :rebin)   ||  (meta[:rebin] = GFit.todict_opt[:rebin])
         haskey(meta, :label)   ||  (meta[:label] = "Prediction $id")
         haskey(meta, :label_x) ||  (meta[:label_x] = "")
@@ -16,28 +16,23 @@ function add_default_meta!(model::Model)
         haskey(meta, :scale_y) ||  (meta[:scale_y] =  1)
         haskey(meta, :unit_y ) ||  (meta[:unit_y]  = "")
 
-        for (cname, comp) in model.comps
-            meta = metadict(model, cname)
-            haskey(meta, :label)            ||  (meta[:label] = string(cname))
-            haskey(meta, :color)            ||  (meta[:color] = "auto")
-            haskey(meta, :default_visible)  ||  (meta[:default_visible] = false)
-            meta[:use_in_plot] = (GFit.todict_opt[:addcomps]  ||  (cname in GFit.todict_opt[:selcomps]))
-            for (pname, param) in GFit.getparams(comp)
-                meta = param.meta
-                haskey(meta, :scale)   ||  (meta[:unit] =  1)
-                haskey(meta, :unit )   ||  (meta[:unit] = "")
-                haskey(meta, :note )   ||  (meta[:note] = "")
+        for (cname, cmeta) in model.meta[id][:components]
+            haskey(cmeta, :label)            ||  (cmeta[:label] = string(cname))
+            haskey(cmeta, :color)            ||  (cmeta[:color] = "auto")
+            haskey(cmeta, :default_visible)  ||  (cmeta[:default_visible] = false)
+            cmeta[:use_in_plot] = (GFit.todict_opt[:addcomps]  ||  (cname in GFit.todict_opt[:selcomps]))
+            for (pname, pmeta) in model.meta[id][:components][cname][:params]
+                haskey(pmeta, :scale)   ||  (pmeta[:unit] =  1)
+                haskey(pmeta, :unit )   ||  (pmeta[:unit] = "")
+                haskey(pmeta, :note )   ||  (pmeta[:note] = "")
             end
         end
 
-        for pred in model.preds
-            for (rname, reval) in pred.revals
-                meta = metadict(model, rname)
-                haskey(meta, :label)            ||  (meta[:label] = string(rname))
-                haskey(meta, :color)            ||  (meta[:color] = "auto")
-                haskey(meta, :default_visible)  ||  (meta[:default_visible] = true)
-                meta[:use_in_plot] = true
-            end
+        for (rname, rmeta) in model.meta[id][:reducers]
+            haskey(rmeta, :label)            ||  (rmeta[:label] = string(rname))
+            haskey(rmeta, :color)            ||  (rmeta[:color] = "auto")
+            haskey(rmeta, :default_visible)  ||  (rmeta[:default_visible] = true)
+            rmeta[:use_in_plot] = true
         end
     end
 end
@@ -50,15 +45,10 @@ function add_default_meta!(data::GFit.Measures_1D)
 end
 
 
-viewer(model::Model, data::GFit.Measures_1D) = viewer(model, [data])
-viewer(model::Model, data::GFit.Measures_1D, bestfit::GFit.BestFitResult) = viewer(model, [data], bestfit)
-
-
-function save_html(path::AbstractString,
-                   model::Model,
-                   data::Union{Nothing, Vector{GFit.Measures_1D}}=nothing,
-                   bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
-                   rebin::Int=1, addcomps::Bool=false, selcomps=Vector{Symbol}())
+function todict(model::Model,
+                data::Union{Nothing, Vector{GFit.Measures_1D}}=nothing,
+                bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
+                rebin::Int=1, addcomps::Bool=false, selcomps=Vector{Symbol}())
 
     GFit.todict_opt[:rebin] = rebin
     GFit.todict_opt[:addcomps] = addcomps
@@ -72,39 +62,50 @@ function save_html(path::AbstractString,
     end
 
     if isnothing(data)
-        d = GFit.todict(model)
+        dict = GFit.todict(model)
     elseif isnothing(bestfit)
-        d = GFit.todict(model, data)
+        dict = GFit.todict(model, data)
     else
-        d = GFit.todict(model, data, bestfit)
+        dict = GFit.todict(model, data, bestfit)
     end
+    return dict
+end
 
-    io = open(path, "w")
 
+function tostring(dict::OrderedDict)
+    io = IOBuffer()
+    JSON.print(io, dict)
+    return String(take!(io))
+end
+
+function save_html(dict::OrderedDict, filename::AbstractString)
+    io = open(filename, "w")
     template = dirname(@__DIR__) * "/src/viewer.html"
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, d)
+    JSON.print(io, dict)
     while !eof(input)
         write(io, readavailable(input))
     end
     close(io)
-
-    io = open(path * ".json", "w")
-    JSON.print(io, d)
-    close(io)
-
-    # io = IOBuffer()
-    # JSON.print(io, d)
-    # return String(take!(io))
-
-    return path
+    return filename
 end
 
+function save_json(dict::OrderedDict, filename::AbstractString)
+    io = open(filename, "w")
+    JSON.print(io, dict)
+    close(io)
+    return filename
+end
+
+viewer(model::Model, data::GFit.Measures_1D) = viewer(model, [data])
+viewer(model::Model, data::GFit.Measures_1D, bestfit::GFit.BestFitResult) = viewer(model, [data], bestfit)
 function viewer(args...; kw...)
-    path = tempdir() * "/gfitviewer.html"
-    save_html(path, args...; kw...)
-    DefaultApplication.open(path)
+    dict = todict(args...; kw...)
+    path = tempdir()
+    fname = save_json(dict, "$(path)/gfitviewer.json")
+    fname = save_html(dict, "$(path)/gfitviewer.html")
+    DefaultApplication.open(fname)
 end
 
 
