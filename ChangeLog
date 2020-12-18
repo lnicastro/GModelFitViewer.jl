@@ -59,3 +59,6 @@
 
 2020-12-17 LN, ver. 0.1
 	- Added Y error range shaded area
+
+2020-12-18 LN, ver. 0.1
+	- Y error range shaded area managed in legend items

@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2020-12-17" />
+  <meta name="date" content="2020-12-18" />
 
 <!-- @Remote
 -->
@@ -816,7 +816,9 @@ hr.style-two {
 <body>
 
 <div class="hdrdiv2">
-  <img src="https://qsfit.inaf.it/GFitViewer/local/logo_inaf-left_t_h126px.png" alt="INAF logo" id="inaf-logo" />
+<!--<img src="https://qsfit.inaf.it/GFitViewer/local/logo_inaf-left_t_h126px.png" alt="INAF logo" id="inaf-logo" />
+-->
+<img src="http://ross.oas.inaf.it/Icons/logo_inaf-left_t_h126px.png" alt="INAF logo" id="inaf-logo" />
   <div class="inline-div">
     <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GFitViewer.jl" target="_new">GFitViewer</a> &minus;
       <span style="font-size: 1rem; font-style: italic; color: #ccc;">Version 0.1</span>
@@ -893,10 +895,10 @@ hr.style-two {
 	<span class="box-cb" title="Toggle Y errors plot">
 	  <input type="checkbox" id="y_err-cb" onclick="y_err_toggle()" /><label for="y_err-cb">Y err</label>
 	</span>
--->
 	<span class="box-cb" title="Toggle Y errors shaded area">
 	  <input type="checkbox" id="y_err_shade-cb" onclick="y_err_shade_toggle()" /><label for="y_err_shade-cb">Y-err shade</label>
 	</span>
+-->
 
 	<span class="box-cb" title="Toggle X lin/log scale">
 	  <input type="checkbox" id="x_log-cb" onclick="x_linlog_toggle()" /><label for="x_log-cb">X log</label>
@@ -1393,7 +1395,7 @@ console.log('Create main reducer:', rname);
 
   series.name = rname;
   series.strokeWidth = 2;
-  series.legendSettings.valueText = "{valueY}";
+//series.legendSettings.valueText = "{valueY}";
 
   if ( reducer.meta.color !== 'auto' ) {  // User selected color?
     series.stroke = reducer.meta.color;
@@ -1435,9 +1437,9 @@ function createDataSeries(isel) {
   sdata.dataFields.valueY = 'y';
   sdata.name = 'data';  // chart_data.meta.data.label;
   sdata.strokeWidth = 2;
-  //sdata.minBulletDistance = 3;  // Error visible if points are not closer than 3 pixels
-  sdata.legendSettings.valueText = '{valueY}';
-  //sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
+//sdata.minBulletDistance = 3;  // Error visible if points are not closer than 3 pixels
+//sdata.legendSettings.valueText = '{valueY}';
+//sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
 
 
 // User selected color?
@@ -1454,6 +1456,7 @@ function createDataSeries(isel) {
   serr.dataFields.valueX = 'x';
   serr.dataFields.openValueY = 'err_lo';
   serr.dataFields.valueY = 'err_up';
+  serr.name = 'data-err shade';
   serr.fillOpacity = 0.3;
   serr.fill = sdata.fill;
   serr.stroke = '#fff';  // White (invisible) top line
@@ -1489,10 +1492,10 @@ function createDataSeries(isel) {
   });
 */
 
-  chart.scrollbarX.series.push(sdata);  // If no data use ruducer? (TODO)
+  chart.scrollbarX.series.push(sdata);
 
 
-// -- Main Reducer always first (and before resisuals and the components)
+// -- Main Reducer always first (and before residuals and the components)
 
   createMainReducer(isel);
 
@@ -1506,7 +1509,7 @@ function createDataSeries(isel) {
     resid.name = 'residuals';  // chart_data.data.meta.resid_label;
     resid.yAxis = valueAxis2;
     resid.strokeWidth = 2;
-    resid.legendSettings.valueText = "{valueY}";
+    //resid.legendSettings.valueText = "{valueY}";
 
 // Visible?
     sdata.resid_visible = aux.datinfo[isel].resid_visible;
@@ -1517,7 +1520,7 @@ function createDataSeries(isel) {
 	valueAxis.renderer.grid.template.strokeOpacity = 0;
 	valueAxis2.renderer.ticks.template.strokeOpacity = 1;
     } else {
-	valueAxis2.visible = false;  // TODO
+	valueAxis2.visible = false;
 	valueAxis2.cursorTooltipEnabled = false;
 	resid.hidden = true;
 
@@ -1572,7 +1575,7 @@ console.log('Create component:', cname);
 
 	series.name = cname;
 	series.strokeWidth = 2;
-	series.legendSettings.valueText = "{valueY}";
+	//series.legendSettings.valueText = "{valueY}";
 
 	if ( component.meta.color !== 'auto' ) {  // User selected color?
 	  series.stroke = component.meta.color;
@@ -1602,7 +1605,7 @@ console.log('  color:', mycolors[icol % n_myc].name, mycolors[icol % n_myc].hex)
 	continue;
 
 console.log('Create reducer:', rname);
-    
+ 
     reducer = p.reducers[rname];
     var series = chart.series.push(new am4charts.LineSeries());
     series.dataFields.valueX = 'x';
@@ -1707,7 +1710,7 @@ am4core.ready(function() {
 	chart.data.push({"lambda": parseInt(1000 + j*1500), "y": Math.sin(j)});
 
 // Open the file load div (if I/O mode interface)
-  if ( interface_type == 'fileio' )
+    if ( interface_type == 'fileio' )
 	openLoadDiv();
   }
 
@@ -1852,14 +1855,12 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 		valueAxis2.renderer.ticks.template.strokeOpacity = 1;
 		valueAxis2.visible = true;  // TODO
 		valueAxis2.cursorTooltipEnabled = true;
-//valueAxis.renderer.grid.template.strokeOpacity = 0;
 	} else {
 		range.grid.strokeOpacity = 0;
 		range2.axisFill.fillOpacity = 0;
 		valueAxis2.renderer.ticks.template.strokeOpacity = 0;
 		valueAxis2.visible = false;  // TODO
 		valueAxis2.cursorTooltipEnabled = false;
-//valueAxis.renderer.grid.template.strokeOpacity = 1;
 	}
     }
   });
@@ -1893,7 +1894,7 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 	scrollAxis.renderer.grid.template.disabled = true;
 
 	//document.getElementById('y_err-cb').checked = false;
-	document.getElementById('y_err_shade-cb').checked = false;
+	//document.getElementById('y_err_shade-cb').checked = false;
 	document.getElementById('x_log-cb').checked = false;
 	document.getElementById('y_log-cb').checked = false;
 	//errorBullet.hide();
