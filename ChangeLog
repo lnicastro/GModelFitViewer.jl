@@ -62,3 +62,7 @@
 
 2020-12-18 LN, ver. 0.1
 	- Y error range shaded area managed in legend items
+
+2020-12-19 LN, ver. 0.1
+	- SVG version of the INAF logo 
+	- Code cleaning
