@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2020-12-18" />
+  <meta name="date" content="2020-12-19" />
 
 <!-- @Remote
 -->
@@ -23,10 +23,6 @@
   <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
   <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" type="text/css" rel="stylesheet" crossorigin="anonymous" />
 
-
-<!--
-  <link href="https://qsfit.inaf.it/GFitViewer/local/gfitviewer.css" type="text/css" rel="stylesheet" />
--->
 
 <style>
 body {
@@ -160,7 +156,6 @@ label {
 }
 
 .shadow {
-  -moz-box-shadow:    3px 3px 5px 6px #ccc;
   -webkit-box-shadow: 3px 3px 5px 6px #ccc;
   box-shadow:         3px 3px 5px 6px #ccc;
 }
@@ -175,6 +170,15 @@ label {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+.logo-div {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 8px;
+  margin-top: 1px;
+  background: #f7f7f7;
+  border-top-right-radius: 36px;
 }
 
 .contact-info {
@@ -232,7 +236,6 @@ label {
 .page_top_tbar {
   background-color: #f7f7f7;
   color: #666;
-  vertical-align: middle;
   border-bottom: 1px solid #bdbec2;
   border-left: 1px solid #186680;
   border-right: 1px solid #186680;
@@ -816,15 +819,41 @@ hr.style-two {
 <body>
 
 <div class="hdrdiv2">
-<!--<img src="https://qsfit.inaf.it/GFitViewer/local/logo_inaf-left_t_h126px.png" alt="INAF logo" id="inaf-logo" />
--->
-<img src="http://ross.oas.inaf.it/Icons/logo_inaf-left_t_h126px.png" alt="INAF logo" id="inaf-logo" />
+
+  <div class="logo-div">
+  <svg width="128" height="48" viewBox="0 0 156.5 61.2">
+	<g transform="matrix(1.333,0,0,-1.333,-223.620,567.710)">
+<g transform="translate(-1692,-1584)"><path
+	d="m 1883.7977,1992.7143 c 5.1416,-4.167 5.9327,-11.7148 1.7666,-16.8593 -4.166,-5.1443 -11.7111,-5.9368 -16.853,-1.7698 -5.1416,4.1667 -5.9326,11.7148 -1.7666,16.8591 4.166,5.1446 11.7112,5.937 16.853,1.77 z"
+	style="fill:#00adef;fill-opacity:1;fill-rule:nonzero;stroke:none"
+	/><path
+	d="m 1898.2428,2006.6033 -3.1782,-3.9246 -3.9224,3.179 3.1782,3.9245 z"
+	style="fill:#1478c7;fill-opacity:1;fill-rule:nonzero;stroke:none"
+	/><path
+	d="m 1866.8156,1967.7952 -3.1783,-3.9246 -3.9226,3.1789 3.178,3.9246 z"
+	style="fill:#1f4fa2;fill-opacity:1;fill-rule:nonzero;stroke:none"
+	/><path
+	d="m 1924.756,1978.2402 h 3.2151 v 11.0532 h -3.2151 z"
+	style="fill:#63696e;fill-opacity:1;fill-rule:evenodd;stroke:none"
+	/><path
+	d="m 1932.778,1978.2402 h 2.8474 v 7.961 h 0.031 l 5.0064,-7.961 h 4.2561 v 11.0532 h -2.8477 v -7.9609 h -0.031 l -5.0369,7.9609 h -4.2253 z"
+	style="fill:#63696e;fill-opacity:1;fill-rule:evenodd;stroke:none"
+	/><path
+	d="m 1958.5463,1982.4807 h -4.4551 l 2.2656,4.6694 z m -9.8286,-4.2405 h 3.3066 l 1.0718,2.1892 h 6.4299 l 1.041,-2.1892 h 3.5977 l -5.741,11.0532 h -3.8428 z"
+	style="fill:#63696e;fill-opacity:1;fill-rule:evenodd;stroke:none"
+	/><path
+	d="m 1968.1,1978.2402 h 3.2151 v 4.1336 h 5.4196 v 2.2656 h -5.4196 v 2.2964 h 5.7409 v 2.3576 h -8.956 z"
+	style="fill:#63696e;fill-opacity:1;fill-rule:evenodd;stroke:none"
+	/></g></g>
+  </svg>
+  </div>
+
   <div class="inline-div">
     <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GFitViewer.jl" target="_new">GFitViewer</a> &minus;
       <span style="font-size: 1rem; font-style: italic; color: #ccc;">Version 0.1</span>
     </div>
 
-    <div style="font-size: 1rem; margin-top: 0.5em;"> A viewer for <strong>GFit</strong> 1D results </div>
+    <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <strong>GFit</strong> 1D results </div>
 
   </div>
 
@@ -968,7 +997,7 @@ hr.style-two {
 	vxAxis, valueAxis, errorBullet;
 
 
-// A set of 18 colors + white + black
+// A set of 19 colors + white + black
 // grey, blue and darkblue removed and used by def. for the data, main reducer and residuals array
   var mycolors = [
         {'name':'Red', 'hex':'#e6194b', 'rgb':'(230, 25, 75)', 'rgba':'(230, 25, 75, 0.5)'},
@@ -994,7 +1023,7 @@ hr.style-two {
 
         {'name':'White', 'hex':'#FFFFFF', 'rgb':'(255, 255, 255)', 'rgba':'(255, 255, 255, 0.5)'},
         {'name':'Black', 'hex':'#000000', 'rgb':'(0, 0, 0)', 'rgba':'(0, 0, 0, 0.5)'}
-  ], n_myc = 18,
+  ], n_myc = 19,
 
 // Data color
   dcolor = {'name':'Grey', 'hex':'#808080', 'rgb':'(128,128,128)', 'rgba':'(128,128,128, 0.5)'},
@@ -1727,8 +1756,8 @@ am4core.ready(function() {
   vxAxis.strictMinMax = true;  // This is required
 
 // No cursor Tooltip for ValueAxis
-  vxAxis.cursorTooltipEnabled = true;
-vxAxis.precision = 3;
+  //vxAxis.cursorTooltipEnabled = true;
+//vxAxis.precision = 3;
 
 //vxAxis.renderer.grid.template.dx=5;
 //vxAxis.renderer.labels.template.dx=5;
@@ -1775,16 +1804,17 @@ vxAxis.precision = 3;
     range2.grid.strokeOpacity = 0;
   }
 
+
+// Cursor
+  chart.cursor = new am4charts.XYCursor();
+  chart.cursor.behavior = 'zoomXY';
+
 // Scrollbar disabling labels and grid
   chart.scrollbarX = new am4charts.XYChartScrollbar();
 
 // Increase contrast by taking every second color
   //chart.colors.step = 2;
 
-
-// Cursor
-  chart.cursor = new am4charts.XYCursor();
-  chart.cursor.behavior = 'zoomXY';
 
 // Need to manage manually the Y zoom (animation issue?)
   if ( am_anim ) {
@@ -1853,13 +1883,13 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 		range.grid.strokeOpacity = 0.5;
 		range2.axisFill.fillOpacity = 0.1;
 		valueAxis2.renderer.ticks.template.strokeOpacity = 1;
-		valueAxis2.visible = true;  // TODO
-		valueAxis2.cursorTooltipEnabled = true;
+		valueAxis2.visible = true;
+		//valueAxis2.cursorTooltipEnabled = true;
 	} else {
 		range.grid.strokeOpacity = 0;
 		range2.axisFill.fillOpacity = 0;
 		valueAxis2.renderer.ticks.template.strokeOpacity = 0;
-		valueAxis2.visible = false;  // TODO
+		valueAxis2.visible = false;
 		valueAxis2.cursorTooltipEnabled = false;
 	}
     }
@@ -1986,7 +2016,6 @@ console.log('Y range set to:', ymin, ymax);
   (ymin > 0) ? y_range.log[0] = ymin * 0.95 : y_range.log[0] = 1e-4;  // TODO
   y_range.log[1] = ymax;
 
-  x_linlog_toggle();
   y_linlog_toggle();
 }
 
@@ -2001,6 +2030,7 @@ function y_err_toggle() {
 	errorBullet.show();
   else
 	errorBullet.hide();
+
 }
 
 
@@ -2020,7 +2050,7 @@ function x_linlog_toggle() {
 	set_x_range();
 	vxAxis.logarithmic = false;
 	vxAxis.precision = 0;
-	vxAxis.strictMinMax = false;
+	//vxAxis.strictMinMax = false;
   }
 }
 
@@ -2106,7 +2136,7 @@ function xy_range_reset() {
   set_x_range();
   set_y_range();
   xy_rangein_reset();  // Clear manual range input fields
-//console.log('reset X, Y range:', vxAxis.min, .xAxis.max, valueAxis.min, valueAxis.max);
+console.log('reset X, Y range:', vxAxis.min, vxAxis.max, valueAxis.min, valueAxis.max);
   vxAxis.zoomToValues(vxAxis.min, vxAxis.max);
   valueAxis.zoomToValues(valueAxis.min, valueAxis.max);
 }
