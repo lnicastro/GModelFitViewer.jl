@@ -1364,8 +1364,8 @@ console.log('isel:', isel);
 	for (var j = 0; j < aux.preinfo[isel].n_comps; j++) { // Components
           if ( !p.components[cnames[j]].meta.use_in_plot )
 		continue;
-	  //if ( p.components[cnames[j]].y[i] > 0 )
-	  vals[cnames[j]] = p.components[cnames[j]].y[i];
+	  //if ( p.compevals[cnames[j]].y[i] > 0 )
+	  vals[cnames[j]] = p.compevals[cnames[j]].y[i];
 	}
 
 	mydata.push(vals);
