@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The personal GFit viewer</title>
+  <title>The GFit viewer</title>
   <meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
   <meta http-equiv=Content-Script-Type content="text/javascript" />
   <meta http-equiv=Content-Style-Type content="text/css" />
@@ -853,7 +853,7 @@ hr.style-two {
       <span style="font-size: 1rem; font-style: italic; color: #ccc;">Version 0.1</span>
     </div>
 
-    <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <strong>GFit</strong> 1D results </div>
+    <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <a href="https://github.com/gcalderone/GFit.jl">GFit</a> 1D results </div>
 
   </div>
 
@@ -1422,7 +1422,7 @@ console.log('Create main reducer:', rname);
   series.dataFields.valueX = 'x';
   series.dataFields.valueY = rname;
 
-  series.name = rname;
+  series.name = 'Prediction '+ isel +' ('+ rname +')';
   series.strokeWidth = 2;
 //series.legendSettings.valueText = "{valueY}";
 
@@ -1464,7 +1464,7 @@ function createDataSeries(isel) {
   sdata = chart.series.push(new am4charts.LineSeries());
   sdata.dataFields.valueX = 'x';
   sdata.dataFields.valueY = 'y';
-  sdata.name = 'data';  // chart_data.meta.data.label;
+  sdata.name = 'Data';  // chart_data.meta.data.label;
   sdata.strokeWidth = 2;
 //sdata.minBulletDistance = 3;  // Error visible if points are not closer than 3 pixels
 //sdata.legendSettings.valueText = '{valueY}';
@@ -1485,7 +1485,7 @@ function createDataSeries(isel) {
   serr.dataFields.valueX = 'x';
   serr.dataFields.openValueY = 'err_lo';
   serr.dataFields.valueY = 'err_up';
-  serr.name = 'data-err shade';
+  serr.name = 'Uncert.';
   serr.fillOpacity = 0.3;
   serr.fill = sdata.fill;
   serr.stroke = '#fff';  // White (invisible) top line
@@ -1535,7 +1535,7 @@ function createDataSeries(isel) {
     resid = chart.series.push(new am4charts.LineSeries());
     resid.dataFields.valueX = 'x';
     resid.dataFields.valueY = 'resid';
-    resid.name = 'residuals';  // chart_data.data.meta.resid_label;
+    resid.name = 'Residuals';  // chart_data.data.meta.resid_label;
     resid.yAxis = valueAxis2;
     resid.strokeWidth = 2;
     //resid.legendSettings.valueText = "{valueY}";
