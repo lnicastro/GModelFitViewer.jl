@@ -985,6 +985,7 @@ hr.style-two {
 	y_err_shade = false,  // Y errors shaded area
 	x_logscale = false,  // X lin/log scale
 	y_logscale = false,  // Y lin/log scale
+	x_range = {lin: [null, null], log: [null, null]},  // lin/log X ranges
 	y_range = {lin: [null, null], log: [null, null]},  // lin/log Y ranges
 	chart = {},	// The amchart object
 	sdata = [],	// The data series to plot (with errors)
@@ -994,7 +995,10 @@ hr.style-two {
 	am_anim = false,  // Animation theme ?
 	valueAxis2,	// The residuals right axis object
 	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
-	vxAxis, valueAxis, errorBullet;
+	vxAxis, valueAxis, errorBullet,
+
+	p_title = document.getElementById('p_title'),
+	xyin_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
 
 
 // A set of 19 colors + white + black
@@ -1152,7 +1156,7 @@ function hideLoadDiv() {
 // -- Files drop management
 
 window.onload = function() {
-	var dropzone = document.getElementById("dropzone");
+	var dropzone = document.getElementById('dropzone');
 	dropzone.ondragover = dropzone.ondragenter = function(event) {
 		event.stopPropagation();
 		event.preventDefault();
@@ -1291,7 +1295,7 @@ var getauxinfo = function() {  // TODO
 		x_lab += un +'X ';
 	x_lab += chart_data.predictions[i].meta.unit_x +')';
     } else
-	x_lab = 'No X label';
+	x_lab = 'X label';
     
     y_lab = chart_data.predictions[i].meta.label_y;
     if ( y_lab !== '' ) {
@@ -1302,7 +1306,7 @@ var getauxinfo = function() {  // TODO
 		y_lab += un +' ';
 	y_lab += chart_data.predictions[i].meta.unit_y +')';
     } else
-	y_lab = 'No Y label';
+	y_lab = 'Y label';
     
     x_step = Math.abs(chart_data.predictions[i].x[1] - chart_data.predictions[i].x[0]);
 
@@ -1355,12 +1359,12 @@ var getauxinfo = function() {  // TODO
 	);  // TODO
   }
 
-  document.getElementById('p_title').innerHTML = aux.preinfo[c_ipre].title;
+  p_title.innerHTML = aux.preinfo[c_ipre].title;
 }
 
 
 //
-// -- From custom "data/components/reducers" structures to default amchart data structure.
+// -- From custom "data/components/reducers" structures to default amchart data structure
 
 var mydata2chart = function(isel) {
   if ( isel === undefined )
@@ -1422,7 +1426,7 @@ console.log('Create main reducer:', rname);
   series.dataFields.valueX = 'x';
   series.dataFields.valueY = rname;
 
-  series.name = 'Prediction '+ isel+1 +' ('+ rname +')';
+  series.name = 'Prediction '+ (isel+1) +' ('+ rname +')';
   series.strokeWidth = 2;
 //series.legendSettings.valueText = "{valueY}";
 
@@ -1538,7 +1542,7 @@ function createDataSeries(isel) {
     resid.name = 'Residuals';  // chart_data.data.meta.resid_label;
     resid.yAxis = valueAxis2;
     resid.strokeWidth = 2;
-    //resid.legendSettings.valueText = "{valueY}";
+    resid.legendSettings.valueText = "{valueY}";
 
 // Visible?
     sdata.resid_visible = aux.datinfo[isel].resid_visible;
@@ -1817,21 +1821,35 @@ am4core.ready(function() {
 
 
 // Need to manage manually the Y zoom (animation issue?)
-  if ( am_anim ) {
     chart.cursor.events.on("zoomended", function(ev) {
-	var range = ev.target.yRange;
-	var axis = ev.target.chart.yAxes.getIndex(0);
-	var y_min = axis.getPositionLabel(axis.toAxisPosition(range.start));
-	var y_max = axis.getPositionLabel(axis.toAxisPosition(range.end));
+	var xrange = ev.target.xRange;
+	var xaxis = ev.target.chart.xAxes.getIndex(0);
+	var x_min = xaxis.positionToValue(xrange.start);
+	var x_max = xaxis.positionToValue(xrange.end);
+console.log("X cursor selected from "+ x_min +" to "+ x_max);
+
+	var yrange = ev.target.yRange;
+	var yaxis = ev.target.chart.yAxes.getIndex(0);
+	var y_min = yaxis.positionToValue(yaxis.toAxisPosition(yrange.start));
+	var y_max = yaxis.positionToValue(yaxis.toAxisPosition(yrange.end));
 console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 
-// If animation is on, a delay is necessary to have the Y zoom
-	setTimeout(function() {
-		valueAxis.zoomToValues(y_min, y_max);
-	}, 700);
-    });
-  }
+	xyin_ranges.xmin.value = x_min.toPrecision(4);
+	xyin_ranges.xmax.value = x_max.toPrecision(4);
+	xyin_ranges.ymin.value = y_min.toPrecision(4);
+	xyin_ranges.ymax.value = y_max.toPrecision(4);
 
+	set_x_range( true );  // Save X range
+
+	if ( am_anim ) {
+// If animation is on, a delay is necessary to have the Y zoom
+	  setTimeout(function() {
+		valueAxis.zoomToValues(y_min, y_max);
+	  }, 700);
+	}
+
+
+    });
 
 // Legend
   chart.legend = new am4charts.Legend();
@@ -1839,12 +1857,40 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
   chart.legend.useDefaultMarker = true;
 
   var marker = chart.legend.markers.template.children.getIndex(0);
+
   marker.cornerRadius(8, 8, 8, 8);
+  marker.adapter.add("cornerRadiusTopLeft", radiusAdapter);
+  marker.adapter.add("cornerRadiusTopRight", radiusAdapter);
+  marker.adapter.add("cornerRadiusBottomLeft", radiusAdapter);
+  marker.adapter.add("cornerRadiusBottomRight", radiusAdapter);
+
+//chart.legend.itemContainers.template.tooltipText = "{dataContext.dummyData.description}";
+  chart.legend.itemContainers.template.adapter.add("tooltipText",  ttAdapter);
+
   marker.width = 16;
   marker.height = 16;
   marker.strokeWidth = 2;
   marker.strokeOpacity = 1;
   marker.stroke = am4core.color("#ccc");
+
+function radiusAdapter(radius, target) {
+  if (!target.dataItem) {
+    return radius;
+  }
+
+  if ( target.dataItem.name == 'Uncert.' )
+	return 3;
+  else
+	return radius;
+}
+
+function ttAdapter(tooltip, target) {
+  if ( target.dataItem.name == 'Uncert.' )
+	return 'Show/hide data uncertainties shade area';
+  else
+	return '';
+}
+
 
 // Values background
   var lt = chart.legend.valueLabels.template;
@@ -1871,9 +1917,13 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
   chart.legend.itemContainers.template.events.on("hit", function(ev) {
     var field = ev.target.dataItem.dataContext,
 	name = ev.target.dataItem.name;
+console.log('Clicked:', name);
+console.log(ev.target.dataItem);
+console.log('dataContext', field);
+console.log('dataFields', field.dataFields);
 
 
-    if ( name == 'residuals' ) {  // TODO
+    if ( name == 'Residuals' ) {  // TODO
 	sdata.resid_visible = ! field.isHidden;
 	resid.hidden = ! field.isHidden;
 	if ( field.isHidden ) {
@@ -1893,6 +1943,17 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 		valueAxis2.cursorTooltipEnabled = false;
 	}
     }
+
+
+console.log('zoom to:', x_range.lin[0], x_range.lin[1]);
+	setTimeout(function() {
+		if ( x_logscale )
+		  vxAxis.zoomToValues(x_range.log[0], x_range.log[1]);
+		else
+		  vxAxis.zoomToValues(x_range.lin[0], x_range.lin[1]);
+	}, 100);
+
+
   });
 
 
@@ -1975,13 +2036,25 @@ function x_axis_renderer() {
 //
 // -- Set initial X range
 
-function set_x_range() {
+function set_x_range(from_rangein) {
 // This is not set immediately and causes problems to the zoom below!
-  vxAxis.min = aux.preinfo[c_ipre].x_min;
-  vxAxis.max = aux.preinfo[c_ipre].x_max;
+  if ( from_rangein !== undefined && from_rangein == true ) {
+	xmin = parseFloat(xyin_ranges.xmin.value !== '' ? xyin_ranges.xmin.value : vxAxis.min);
+	xmax = parseFloat(xyin_ranges.xmax.value !== '' ? xyin_ranges.xmax.value : vxAxis.max);
+  } else {
+	xmin = aux.preinfo[c_ipre].x_min;
+	xmax = aux.preinfo[c_ipre].x_max;
+	vxAxis.min = aux.preinfo[c_ipre].x_min;
+	vxAxis.max = aux.preinfo[c_ipre].x_max;
+  }
 
 // For some reason here we need a value higher than xAxis.max to force alignement
 //  vxAxis.zoomToValues(aux.preinfo[c_ipre].x_min, aux.preinfo[c_ipre].x_max + aux.preinfo[c_ipre].x_step / 2);
+
+  x_range.lin[0] = xmin;
+  x_range.lin[1] = xmax;
+  (xmin > 0) ? x_range.log[0] = xmin * 0.95 : x_range.log[0] = 1e-4;  // TODO
+  x_range.log[1] = xmax;
 }
 
 
@@ -2080,19 +2153,17 @@ function y_linlog_toggle() {
 // -- Set X and Y plot range to fixed ranges
 
 function xy_range_set() {
-  var inputs = document.getElementById('range-selector-div').getElementsByTagName('input');
-
 // Note: need to parse to Float and use getPositionLabel because Category axis is string type.
 // It also wants "0.nnn" and not ".nnn"
   var x_size = vxAxis.max - vxAxis.min;
   if ( x_size <= 0 )
-	 x_size = aux.preinfo[c_ipre].x_step;
+	x_size = aux.preinfo[c_ipre].x_step;
 
-  var vx_min = parseFloat(inputs.xmin.value !== '' ? inputs.xmin.value : vxAxis.min);
-  var vx_max = parseFloat(inputs.xmax.value !== '' ? inputs.xmax.value : vxAxis.max);
+  var vx_min = parseFloat(xyin_ranges.xmin.value !== '' ? xyin_ranges.xmin.value : vxAxis.min);
+  var vx_max = parseFloat(xyin_ranges.xmax.value !== '' ? xyin_ranges.xmax.value : vxAxis.max);
 
-  var y_min = inputs.ymin.value !== '' ? parseFloat(inputs.ymin.value) : valueAxis.min;
-  var y_max = inputs.ymax.value !== '' ? parseFloat(inputs.ymax.value) : valueAxis.max;
+  var y_min = xyin_ranges.ymin.value !== '' ? parseFloat(xyin_ranges.ymin.value) : valueAxis.min;
+  var y_max = xyin_ranges.ymax.value !== '' ? parseFloat(xyin_ranges.ymax.value) : valueAxis.max;
 
 // Some checks (range checks are done in getPositionLabel)
   if ( vx_min > vx_max ) {
@@ -2145,12 +2216,10 @@ console.log('reset X, Y range:', vxAxis.min, vxAxis.max, valueAxis.min, valueAxi
 // -- Clear range input fields
 
 function xy_rangein_reset() {
-  var inputs = document.getElementById('range-selector-div').getElementsByTagName('input');
-
-  inputs.xmin.value = '';
-  inputs.xmax.value = '';
-  inputs.ymin.value = '';
-  inputs.ymax.value = '';
+  xyin_ranges.xmin.value = '';
+  xyin_ranges.xmax.value = '';
+  xyin_ranges.ymin.value = '';
+  xyin_ranges.ymax.value = '';
 
   valueAxis.strictMinMax = false;
 }
