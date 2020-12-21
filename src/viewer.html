@@ -2235,39 +2235,19 @@ function savejsonobj(filename, obj) {
 //
 // -- Display input JSON formatted fit results in table format
 // -- Params:
-//    obj: the json object (components or reducer - TODO)
+//    obj: the json object
 //    type: 0=components, 1=prediction, 2=reducer, 3=fit_results
 //    tab_id: the (html) id to give to the created table
 
 var tableFromJson = function(obj, type, tab_id) {
-  var col = [], tlab = document.createElement("div");
+  var col = [], tlab = document.createElement('div'),
+	contentdiv, tabdiv, tab, tb, hdr, tr, tabCell, comp, cname, nc, ncol, title;
 
-//console.log(obj);
-// Components or reducers? (TODO)
-  var contentdiv, tabdiv, tab, tb, hdr, tr, tabCell, comp, cname, nc, red, rname, nr, ncol, title;
-
-  if ( type == 0 ) {
-	comp = obj.components;
-	cname = Object.keys(comp);  // comp. names
-	nc = cname.length;
-  } else if ( type == 1 ) {
-	comp = obj.compevals;
-	cname = Object.keys(comp);  // comp. names
-	nc = cname.length;
-  } else if ( type == 2 ) {
-	red = obj.reducers;
-	rname = Object.keys(red);  // red. names
-	nr = rname.length;
-  } else if ( type == 3 ) {
-	comp = obj.predictions[0].components;
-	cname = Object.keys(comp);  // comp. names
-	nc = cname.length;
-}
-
-
-// Define header from type
+// Define component/prediction/reducer reference object and header from type
   switch (type) {
     case 0:
+	comp = obj.components;
+
 	title = '<i id="view_comp_table_angle" class="fas fa-angle-down ud-angle"></i>Components'
 	tlab.setAttribute('id', 'comp_table_sect');
 	tlab.setAttribute('class', 'toggle_table-hdr');
@@ -2275,7 +2255,8 @@ var tableFromJson = function(obj, type, tab_id) {
 	col = ['Component', 'Type', 'Param.', 'Value', 'Range'];	
 	break;
     case 1:
-	//title = 'Prediction'
+	comp = obj.compevals;
+
 	title = '<i id="view_pred_table_angle" class="fas fa-angle-down ud-angle"></i>Prediction'
 	tlab.setAttribute('id', 'pred_table_sect');
 	tlab.setAttribute('class', 'toggle_table-hdr');
@@ -2283,13 +2264,15 @@ var tableFromJson = function(obj, type, tab_id) {
 	col = ['Component', 'Counter', 'Min', 'Max', 'Mean', 'NaN/Inf'];	
 	break;
     case 2:
-	title = 'Reducer'
+	comp = obj.reducers;
+
+	title = 'Reducer';
 	tlab.setAttribute('class', 'header-lab');
 	col = ['Component', 'Counter', 'Min', 'Max', 'Mean', 'NaN/Inf'];	
 	break;
     case 3:
-	//title = 'Best Fit results';
-	//tlab.setAttribute('class', 'header-lab');
+	comp = obj.predictions[0].components;
+
 	title = '<i id="view_fitres_table_angle" class="fas fa-angle-down ud-angle"></i>Best Fit results'
 	tlab.setAttribute('id', 'fitres_table_sect');
 	tlab.setAttribute('class', 'toggle_table-hdr');
@@ -2300,6 +2283,9 @@ var tableFromJson = function(obj, type, tab_id) {
     default:
 	console.log(`Sorry, option not recognised: ${type}.`);
   }
+
+  cname = Object.keys(comp);  // comp. names
+  nc = cname.length;
 
   tlab.innerHTML = title;
   ncol = col.length;
@@ -2440,14 +2426,14 @@ var tableFromJson = function(obj, type, tab_id) {
     case 2:  // reducers
 	var c, cell, pcol = ['counter', 'min', 'max', 'mean', 'error'];
 
-	for (var i = 0; i < nr; i++) {
-	  c = red[rname[i]];  // comp. obj
+	for (var i = 0; i < nc; i++) {
+	  c = comp[cname[i]];  // comp. obj
 //console.log('c:',c);
  
 	  tr = tb.insertRow(-1);
 
 	  tabCell = tr.insertCell(-1);
-	  tabCell.innerHTML = rname[i];	 // 1st column is comp. name
+	  tabCell.innerHTML = cname[i];	 // 1st column is comp. name
 
 	  for (var j = 0; j < pcol.length; j++) {
 	    if ( typeof c[pcol[j]] == 'number' ) {
@@ -2573,19 +2559,19 @@ var tableFromJson = function(obj, type, tab_id) {
 // -- Update the prediction+reducer tables with current data
 
 function updatePredTabs(obj) {
-  var tab, tb, tr, tabCell, comp, cname, nc, red, rname, nr;
-	comp = obj.components;
-	cname = Object.keys(comp);  // comp. names
-	nc = cname.length;
-	red = obj.reducers;
-	rname = Object.keys(red);  // red. names
-	nr = rname.length;
+  var comp = obj.compevals,
+	cname = Object.keys(comp),  // comp. names
+	nc = cname.length,
+	red = obj.reducers,
+	rname = Object.keys(red),  // red. names
+	nr = rname.length,
 
-	tab = document.getElementById('pred_table-div');  // predictions
-	tb = tab.getElementsByTagName("tbody")[0];
+	tab = document.getElementById('pred_table-div'),  // predictions
+	tb = tab.getElementsByTagName("tbody")[0],
+	pcol = ['counter', 'min', 'max', 'mean', 'error'],
+	c, cell, tr, tabCell;
+
 	tb.innerHTML = '';
-
-	var c, cell, pcol = ['counter', 'min', 'max', 'mean', 'error'];
 
 	for (var i = 0; i < nc; i++) {
 	  c = comp[cname[i]];  // comp. obj.
@@ -2645,7 +2631,7 @@ function updatePredTabs(obj) {
 
 function createFitLogTabs() {
   var divShowData = document.getElementById('fitlog_tab');
-  divShowData.innerHTML = "";
+  divShowData.innerHTML = '';
 
   tabdiv = tableFromJson(chart_data.predictions[c_ipre], 0, 'comp_table-div');
   divShowData.appendChild(tabdiv);  // Add the components table to the container
@@ -2668,7 +2654,7 @@ function createFitLogTabs() {
 
 </div>
 
-<div class="trailer"> </div>
+<div class="trailer"></div>
 
 </body>
 </html>
