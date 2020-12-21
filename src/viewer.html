@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2020-12-19" />
+  <meta name="date" content="2020-12-21" />
 
 <!-- @Remote
 -->
@@ -2246,16 +2246,24 @@ var tableFromJson = function(obj, type, tab_id) {
 // Components or reducers? (TODO)
   var contentdiv, tabdiv, tab, tb, hdr, tr, tabCell, comp, cname, nc, red, rname, nr, ncol, title;
 
-  if ( type !== 2 ) {
+  if ( type == 0 ) {
 	comp = obj.components;
 	cname = Object.keys(comp);  // comp. names
 	nc = cname.length;
-//console.log(cname);
-  } else {
+  } else if ( type == 1 ) {
+	comp = obj.compevals;
+	cname = Object.keys(comp);  // comp. names
+	nc = cname.length;
+  } else if ( type == 2 ) {
 	red = obj.reducers;
 	rname = Object.keys(red);  // red. names
 	nr = rname.length;
-  }
+  } else if ( type == 3 ) {
+	comp = obj.predictions[0].components;
+	cname = Object.keys(comp);  // comp. names
+	nc = cname.length;
+}
+
 
 // Define header from type
   switch (type) {
@@ -2330,7 +2338,6 @@ var tableFromJson = function(obj, type, tab_id) {
     case 0:  // components
 	for (var i = 0; i < nc; i++) {
 	  var c = comp[cname[i]],  // comp. obj.
-	   //p, // par. obj 
 		par_tt = '',  // Parameter tooltip
 		pname = Object.keys(c.params);  // par. names
 
@@ -2346,7 +2353,7 @@ var tableFromJson = function(obj, type, tab_id) {
 	  tabCell.innerHTML = c.type;	 // 2nd column is comp. type
 
 	  var cell = pname[0];  // 3rd column is par. names
-	  par_tt = '<strong>'+ cname[i] +'</strong><br />'+ pname[0] +' (unit: '+ chart_data.components[cname[i]].params[pname[0]].meta.unit +' note: '+ chart_data.components[cname[i]].params[pname[0]].meta.note +')';
+	  par_tt = '<strong>'+ cname[i] +'</strong><br />'+ pname[0] +' (unit: '+ c.params[pname[0]].meta.unit +' note: '+ c.params[pname[0]].meta.note +')';
 
 	  if ( c.params[pname[0]].fixed == true )
 		cell += ' (FIXED)';
@@ -2354,7 +2361,7 @@ var tableFromJson = function(obj, type, tab_id) {
 	    cell += '<br />'+ pname[k];
 	    if ( c.params[pname[k]].fixed == true )
 		cell += ' (FIXED)';
-	    par_tt += '<br />'+ pname[k] +' (unit: '+ chart_data.components[cname[i]].params[pname[k]].meta.unit +' note: '+ chart_data.components[cname[i]].params[pname[k]].meta.note +')';
+	    par_tt += '<br />'+ pname[k] +' (unit: '+ c.params[pname[k]].meta.unit +' note: '+ c.params[pname[k]].meta.note +')';
 	  }
 
 
@@ -2640,7 +2647,7 @@ function createFitLogTabs() {
   var divShowData = document.getElementById('fitlog_tab');
   divShowData.innerHTML = "";
 
-  tabdiv = tableFromJson(chart_data, 0, 'comp_table-div');
+  tabdiv = tableFromJson(chart_data.predictions[c_ipre], 0, 'comp_table-div');
   divShowData.appendChild(tabdiv);  // Add the components table to the container
 
 // Current prediction/reducer tables
