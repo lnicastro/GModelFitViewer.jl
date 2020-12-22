@@ -313,6 +313,12 @@ label {
   text-align: left;
 }
 
+#res_legenddiv {
+  display: inline-block;
+  height: 40px;
+  width: 180px;
+  vertical-align: middle;
+}
 
 #controls-div {
   margin-top: 0.5em;
@@ -911,13 +917,17 @@ hr.style-two {
   <section style="margin-top: 0.5em;">
 	<span id="p_title">GFitViewer info here...</span>
 
-	<span class="box-in" style="float: right;" title="Set the highlighted resid. range">Resid. &pm; N&sigma;
-	<input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" onchange="n_sigma_update(this)" />
-	</span>
   </section>
 
 
   <div id="chartdiv"></div>
+
+<div>
+  <div id="res_legenddiv"></div>
+	<span class="box-in" style="vertical-align: middle;" title="Set the highlighted resid. range">Resid. &pm; N&sigma;
+	  <input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" onchange="n_sigma_update(this)" />
+	</span>
+</div>
 
   <div id="controls-div">
 <!--
@@ -992,6 +1002,7 @@ hr.style-two {
 	valueAxis2,	// The residuals right axis object
 	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
 	vxAxis, valueAxis, errorBullet,
+	legend1, legend2,
 
 	p_title = document.getElementById('p_title'),
 	xyin_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
@@ -1350,7 +1361,7 @@ var getauxinfo = function() {  // TODO
   
   for (var i = 0; i < aux.n_d; i++) {
 	aux.datinfo.push({
-	  resid_visible: chart_data.data[i].meta.resid_visible,
+	  resid_visible: (chart_data.data[i].meta.resid_visible || false),
 	  resid_color: (chart_data.data[i].meta.resid_color || rcolor.hex)}
 	);  // TODO
   }
@@ -1499,7 +1510,7 @@ function createDataSeries(isel) {
   hs = sdata.segments.template.states.create("hover");
   hs.properties.strokeWidth = 5;
 
-// Errors
+// Errors (unused)
 /*
   errorBullet = sdata.bullets.create(am4charts.ErrorBullet);
   errorBullet.isDynamic = true;
@@ -1541,7 +1552,8 @@ function createDataSeries(isel) {
     resid.name = 'Residuals';  // chart_data.data.meta.resid_label;
     resid.yAxis = valueAxis2;
     resid.strokeWidth = 2;
-    resid.legendSettings.valueText = "{valueY}";
+    resid.hiddenInLegend = true;  // Not in the default legend
+
 
 // Visible?
     sdata.resid_visible = aux.datinfo[isel].resid_visible;
@@ -1569,12 +1581,59 @@ function createDataSeries(isel) {
 	resid.stroke = rcolor.hex;
 	resid.fill = rcolor.hex;
     }
+
+    legend2.data.push({name: resid.name, fill: resid.fill, visible: sdata.resid_visible});
+
+
+// Highlight when cursor on legend item
+  legend2.itemContainers.template.events.on("over", function(ev) {
+	resid.strokeWidth = 5;
+  });
+
+  legend2.itemContainers.template.events.on("out", function(ev) {
+	resid.strokeWidth = 2;
+  });
+
+
+// Toggle residuals visibility in legend2
+  legend2.itemContainers.template.events.on("hit", function(ev) {
+//console.log("Clicked on ", ev.target.dataItem.className);
+    var field = ev.target.dataItem.dataContext,
+	name = field.name;
+console.log('Clicked:', name);
+console.log('is visible:', field.legendDataItem.visible);
+    if ( sdata.resid_visible ) {
+    //ev.target.dataItem.dataContext.hide();
+	range.grid.strokeOpacity = 0;
+	range2.axisFill.fillOpacity = 0;
+	valueAxis2.renderer.ticks.template.strokeOpacity = 0;
+	valueAxis2.visible = false;
+	valueAxis2.cursorTooltipEnabled = false;
+	resid.hide();
+	resid.hidden = true;
+    } else {
+    //ev.target.dataItem.dataContext.show();
+	n_sigma = document.getElementById('n_sigma').value;
+	range2.value = -n_sigma;
+	range2.endValue = n_sigma;
+	range.grid.strokeOpacity = 0.5;
+	range2.axisFill.fillOpacity = 0.1;
+	valueAxis2.renderer.ticks.template.strokeOpacity = 1;
+	valueAxis2.visible = true;
+//valueAxis2.cursorTooltipEnabled = true;
+	resid.show();
+	resid.hidden = false;
+    }
+    sdata.resid_visible = ! sdata.resid_visible;
+  });
+
+
   }  // end sdata.residuals
 
 
 // Highlight when cursor on legend item
-  hs = resid.segments.template.states.create("hover");
-  hs.properties.strokeWidth = 5;
+//hs = resid.segments.template.states.create("hover");
+//hs.properties.strokeWidth = 5;
 }
 
 
@@ -1607,7 +1666,7 @@ console.log('Create component:', cname);
 
 	series.name = cname;
 	series.strokeWidth = 2;
-	//series.legendSettings.valueText = "{valueY}";
+//series.legendSettings.valueText = "{valueY}";
 
 	if ( component.meta.color !== 'auto' ) {  // User selected color?
 	  series.stroke = component.meta.color;
@@ -1648,7 +1707,7 @@ console.log('Create reducer:', rname);
 
     series.name = rname;
     series.strokeWidth = 2;
-    series.legendSettings.valueText = "{valueY}";
+//series.legendSettings.valueText = "{valueY}";
 
     if ( reducer.meta.color !== 'auto' ) {  // User selected color?
       series.stroke = reducer.meta.color;
@@ -1826,15 +1885,21 @@ am4core.ready(function() {
 //vxAxis.events.on("startendchanged", vxAxisChanged);
   vxAxis.events.on("selectionextremeschanged", vxAxisChanged);
 
-// Does not work in log scale
+
+// Does not work in log scale !
 function vxAxisChanged(ev) {
-	if ( x_logscale )
-		return false;
-        var x_min = ev.target.minZoomed;
-        var x_max = ev.target.maxZoomed;
+	//if ( x_logscale ) {
+		//xyin_ranges.xmin.value = '';
+		//xyin_ranges.xmax.value = '';
+	//} else {
+        	var x_min = ev.target.minZoomed;
+        	var x_max = ev.target.maxZoomed;
 console.log("New range: " + x_min + " -- " + x_max);
-	xyin_ranges.xmin.value = x_min.toPrecision(4);
-	xyin_ranges.xmax.value = x_max.toPrecision(4);
+		xyin_ranges.xmin.value = x_min.toPrecision(4);
+		xyin_ranges.xmax.value = x_max.toPrecision(4);
+		x_range.lin.xmin = x_min;
+		x_range.lin.xmin = x_max;
+	//}
 }
 
 
@@ -1870,10 +1935,24 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
     });
 
 
-// Legend
+// Legends
+
+  var legendContainer = am4core.create("res_legenddiv", am4core.Container);
+  legendContainer.width = am4core.percent(100);
+  //legendContainer.height = am4core.percent(100);
+
+  legend2 = new am4charts.Legend();
+  legend2.parent = legendContainer;
+  legend2.marginTop = 20;
+  legend2.marginLeft = 0;
+  legend2.labels.template.text = "[bold]{name}[/]";
+  legend2.useDefaultMarker = true;
+
   chart.legend = new am4charts.Legend();
+  chart.legend.marginTop = 20;
   chart.legend.labels.template.text = "[bold]{name}[/]";
   chart.legend.useDefaultMarker = true;
+
 
   var marker = chart.legend.markers.template.children.getIndex(0);
 
@@ -1910,7 +1989,7 @@ function ttAdapter(tooltip, target) {
 }
 
 
-// Values background
+// Values background (unused)
   var lt = chart.legend.valueLabels.template;
   lt.background.fill = am4core.color("#efefef");
   lt.background.fillOpacity = 1;
@@ -1936,7 +2015,7 @@ function ttAdapter(tooltip, target) {
     var field = ev.target.dataItem.dataContext,
 	name = ev.target.dataItem.name;
 console.log('Clicked:', name);
-
+/* Residuals managed in legend2
     if ( name == 'Residuals' ) {  // TODO
 	sdata.resid_visible = ! field.isHidden;
 	resid.hidden = ! field.isHidden;
@@ -1957,14 +2036,16 @@ console.log('Clicked:', name);
 		valueAxis2.cursorTooltipEnabled = false;
 	}
     }
+*/
 
 
 console.log('zoom to:', x_range.lin.min, x_range.lin.max);
 	setTimeout(function() {
-		if ( x_logscale )
+		if ( x_logscale ) {
 		  vxAxis.zoomToValues(x_range.log.min, x_range.log.max);
-		else
+		} else {
 		  vxAxis.zoomToValues(x_range.lin.min, x_range.lin.max);
+		}
 	}, 100);
 
 
@@ -1991,6 +2072,7 @@ console.log('zoom to:', x_range.lin.min, x_range.lin.max);
 
   chart.events.on('datavalidated', function(e) {
 	createFitLogTabs();  // The fit log tables
+
 
 //x_axis_renderer();
 //chart.cursor.snapToSeries = sdata;
@@ -2062,6 +2144,7 @@ function set_x_range(from_rangein) {
 	xmax = aux.preinfo[c_ipre].x_max;
 	vxAxis.min = aux.preinfo[c_ipre].x_min;
 	vxAxis.max = aux.preinfo[c_ipre].x_max;
+  }
 
 // For some reason here we need a value higher than xAxis.max to force alignement
 //  vxAxis.zoomToValues(aux.preinfo[c_ipre].x_min, aux.preinfo[c_ipre].x_max + aux.preinfo[c_ipre].x_step / 2);
@@ -2070,7 +2153,6 @@ function set_x_range(from_rangein) {
   x_range.lin.max = xmax;
   (xmin > 0) ? x_range.log.min = xmin : x_range.log.min = 1e-4;  // TODO
   x_range.log.max = xmax;
-  }
 }
 
 
@@ -2138,8 +2220,6 @@ function x_linlog_toggle() {
 	//vxAxis.precision = 4;
 	vxAxis.strictMinMax = true;
 
-	//scrollAxis.min = x_range.log.min;
-	//scrollAxis.max = x_range.log.max;
 	scrollAxis.logarithmic = true;
 	scrollAxis.strictMinMax = true;
   } else {  // From log to lin
@@ -2151,8 +2231,6 @@ function x_linlog_toggle() {
 	vxAxis.precision = 0;
 	vxAxis.strictMinMax = false;
 
-	//scrollAxis.min = x_range.lin.min;
-	//scrollAxis.max = x_range.lin.max;
 	scrollAxis.logarithmic = false;
 	scrollAxis.strictMinMax = false;
   }
