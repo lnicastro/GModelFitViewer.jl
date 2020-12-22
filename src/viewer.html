@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2020-12-21" />
+  <meta name="date" content="2020-12-22" />
 
 <!-- @Remote
 -->
@@ -924,11 +924,7 @@ hr.style-two {
 	<span class="box-cb" title="Toggle Y errors plot">
 	  <input type="checkbox" id="y_err-cb" onclick="y_err_toggle()" /><label for="y_err-cb">Y err</label>
 	</span>
-	<span class="box-cb" title="Toggle Y errors shaded area">
-	  <input type="checkbox" id="y_err_shade-cb" onclick="y_err_shade_toggle()" /><label for="y_err_shade-cb">Y-err shade</label>
-	</span>
 -->
-
 	<span class="box-cb" title="Toggle X lin/log scale">
 	  <input type="checkbox" id="x_log-cb" onclick="x_linlog_toggle()" /><label for="x_log-cb">X log</label>
 	</span>
@@ -985,8 +981,8 @@ hr.style-two {
 	y_err_shade = false,  // Y errors shaded area
 	x_logscale = false,  // X lin/log scale
 	y_logscale = false,  // Y lin/log scale
-	x_range = {lin: [null, null], log: [null, null]},  // lin/log X ranges
-	y_range = {lin: [null, null], log: [null, null]},  // lin/log Y ranges
+	x_range = {lin: {min: null, max: null}, log: {min: null, max: null}},  // lin/log X ranges
+	y_range = {lin: {min: null, max: null}, log: {min: null, max: null}},  // lin/log Y ranges
 	chart = {},	// The amchart object
 	sdata = [],	// The data series to plot (with errors)
 	serr = [],	// The Y errors shaded area series
@@ -1390,9 +1386,12 @@ console.log('isel:', isel);
 	  vals['err_up'] = chart_data.data[isel].y[i] + chart_data.data[isel].err[i];
 	}
 
-	for (var j = 0; j < aux.preinfo[isel].n_reds; j++)  // Reducers
+	for (var j = 0; j < aux.preinfo[isel].n_reds; j++) {  // Reducers
+          if ( !p.reducers[rnames[j]].meta.use_in_plot )
+		continue;
 	  //if ( p.reducers[rnames[j]].y[i] > 0 )
 	  vals[rnames[j]] = p.reducers[rnames[j]].y[i];
+}
 
 	for (var j = 0; j < aux.preinfo[isel].n_comps; j++) { // Components
           if ( !p.components[cnames[j]].meta.use_in_plot )
@@ -1637,6 +1636,9 @@ console.log('  color:', mycolors[icol % n_myc].name, mycolors[icol % n_myc].hex)
     if ( rname.indexOf(aux.preinfo[isel].main_reducer) == 0 )  // This is the main reducers: skip
 	continue;
 
+    if ( !p.reducers[rname].meta.use_in_plot )
+	continue;
+
 console.log('Create reducer:', rname);
  
     reducer = p.reducers[rname];
@@ -1757,11 +1759,11 @@ am4core.ready(function() {
   vxAxis.renderer.grid.template.strokeOpacity = 1;
   vxAxis.min = aux.preinfo[c_ipre].x_min;
   vxAxis.max = aux.preinfo[c_ipre].x_max;
-  vxAxis.strictMinMax = true;  // This is required
+//vxAxis.strictMinMax = true;  // This causes issue with the log plot
 
 // No cursor Tooltip for ValueAxis
-  //vxAxis.cursorTooltipEnabled = true;
-//vxAxis.precision = 3;
+//vxAxis.cursorTooltipEnabled = true;
+//vxAxis.precision = 4;
 
 //vxAxis.renderer.grid.template.dx=5;
 //vxAxis.renderer.labels.template.dx=5;
@@ -1820,6 +1822,22 @@ am4core.ready(function() {
   //chart.colors.step = 2;
 
 
+// Monitor X axis zoom (TODO)
+//vxAxis.events.on("startendchanged", vxAxisChanged);
+  vxAxis.events.on("selectionextremeschanged", vxAxisChanged);
+
+// Does not work in log scale
+function vxAxisChanged(ev) {
+	if ( x_logscale )
+		return false;
+        var x_min = ev.target.minZoomed;
+        var x_max = ev.target.maxZoomed;
+console.log("New range: " + x_min + " -- " + x_max);
+	xyin_ranges.xmin.value = x_min.toPrecision(4);
+	xyin_ranges.xmax.value = x_max.toPrecision(4);
+}
+
+
 // Need to manage manually the Y zoom (animation issue?)
     chart.cursor.events.on("zoomended", function(ev) {
 	var xrange = ev.target.xRange;
@@ -1851,6 +1869,7 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 
     });
 
+
 // Legend
   chart.legend = new am4charts.Legend();
   chart.legend.labels.template.text = "[bold]{name}[/]";
@@ -1864,7 +1883,6 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
   marker.adapter.add("cornerRadiusBottomLeft", radiusAdapter);
   marker.adapter.add("cornerRadiusBottomRight", radiusAdapter);
 
-//chart.legend.itemContainers.template.tooltipText = "{dataContext.dummyData.description}";
   chart.legend.itemContainers.template.adapter.add("tooltipText",  ttAdapter);
 
   marker.width = 16;
@@ -1918,10 +1936,6 @@ function ttAdapter(tooltip, target) {
     var field = ev.target.dataItem.dataContext,
 	name = ev.target.dataItem.name;
 console.log('Clicked:', name);
-console.log(ev.target.dataItem);
-console.log('dataContext', field);
-console.log('dataFields', field.dataFields);
-
 
     if ( name == 'Residuals' ) {  // TODO
 	sdata.resid_visible = ! field.isHidden;
@@ -1934,7 +1948,7 @@ console.log('dataFields', field.dataFields);
 		range2.axisFill.fillOpacity = 0.1;
 		valueAxis2.renderer.ticks.template.strokeOpacity = 1;
 		valueAxis2.visible = true;
-		//valueAxis2.cursorTooltipEnabled = true;
+//valueAxis2.cursorTooltipEnabled = true;
 	} else {
 		range.grid.strokeOpacity = 0;
 		range2.axisFill.fillOpacity = 0;
@@ -1945,12 +1959,12 @@ console.log('dataFields', field.dataFields);
     }
 
 
-console.log('zoom to:', x_range.lin[0], x_range.lin[1]);
+console.log('zoom to:', x_range.lin.min, x_range.lin.max);
 	setTimeout(function() {
 		if ( x_logscale )
-		  vxAxis.zoomToValues(x_range.log[0], x_range.log[1]);
+		  vxAxis.zoomToValues(x_range.log.min, x_range.log.max);
 		else
-		  vxAxis.zoomToValues(x_range.lin[0], x_range.lin[1]);
+		  vxAxis.zoomToValues(x_range.lin.min, x_range.lin.max);
 	}, 100);
 
 
@@ -1978,8 +1992,8 @@ console.log('zoom to:', x_range.lin[0], x_range.lin[1]);
   chart.events.on('datavalidated', function(e) {
 	createFitLogTabs();  // The fit log tables
 
-	x_axis_renderer();
-	//chart.cursor.snapToSeries = sdata;
+//x_axis_renderer();
+//chart.cursor.snapToSeries = sdata;
 	var scrollAxis = chart.scrollbarX.scrollbarChart.xAxes.getIndex(0);
 	scrollAxis.renderer.labels.template.disabled = true;
 	scrollAxis.renderer.grid.template.disabled = true;
@@ -2041,20 +2055,22 @@ function set_x_range(from_rangein) {
   if ( from_rangein !== undefined && from_rangein == true ) {
 	xmin = parseFloat(xyin_ranges.xmin.value !== '' ? xyin_ranges.xmin.value : vxAxis.min);
 	xmax = parseFloat(xyin_ranges.xmax.value !== '' ? xyin_ranges.xmax.value : vxAxis.max);
+
+	vxAxis.zoomToValues(xmin, xmax);
   } else {
 	xmin = aux.preinfo[c_ipre].x_min;
 	xmax = aux.preinfo[c_ipre].x_max;
 	vxAxis.min = aux.preinfo[c_ipre].x_min;
 	vxAxis.max = aux.preinfo[c_ipre].x_max;
-  }
 
 // For some reason here we need a value higher than xAxis.max to force alignement
 //  vxAxis.zoomToValues(aux.preinfo[c_ipre].x_min, aux.preinfo[c_ipre].x_max + aux.preinfo[c_ipre].x_step / 2);
 
-  x_range.lin[0] = xmin;
-  x_range.lin[1] = xmax;
-  (xmin > 0) ? x_range.log[0] = xmin * 0.95 : x_range.log[0] = 1e-4;  // TODO
-  x_range.log[1] = xmax;
+  x_range.lin.min = xmin;
+  x_range.lin.max = xmax;
+  (xmin > 0) ? x_range.log.min = xmin : x_range.log.min = 1e-4;  // TODO
+  x_range.log.max = xmax;
+  }
 }
 
 
@@ -2084,10 +2100,10 @@ function set_y_range() {
   }
 
 console.log('Y range set to:', ymin, ymax);
-  y_range.lin[0] = ymin;
-  y_range.lin[1] = ymax;
-  (ymin > 0) ? y_range.log[0] = ymin * 0.95 : y_range.log[0] = 1e-4;  // TODO
-  y_range.log[1] = ymax;
+  y_range.lin.min = ymin;
+  y_range.lin.max = ymax;
+  (ymin > 0) ? y_range.log.min = ymin * 0.95 : y_range.log.min = 1e-4;  // TODO
+  y_range.log.max = ymax;
 
   y_linlog_toggle();
 }
@@ -2113,17 +2129,32 @@ function y_err_toggle() {
 
 function x_linlog_toggle() {
   x_logscale = document.getElementById('x_log-cb').checked;
+  var scrollAxis = chart.scrollbarX.scrollbarChart.xAxes.getIndex(0);
 
   if ( x_logscale ) {   // From lin to log
-	vxAxis.min = Math.max(.001, vxAxis.min);
+	vxAxis.min = x_range.log.min;
+	vxAxis.max = x_range.log.max;
 	vxAxis.logarithmic = true;
-	vxAxis.precision = 3;
+	//vxAxis.precision = 4;
 	vxAxis.strictMinMax = true;
+
+	//scrollAxis.min = x_range.log.min;
+	//scrollAxis.max = x_range.log.max;
+	scrollAxis.logarithmic = true;
+	scrollAxis.strictMinMax = true;
   } else {  // From log to lin
-	set_x_range();
+	//set_x_range();
+	vxAxis.min = x_range.lin.min;
+	vxAxis.max = x_range.lin.max;
+	valueAxis.logarithmic = false;
 	vxAxis.logarithmic = false;
 	vxAxis.precision = 0;
-	//vxAxis.strictMinMax = false;
+	vxAxis.strictMinMax = false;
+
+	//scrollAxis.min = x_range.lin.min;
+	//scrollAxis.max = x_range.lin.max;
+	scrollAxis.logarithmic = false;
+	scrollAxis.strictMinMax = false;
   }
 }
 
@@ -2132,15 +2163,15 @@ function y_linlog_toggle() {
   y_logscale = document.getElementById('y_log-cb').checked;
 
   if ( y_logscale ) {  // From lin to log
-	valueAxis.min = y_range.log[0];
-	valueAxis.max = y_range.log[1];
+	valueAxis.min = y_range.log.min;
+	valueAxis.max = y_range.log.max;
 	valueAxis.logarithmic = true;
 	valueAxis.precision = 3;
 	valueAxis.strictMinMax = true;
 	valueAxis.extraMin = 0;
   } else {  // From log to lin
-	valueAxis.min = y_range.lin[0];
-	valueAxis.max = y_range.lin[1];
+	valueAxis.min = y_range.lin.min;
+	valueAxis.max = y_range.lin.max;
 	valueAxis.logarithmic = false;
 	valueAxis.precision = 0;
 	valueAxis.strictMinMax = false;
@@ -2204,6 +2235,9 @@ function xy_range_set() {
 // -- Reset X and Y plot range to initial values
 
 function xy_range_reset() {
+  //valueAxis.strictMinMax = false;
+  //vxAxis.strictMinMax = false;
+
   set_x_range();
   set_y_range();
   xy_rangein_reset();  // Clear manual range input fields
@@ -2220,8 +2254,6 @@ function xy_rangein_reset() {
   xyin_ranges.xmax.value = '';
   xyin_ranges.ymin.value = '';
   xyin_ranges.ymax.value = '';
-
-  valueAxis.strictMinMax = false;
 }
 
 
