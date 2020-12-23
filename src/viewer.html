@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2020-12-22" />
+  <meta name="date" content="2020-12-23" />
 
 <!-- @Remote
 -->
@@ -1625,6 +1625,17 @@ console.log('is visible:', field.legendDataItem.visible);
 	resid.hidden = false;
     }
     sdata.resid_visible = ! sdata.resid_visible;
+
+console.log('zoom to:', x_range.lin.min, x_range.lin.max);
+	setTimeout(function() {
+		if ( x_logscale ) {
+		  if ( vxAxis.min !== x_range.log.min || vxAxis.max !== x_range.log.max )
+		    vxAxis.zoomToValues(x_range.log.min, x_range.log.max);
+		} else {
+		  if ( vxAxis.min !== x_range.lin.min || vxAxis.max !== x_range.lin.max )
+		    vxAxis.zoomToValues(x_range.lin.min, x_range.lin.max);
+		}
+	}, 100);
   });
 
 
@@ -2042,18 +2053,19 @@ console.log('Clicked:', name);
 console.log('zoom to:', x_range.lin.min, x_range.lin.max);
 	setTimeout(function() {
 		if ( x_logscale ) {
-		  vxAxis.zoomToValues(x_range.log.min, x_range.log.max);
+		  if ( vxAxis.min !== x_range.log.min || vxAxis.max !== x_range.log.max )
+		    vxAxis.zoomToValues(x_range.log.min, x_range.log.max);
 		} else {
-		  vxAxis.zoomToValues(x_range.lin.min, x_range.lin.max);
+		  if ( vxAxis.min !== x_range.lin.min || vxAxis.max !== x_range.lin.max )
+		    vxAxis.zoomToValues(x_range.lin.min, x_range.lin.max);
 		}
 	}, 100);
-
 
   });
 
 
 // Set up number format
-  //chart.numberFormatter.numberFormat = "#,###.000";
+//chart.numberFormatter.numberFormat = "#,###.000";
 
 // The export menu
   chart.exporting.menu = new am4core.ExportMenu();
