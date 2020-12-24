@@ -1588,6 +1588,7 @@ function createDataSeries(isel) {
     legend2.data.push({name: resid.name, fill: resid.fill, visible: sdata.resid_visible});
     legend2.tooltipText = 'Show/hide residuals';
     legend2.tooltip.background.opacity = 0.7;
+    legend2.tooltip.pointerOrientation='right';
 
     var marker = legend2.markers.template.children.getIndex(0);
     legend2.useDefaultMarker = true;
@@ -1610,13 +1611,12 @@ function createDataSeries(isel) {
 
 // Toggle residuals visibility in legend2
     legend2.itemContainers.template.events.on("hit", function(ev) {
-//console.log("Clicked on ", ev.target.dataItem.className);
 	var field = ev.target.dataItem.dataContext,
 		name = field.name;
 console.log('Clicked:', name);
 console.log('is visible:', field.legendDataItem.visible);
     if ( sdata.resid_visible ) {
-    //ev.target.dataItem.dataContext.hide();
+//ev.target.dataItem.dataContext.hide();
 	range.grid.strokeOpacity = 0;
 	range2.axisFill.fillOpacity = 0;
 	valueAxis2.renderer.ticks.template.strokeOpacity = 0;
@@ -1625,7 +1625,7 @@ console.log('is visible:', field.legendDataItem.visible);
 	resid.hide();
 	resid.hidden = true;
     } else {
-    //ev.target.dataItem.dataContext.show();
+//ev.target.dataItem.dataContext.show();
 	n_sigma = document.getElementById('n_sigma').value;
 	range2.value = -n_sigma;
 	range2.endValue = n_sigma;
@@ -1690,7 +1690,6 @@ console.log('Create component:', cname);
 
 	series.name = cname;
 	series.strokeWidth = 2;
-//series.legendSettings.valueText = "{valueY}";
 
 	if ( component.meta.color !== 'auto' ) {  // User selected color?
 	  series.stroke = component.meta.color;
@@ -1731,7 +1730,6 @@ console.log('Create reducer:', rname);
 
     series.name = rname;
     series.strokeWidth = 2;
-//series.legendSettings.valueText = "{valueY}";
 
     if ( reducer.meta.color !== 'auto' ) {  // User selected color?
       series.stroke = reducer.meta.color;
@@ -1799,9 +1797,6 @@ am4core.ready(function() {
 // Theme animated
   if ( am_anim )
 	am4core.useTheme(am4themes_animated);
-
-// Sample series if points are closer than 3 pixels
-  //am4core.options.minPolylineStep = 3;
 
   chart = am4core.create('chartdiv', am4charts.XYChart);
 
