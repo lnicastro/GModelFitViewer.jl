@@ -98,15 +98,21 @@ function save_json(dict::OrderedDict, filename::AbstractString)
     return filename
 end
 
-viewer(model::Model, data::GFit.Measures_1D) = viewer(model, [data])
-viewer(model::Model, data::GFit.Measures_1D, bestfit::GFit.BestFitResult) = viewer(model, [data], bestfit)
-function viewer(args...; kw...)
+viewer(model::Model, data::GFit.Measures_1D; kw...) = viewer(model, [data]; kw...)
+viewer(model::Model, data::GFit.Measures_1D, bestfit::GFit.BestFitResult; kw...) = viewer(model, [data], bestfit; kw...)
+
+function viewer(args...; filename=nothing, kw...)
     dict = todict(args...; kw...)
     path = tempdir()
-    fname = save_json(dict, "$(path)/gfitviewer.json")
-    fname = save_html(dict, "$(path)/gfitviewer.html")
+
+    if filename == nothing
+        fname = "$(path)/gfitviewer.json"
+    else
+        fname = filename
+    end
+    save_json(dict, fname * ".json")
+    save_html(dict, fname)
     DefaultApplication.open(fname)
 end
-
 
 end
