@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2020-12-23" />
+  <meta name="date" content="2020-12-24" />
 
 <!-- @Remote
 -->
@@ -276,25 +276,6 @@ label {
   box-shadow: inset 0 0 0 1.2em #eaeaea;
 }
 
-.box-in {
-  display: inline-block;
-  margin-left: 1em;
-  padding-left: .5em;
-  background: #efefef;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.box-cb {
-  display: inline-block;
-  margin-left: 1em;
-  padding-right: .5em;
-  background: #efefef;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  vertical-align: middle;
-}
-
 .label-range-in {
   margin-left: 0.5em;
   margin-right: 0.2em;
@@ -315,8 +296,27 @@ label {
 
 #res_legenddiv {
   display: inline-block;
-  height: 40px;
-  width: 180px;
+  height: 34px;
+  width: 120px;
+  vertical-align: middle;
+}
+
+.box-resid-in {
+  display: inline-block;
+  margin: 0 1em;
+  padding-right: 4px;
+  background: #efefef;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.box-cb {
+  display: inline-block;
+  margin-left: 1em;
+  padding-right: .5em;
+  background: #efefef;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   vertical-align: middle;
 }
 
@@ -922,12 +922,15 @@ hr.style-two {
 
   <div id="chartdiv"></div>
 
-<div>
+
+<div class="box-resid-in" style="float: right;">
   <div id="res_legenddiv"></div>
-	<span class="box-in" style="vertical-align: middle;" title="Set the highlighted resid. range">Resid. &pm; N&sigma;
+
+	<span style="vertical-align: middle;" title="Set the highlighted resid. range"> &pm; N&sigma;
 	  <input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" onchange="n_sigma_update(this)" />
 	</span>
 </div>
+
 
   <div id="controls-div">
 <!--
@@ -961,10 +964,11 @@ hr.style-two {
 	  <i class="fas fa-times" aria-hidden="true"></i>
 	  </button>
 	</div>
-
+<!--
 	<div style="display: block; float: right; margin-top: 1rem; color: #999;">
 	plot made using <a href="https://amCharts.com/" target="_new">amCharts</a>
 	</div>
+-->
 
   </div> <!-- controls-div -->
 
@@ -1001,8 +1005,8 @@ hr.style-two {
 	am_anim = false,  // Animation theme ?
 	valueAxis2,	// The residuals right axis object
 	range, range2,	// Used to highlight +/- N sigma residuals. (TODO)
-	vxAxis, valueAxis, errorBullet,
-	legend1, legend2,
+	vxAxis, valueAxis,  // errorBullet,
+	legend2,
 
 	p_title = document.getElementById('p_title'),
 	xyin_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
@@ -1436,9 +1440,9 @@ console.log('Create main reducer:', rname);
   series.dataFields.valueX = 'x';
   series.dataFields.valueY = rname;
 
-  series.name = 'Prediction '+ (isel+1) +' ('+ rname +')';
+  series.name = 'Prediction';
   series.strokeWidth = 2;
-//series.legendSettings.valueText = "{valueY}";
+  series.legendSettings.labelText = 'Prediction '+ (isel+1) +' ('+ rname +')[#fff]______[/]';
 
   if ( reducer.meta.color !== 'auto' ) {  // User selected color?
     series.stroke = reducer.meta.color;
@@ -1478,11 +1482,9 @@ function createDataSeries(isel) {
   sdata = chart.series.push(new am4charts.LineSeries());
   sdata.dataFields.valueX = 'x';
   sdata.dataFields.valueY = 'y';
-  sdata.name = 'Data';  // chart_data.meta.data.label;
+  sdata.name = 'data';  // chart_data.meta.data.label;
+  sdata.legendSettings.labelText = 'Data';
   sdata.strokeWidth = 2;
-//sdata.minBulletDistance = 3;  // Error visible if points are not closer than 3 pixels
-//sdata.legendSettings.valueText = '{valueY}';
-//sdata.legendSettings.valueText = '[font-size: 1rem]{valueY} \u00B1 {error}[/]';
 
 
 // User selected color?
@@ -1499,7 +1501,8 @@ function createDataSeries(isel) {
   serr.dataFields.valueX = 'x';
   serr.dataFields.openValueY = 'err_lo';
   serr.dataFields.valueY = 'err_up';
-  serr.name = 'Uncert.';
+  serr.name = 'uncert';
+  serr.legendSettings.labelText = 'Uncert.';
   serr.fillOpacity = 0.3;
   serr.fill = sdata.fill;
   serr.stroke = '#fff';  // White (invisible) top line
@@ -1583,23 +1586,33 @@ function createDataSeries(isel) {
     }
 
     legend2.data.push({name: resid.name, fill: resid.fill, visible: sdata.resid_visible});
+    legend2.tooltipText = 'Show/hide residuals';
+    legend2.tooltip.background.opacity = 0.7;
+
+    var marker = legend2.markers.template.children.getIndex(0);
+    legend2.useDefaultMarker = true;
+    marker.width = 16;
+    marker.height = 16;
+    marker.strokeWidth = 2;
+    marker.strokeOpacity = 1;
+    marker.stroke = am4core.color("#ccc");
 
 
 // Highlight when cursor on legend item
-  legend2.itemContainers.template.events.on("over", function(ev) {
-	resid.strokeWidth = 5;
-  });
+    legend2.itemContainers.template.events.on("over", function(ev) {
+	resid.strokeWidth = 4;
+    });
 
-  legend2.itemContainers.template.events.on("out", function(ev) {
+    legend2.itemContainers.template.events.on("out", function(ev) {
 	resid.strokeWidth = 2;
-  });
+    });
 
 
 // Toggle residuals visibility in legend2
-  legend2.itemContainers.template.events.on("hit", function(ev) {
+    legend2.itemContainers.template.events.on("hit", function(ev) {
 //console.log("Clicked on ", ev.target.dataItem.className);
-    var field = ev.target.dataItem.dataContext,
-	name = field.name;
+	var field = ev.target.dataItem.dataContext,
+		name = field.name;
 console.log('Clicked:', name);
 console.log('is visible:', field.legendDataItem.visible);
     if ( sdata.resid_visible ) {
@@ -1636,7 +1649,7 @@ console.log('zoom to:', x_range.lin.min, x_range.lin.max);
 		    vxAxis.zoomToValues(x_range.lin.min, x_range.lin.max);
 		}
 	}, 100);
-  });
+    });
 
 
   }  // end sdata.residuals
@@ -1792,8 +1805,8 @@ am4core.ready(function() {
 
   chart = am4core.create('chartdiv', am4charts.XYChart);
 
-// Disable logo
-  chart.logo.disabled = true;
+// Disable logo ?
+//chart.logo.disabled = true;
 
   if ( chart_data !== undefined ) {
     if (interface_type == 'fileio' )
@@ -1974,6 +1987,7 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
   marker.adapter.add("cornerRadiusBottomRight", radiusAdapter);
 
   chart.legend.itemContainers.template.adapter.add("tooltipText",  ttAdapter);
+  chart.legend.tooltip.background.opacity = 0.7;
 
   marker.width = 16;
   marker.height = 16;
@@ -1986,14 +2000,14 @@ function radiusAdapter(radius, target) {
     return radius;
   }
 
-  if ( target.dataItem.name == 'Uncert.' )
+  if ( target.dataItem.name == 'uncert' )
 	return 3;
   else
 	return radius;
 }
 
 function ttAdapter(tooltip, target) {
-  if ( target.dataItem.name == 'Uncert.' )
+  if ( target.dataItem.name == 'uncert' )
 	return 'Show/hide data uncertainties shade area';
   else
 	return '';
@@ -2204,8 +2218,8 @@ console.log('Y range set to:', ymin, ymax);
 
 
 //
-// -- Toggle Y data error plot
-
+// -- Toggle Y data error plot (unused)
+/*
 function y_err_toggle() {
   y_errplot = document.getElementById('y_err-cb').checked;
 
@@ -2215,7 +2229,7 @@ function y_err_toggle() {
 	errorBullet.hide();
 
 }
-
+*/
 
 //
 // -- Toggle linear / logarithmic X / Y scale
