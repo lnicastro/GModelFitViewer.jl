@@ -37,7 +37,7 @@ function add_default_meta!(model::Model)
     end
 end
 
-function add_default_meta!(data::GFit.Measures_1D)
+function add_default_meta!(data::GFit.Measures{1})
     haskey(data.meta, :label)            ||  (data.meta[:label] = "Empirical data")
     haskey(data.meta, :use_in_plot)      ||  (data.meta[:use_in_plot] = true)
     haskey(data.meta, :default_visible)  ||  (data.meta[:default_visible] = true)
@@ -46,7 +46,7 @@ end
 
 
 function todict(model::Model,
-                data::Union{Nothing, Vector{GFit.Measures_1D}}=nothing,
+                data::Union{Nothing, Vector{GFit.Measures{1}}}=nothing,
                 bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
                 rebin::Int=1, addcomps::Bool=false, selcomps=Vector{Symbol}())
 
@@ -98,15 +98,15 @@ function save_json(dict::OrderedDict, filename::AbstractString)
     return filename
 end
 
-viewer(model::Model, data::GFit.Measures_1D; kw...) = viewer(model, [data]; kw...)
-viewer(model::Model, data::GFit.Measures_1D, bestfit::GFit.BestFitResult; kw...) = viewer(model, [data], bestfit; kw...)
+viewer(model::Model, data::GFit.Measures{1}; kw...) = viewer(model, [data]; kw...)
+viewer(model::Model, data::GFit.Measures{1}, bestfit::GFit.BestFitResult; kw...) = viewer(model, [data], bestfit; kw...)
 
 function viewer(args...; filename=nothing, kw...)
     dict = todict(args...; kw...)
     path = tempdir()
 
     if filename == nothing
-        fname = "$(path)/gfitviewer.json"
+        fname = "$(path)/gfitviewer.html"
     else
         fname = filename
     end
