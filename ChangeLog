@@ -79,3 +79,9 @@
 
 2020-12-24 LN, ver. 0.1
 	- Style changes
+
+2021-01-02 LN, ver. 0.1
+	- Changed components visibility management
+	- Changed lin/log toggle management
+	- Cursor position values tracking and display
+	- Style changes
