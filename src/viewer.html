@@ -2128,7 +2128,6 @@ console.log( 'visible', field.visible );
   chart.events.on('datavalidated', function(e) {
 	createFitLogTabs();  // The fit log tables
 
-
 	var scrollAxis = chart.scrollbarX.scrollbarChart.xAxes.getIndex(0);
 	scrollAxis.renderer.labels.template.disabled = true;
 	scrollAxis.renderer.grid.template.disabled = true;
@@ -2236,7 +2235,7 @@ console.log('Y range set to:', y_min, y_max);
 // Needed at start
   setTimeout(function() {
 	y_linlog_toggle();
-  }, 100);
+  }, 300);
 }
 
 
