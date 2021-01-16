@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2021-01-02" />
+  <meta name="date" content="2021-01-16" />
 
 <!-- @Remote
 -->
@@ -1565,7 +1565,7 @@ function createDataSeries(isel) {
     if ( sdata.resid_visible ) {
 	range.grid.strokeOpacity = 0.5;
 	range2.axisFill.fillOpacity = 0.1;
-	valueAxis.renderer.grid.template.strokeOpacity = 0;
+	//valueAxis.renderer.grid.template.strokeOpacity = 0;
 	valueAxis2.renderer.ticks.template.strokeOpacity = 1;
     } else {
 	valueAxis2.visible = false;
@@ -2113,6 +2113,7 @@ console.log( 'visible', field.visible );
 // The export menu
   chart.exporting.menu = new am4core.ExportMenu();
 
+  chart.exporting.timeoutDelay = 5;  // Wait 5 s before warning
 
 // The series
   createDataSeries();
@@ -2142,6 +2143,11 @@ console.log( 'visible', field.visible );
 	set_x_range();
 	set_y_range();
 	xy_rangein_reset();  // Clear manual range input fields
+
+// Timeout needed at start
+	setTimeout(function() {
+		valueAxis2.zoomToValues(-n_sigma - 1, n_sigma + 1);
+	}, 300);
   });
 
 });  // end am4core.ready()
@@ -2154,9 +2160,14 @@ function n_sigma_update(e) {
   if ( ! resid.visible )
 	return;
 
-  n_sigma = e.value;
+  n_sigma = +e.value;
   range2.value = -n_sigma;
   range2.endValue = n_sigma;
+
+// Also zoom the axis range
+  setTimeout(function() {
+	valueAxis2.zoomToValues(-n_sigma - 1, n_sigma + 1);
+  }, 300);
 }
 
 
@@ -2376,6 +2387,8 @@ function xy_range_reset() {
 console.log('reset X, Y range:', vxAxis.min, vxAxis.max, valueAxis.min, valueAxis.max);
   vxAxis.zoomToValues(vxAxis.min, vxAxis.max);
   valueAxis.zoomToValues(valueAxis.min, valueAxis.max);
+
+  curXY.text = '';
 }
 
 

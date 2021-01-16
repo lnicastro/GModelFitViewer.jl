@@ -85,3 +85,6 @@
 	- Changed lin/log toggle management
 	- Cursor position values tracking and display
 	- Style changes
+
+2021-01-16 LN, ver. 0.1
+	- Changed the residuals Y axis management
