@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2021-01-16" />
+  <meta name="date" content="2021-01-20" />
 
 <!-- @Remote
 -->
@@ -927,7 +927,7 @@ hr.style-two {
   <div id="res_legenddiv"></div>
 
 	<span style="vertical-align: middle;" title="Set the highlighted resid. range"> &pm; N&sigma;
-	  <input type="number" style="width: 2rem;" min="1" max="10" step="1" name="n_sigma" id="n_sigma" value="3" onchange="n_sigma_update(this)" />
+	  <input type="number" style="width: 2.5rem;" min="1.0" max="16.0" step="0.1" name="n_sigma" id="n_sigma" value="3.0" onchange="n_sigma_update(this)" />
 	</span>
 </div>
 
@@ -938,8 +938,8 @@ hr.style-two {
 	  <input type="checkbox" id="y_err-cb" onclick="y_err_toggle()" /><label for="y_err-cb">Y err</label>
 	</span>
 -->
-	<span class="box-cb" title="Track and display cursor position">
-	  <input type="checkbox" id="cursor-cb" onclick="cursor_toggle()" /><label for="cursor-cb">Cursor pos</label>
+	<span class="box-cb" title="Track and display cursor position coordinates">
+	  <input type="checkbox" id="cursor-cb" onclick="cursor_toggle()" /><label for="cursor-cb">Track cursor</label>
 	</span>
 	<span class="box-cb" title="Toggle X lin/log scale">
 	  <input type="checkbox" id="x_log-cb" onclick="x_linlog_toggle()" /><label for="x_log-cb">X log</label>
@@ -1506,7 +1506,7 @@ function createDataSeries(isel) {
   serr.legendSettings.labelText = 'Uncert.';
   serr.fillOpacity = 0.3;
   serr.fill = sdata.fill;
-  serr.stroke = '#fff';  // White (invisible) top line
+  serr.stroke = am4core.color("#ffffff00");;  // White (transparent) top line
   serr.visible = false;  // Hidden by default
 
 
@@ -1589,7 +1589,8 @@ function createDataSeries(isel) {
     legend2.data.push({name: resid.name, fill: resid.fill, visible: sdata.resid_visible});
     legend2.tooltipText = 'Show/hide residuals';
     legend2.tooltip.background.opacity = 0.7;
-    legend2.tooltip.pointerOrientation='right';
+    legend2.tooltip.pointerOrientation = 'right';
+    legend2.tooltip.dx = -56;
 
     var marker = legend2.markers.template.children.getIndex(0);
     legend2.useDefaultMarker = true;
@@ -1908,18 +1909,18 @@ am4core.ready(function() {
 	cursorPosition.y = yAxis.positionToValue(yAxis.toAxisPosition(ev.target.yPosition));
 
 	if ( cur_track )
-		curXY.text = cursorPosition.x +', '+ cursorPosition.y;
+		curXY.text = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
   });
 
   chart.plotContainer.events.on("hit", function(ev) {
   console.log(cursorPosition);
-	curXY.text = cursorPosition.x +', '+ cursorPosition.y;
+	curXY.text = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
   });
 
 // Create container to hold cursor X, Y values
   cur_container = chart.plotContainer.createChild(am4core.Container);
   //cur_container.width = am4core.percent(50);
-  cur_container.width = 340;
+  cur_container.width = 240;
   cur_container.height = 36;
   cur_container.x = am4core.percent(50);
   cur_container.align = 'center';
@@ -1932,6 +1933,7 @@ am4core.ready(function() {
   curXY.id = 'cursor';
   curXY.text = '';
   curXY.minWidth = 50;
+  curXY.align = 'center';
   curXY.marginRight = 6;
   curXY.fontWeight = 'bolder';
   curXY.fill = am4core.color('#396478');
@@ -2030,6 +2032,7 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 
   chart.legend.itemContainers.template.adapter.add("tooltipText",  ttAdapter);
   chart.legend.tooltip.background.opacity = 0.7;
+  chart.legend.tooltip.dy = -20;
 
   marker.width = 16;
   marker.height = 16;
