@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2021-01-20" />
+  <meta name="date" content="2021-01-21" />
 
 <!-- @Remote
 -->
@@ -955,7 +955,7 @@ hr.style-two {
 	  <span class="label-range-in" style="margin-left: 1em;">Y range</span><input name="ymin" type="text" class="range-in" value="" onchange="xy_range_set()" />
 	  <input name="ymax" type="text" class="range-in" value="" onchange="xy_range_set()" />
 
-	  <button class="transp_button" style="color: var(--success);" title="Replot with these ranges (2nd click to force Y range)" onclick="xy_range_set()">
+	  <button class="transp_button" style="color: var(--success);" title="Replot with these ranges" onclick="xy_range_set()">
           <i class="far fa-check-circle" aria-hidden="true"></i>
 	  </button>
 <!--
@@ -1312,10 +1312,17 @@ var getauxinfo = function() {  // TODO
     y_lab = chart_data.predictions[i].meta.label_y;
     if ( y_lab !== '' ) {
 	y_lab += ' ('; 
-	var un = chart_data.predictions[i].meta.scale_y.toString().replace(/\+/,'');
-	if ( un !== '1' )
-		//y_lab += un +'X ';
-		y_lab += un +' ';
+	var scale = chart_data.predictions[i].meta.scale_y.toString().replace(/\+/,'');
+	if ( scale !== '1' ) {
+/* This is TODO
+		var ep = scale.indexOf('e');
+		if ( ep > 0 && ep < scale.length - 1 ) {
+			var ee = scale.split('e');
+			scale = ee[0] + '[vertical-align: super; font-size: 70%;]' + ee[1] +'[/]';
+		}
+*/
+		y_lab += scale +' ';
+	}
 	y_lab += chart_data.predictions[i].meta.unit_y +')';
     } else
 	y_lab = 'Y label';
@@ -2138,6 +2145,7 @@ console.log( 'visible', field.visible );
 
 //document.getElementById('y_err-cb').checked = false;
 //document.getElementById('y_err_shade-cb').checked = false;
+	document.getElementById('cursor-cb').checked = false;
 	document.getElementById('x_log-cb').checked = false;
 	document.getElementById('y_log-cb').checked = false;
 //errorBullet.hide();
@@ -2168,9 +2176,7 @@ function n_sigma_update(e) {
   range2.endValue = n_sigma;
 
 // Also zoom the axis range
-  setTimeout(function() {
-	valueAxis2.zoomToValues(-n_sigma - 1, n_sigma + 1);
-  }, 300);
+  valueAxis2.zoomToValues(-n_sigma - 1, n_sigma + 1);
 }
 
 
@@ -2247,6 +2253,8 @@ console.log('Y range set to:', y_min, y_max);
   y_range.log.max = y_max;
 
 // Needed at start
+  valueAxis.min = y_range.lin.min;
+  valueAxis.max = y_range.lin.max;
   setTimeout(function() {
 	y_linlog_toggle();
   }, 300);
@@ -2309,22 +2317,27 @@ function x_linlog_toggle() {
 
 function y_linlog_toggle() {
   y_logscale = document.getElementById('y_log-cb').checked;
+  var c_ymax;
 
   if ( y_logscale ) {  // From lin to log
 	valueAxis.min = y_range.log.min;
-	valueAxis.max = y_range.log.max;
 	valueAxis.logarithmic = true;
 	//valueAxis.strictMinMax = true;
-	if ( y_range.log.max == y_range.lin.max )
-	  y_range.log.max *= 1.001;
+	c_ymax = y_range.log.max;
+	if ( c_ymax == valueAxis.maxZoomed )
+	  c_ymax *= 1.001;
+	valueAxis.max = c_ymax;
 	setTimeout(function() {
-	  valueAxis.zoomToValues(y_range.log.min, y_range.log.max);
-	}, 100);
+	  valueAxis.zoomToValues(y_range.log.min, c_ymax);
+	}, 200);
   } else {  // From log to lin
+	valueAxis.min = y_range.lin.min;
 	valueAxis.logarithmic = false;
-	if ( y_range.log.max == y_range.lin.max )
-	  y_range.lin.max *= 1.001;
-	valueAxis.zoomToValues(y_range.lin.min, y_range.lin.max);
+	c_ymax = y_range.lin.max;
+	if ( c_ymax == valueAxis.maxZoomed )
+	  c_ymax *= 1.001;
+	valueAxis.max = c_ymax;
+	valueAxis.zoomToValues(y_range.lin.min, c_ymax);
   }
 }
 
