@@ -1630,14 +1630,20 @@ function createDataSeries(isel) {
 //valueAxis2.cursorTooltipEnabled = false;
 	resid.hide();
     } else {
-	n_sigma = document.getElementById('n_sigma').value;
+	n_sigma = +document.getElementById('n_sigma').value;
 	range2.value = -n_sigma;
 	range2.endValue = n_sigma;
 	range.grid.strokeOpacity = 0.5;
 	range2.axisFill.fillOpacity = 0.1;
 	valueAxis2.renderer.ticks.template.strokeOpacity = 1;
 	valueAxis2.visible = true;
+
+	valueAxis2.min = -n_sigma - 1;
+	valueAxis2.max = n_sigma + 1;
+	setTimeout(function() {
+		valueAxis2.zoomToValues(-n_sigma - 1, n_sigma + 1);
 //valueAxis2.cursorTooltipEnabled = true;
+	}, 200);
 	resid.show();
     }
     sdata.resid_visible = ! sdata.resid_visible;
@@ -2154,18 +2160,13 @@ console.log( 'visible', field.visible );
 	set_x_range();
 	set_y_range();
 	xy_rangein_reset();  // Clear manual range input fields
-
-// Timeout needed at start
-	setTimeout(function() {
-		valueAxis2.zoomToValues(-n_sigma - 1, n_sigma + 1);
-	}, 300);
   });
 
 });  // end am4core.ready()
 
 
 //
-// -- Update residuals Nsigma shaded range
+// -- Update residuals Nsigma shaded range and axis zoom
 
 function n_sigma_update(e) {
   if ( ! resid.visible )
