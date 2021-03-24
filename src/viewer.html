@@ -1270,7 +1270,7 @@ const f_loadedOk = (e) => {
 
 var getauxinfo = function() {  // TODO
 
-  c_ipre = 0;  // Reset the predition(s) index
+  c_ipre = 0;  // Reset the prediction(s) index
 
 // Multiple predictions for the same "object" are allowed (TODO)
   aux.n_p = chart_data.predictions.length;
@@ -1451,7 +1451,7 @@ console.log('Create "folded_model" model');
 
   series.name = 'Prediction';
   series.strokeWidth = 2;
-  series.legendSettings.labelText = 'Prediction '+ (isel+1) +' (Main model)[#fff]______[/]';
+  series.legendSettings.labelText = 'Prediction [#fff]______[/]';
 
   if ( chart_data.predictions[isel].meta.color !== 'auto' ) {  // User selected color?
     series.stroke = chart_data.predictions[isel].meta.color;
