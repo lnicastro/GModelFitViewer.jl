@@ -33,6 +33,7 @@ function add_default_meta!(model::Model)
             haskey(rmeta, :label)            ||  (rmeta[:label] = string(rname))
             haskey(rmeta, :color)            ||  (rmeta[:color] = "auto")
             haskey(rmeta, :default_visible)  ||  (rmeta[:default_visible] = true)
+            rmeta[:default_visible] = (rname != model[id].rsel)
             rmeta[:use_in_plot] = true
         end
     end
