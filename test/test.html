@@ -817,6 +817,8 @@ hr.style-two {
   <script src="./local/amcharts_animated.js"></script>
   <link href="./local/fontawesome/css/fontawesome.css" rel="stylesheet">
   <link href="./local/fontawesome/css/solid.css" rel="stylesheet">
+
+  <link href="./local/gfitviewer.css" type="text/css" rel="stylesheet" />
 -->
 </head>
 
@@ -983,12 +985,19 @@ hr.style-two {
   <div id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</div>
 </div>
 
+
   <script>
-    //var chart_data = JSON_DATA;
-    var chart_data;
+function foo() {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', "file://test.json");
+    httpRequest.send();
+    return httpRequest.responseText;
+}
+
+    var chart_data = foo();
+   // var chart_data = JSON_DATA;
   </script>
 
-<script src="test_data.js"></script>
 
 <script type="text/javascript">
 
@@ -1226,6 +1235,7 @@ const f_changeStatus = (status) => {
 // Manage local file upload
 
 const processFile = (file) => {
+console.log('File:', file);
 	const fr = new FileReader();
 	fr.readAsText(file);
 	fr.onprogress = f_setProgress;
@@ -2914,6 +2924,20 @@ function createFitLogTabs() {
     divShowData.appendChild(tabdiv);  // Add the fit_res table to the container
   }
 }
+
+//var testfile = 
+ //{ name: "test2.json",
+ //lastModified: 1615482884776,
+ //webkitRelativePath: "",
+ //size: 879187,
+ //type: "application/json"
+ //};
+
+    //processFile(testfile);
+	document.getElementById('selfile').files[0];
+	if ( file )
+	  processFile(file);
+
 </script>
 
 </div>
