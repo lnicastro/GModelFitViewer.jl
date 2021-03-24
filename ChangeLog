@@ -95,3 +95,7 @@
 2021-03-11 LN, ver. 0.1
 	- Package cleaning
 	- Updated example and data in test dir.
+
+2021-03-24 LN, ver. 0.1
+	- Added folded model as reference main model instead of the main reducer
+	- Updated example and data in test dir.

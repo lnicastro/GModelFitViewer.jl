@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.1" />
-  <meta name="date" content="2021-01-21" />
+  <meta name="date" content="2021-03-24" />
 
 <!-- @Remote
 -->
@@ -1336,13 +1336,15 @@ var getauxinfo = function() {  // TODO
 	y_label: y_lab,
 	x_min: chart_data.predictions[i].x[0],
 	x_max: chart_data.predictions[i].x[n_x - 1],
+	y_min: Math.min(...(chart_data.predictions[i].folded_model)),
+	y_max: Math.max(...(chart_data.predictions[i].folded_model)),
 	x_step: x_step,
 	nf_sig: nfSignificant(x_step),
 	components: cnames,
 	n_comps: cnames.length,
 	reducers: rnames,
 	n_reds: rnames.length,
-	main_reducer: chart_data.predictions[i].main_reducer  // TODO
+	main_reducer: chart_data.predictions[i].main_reducer  // TODO - will be removed
     });
 
 // Equidistance check (TODO)
@@ -1410,6 +1412,8 @@ console.log('isel:', isel);
 	  vals['err_up'] = chart_data.data[isel].y[i] + chart_data.data[isel].err[i];
 	}
 
+	vals['folded_model'] = p.folded_model[i];  // Folded model
+
 	for (var j = 0; j < aux.preinfo[isel].n_reds; j++) {  // Reducers
           if ( !p.reducers[rnames[j]].meta.use_in_plot )
 		continue;
@@ -1433,6 +1437,7 @@ console.log('isel:', isel);
 
 //
 // -- Create series for the the main reducer of a prediction.
+//    2021/03/24: Changed to folded_model
 //    If xsc_series=true, use it also for the X window scrolling. 
 
 function createMainReducer(isel, xsc_series) {
@@ -1440,29 +1445,25 @@ function createMainReducer(isel, xsc_series) {
     isel = c_ipre;
 
   var hs;
-  var rname = aux.preinfo[isel].main_reducer;
-  var reducer = chart_data.predictions[isel].reducers[rname];
 
-console.log('Create main reducer:', rname);
-    
+console.log('Create "folded_model" model');
+
   var series = chart.series.push(new am4charts.LineSeries());
   series.dataFields.valueX = 'x';
-  series.dataFields.valueY = rname;
+  series.dataFields.valueY = 'folded_model';
 
   series.name = 'Prediction';
   series.strokeWidth = 2;
-  series.legendSettings.labelText = 'Prediction '+ (isel+1) +' ('+ rname +')[#fff]______[/]';
+  series.legendSettings.labelText = 'Prediction '+ (isel+1) +' (Main model)[#fff]______[/]';
 
-  if ( reducer.meta.color !== 'auto' ) {  // User selected color?
-    series.stroke = reducer.meta.color;
-    series.fill = reducer.meta.color;
+  if ( chart_data.predictions[isel].meta.color !== 'auto' ) {  // User selected color?
+    series.stroke = chart_data.predictions[isel].meta.color;
+    series.fill = chart_data.predictions[isel].meta.color;
   } else {
     series.stroke = mcolor.hex;
     series.fill = mcolor.hex;
   }
 
-  if ( !reducer.meta.default_visible )  // Reducer to hide?
-    series.visible = false;
 
 // Highlight when cursor on legend item
   hs = series.segments.template.states.create("hover");
@@ -1725,8 +1726,8 @@ console.log('  color:', mycolors[icol % n_myc].name, mycolors[icol % n_myc].hex)
   for (var i = 0; i < aux.preinfo[isel].n_reds; i++) {  // Reducers in a prediction
     var rname = aux.preinfo[isel].reducers[i];
 
-    if ( rname.indexOf(aux.preinfo[isel].main_reducer) == 0 )  // This is the main reducers: skip
-	continue;
+    //if ( rname.indexOf(aux.preinfo[isel].main_reducer) == 0 )  // This is the main reducers: skip - no more
+	//continue;
 
     if ( !p.reducers[rname].meta.use_in_plot )
 	continue;
@@ -2228,8 +2229,10 @@ function set_x_range(from_rangein) {
 
 function set_y_range() {
 // Main reducer
-  var y_min = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
-  var y_max = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].max;
+  //var y_min = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].min;
+  //var y_max = chart_data.predictions[c_ipre].reducers[aux.preinfo[c_ipre].main_reducer].max;
+  var y_min = aux.preinfo[c_ipre].y_min;
+  var y_max = aux.preinfo[c_ipre].y_max;
 
 // Then data, if exist
   if ( aux.n_d > 0 && chart_data.data[c_ipre] !== undefined ) {
@@ -2241,8 +2244,8 @@ function set_y_range() {
   for (var i = 0; i < aux.preinfo[c_ipre].n_reds; i++) {  // Reducers in a prediction
     var rname = aux.preinfo[c_ipre].reducers[i];
 
-    if ( rname.indexOf(aux.preinfo[c_ipre].main_reducer) == 0 )  // This is the main reducers: skip
-	continue;
+    //if ( rname.indexOf(aux.preinfo[c_ipre].main_reducer) == 0 )  // This is the main reducers: skip - no more
+	//continue;
 
     y_min = Math.min(y_min, chart_data.predictions[c_ipre].reducers[rname].min);
     y_max = Math.max(y_max, chart_data.predictions[c_ipre].reducers[rname].max);
