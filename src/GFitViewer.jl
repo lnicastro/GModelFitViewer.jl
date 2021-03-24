@@ -9,6 +9,7 @@ function add_default_meta!(model::Model)
         meta = model.meta[id]
         haskey(meta, :rebin)   ||  (meta[:rebin] = GFit.todict_opt[:rebin])
         haskey(meta, :label)   ||  (meta[:label] = "Prediction $id")
+        haskey(meta, :color  ) ||  (meta[:color] = "auto")
         haskey(meta, :label_x) ||  (meta[:label_x] = "")
         haskey(meta, :scale_x) ||  (meta[:scale_x] =  1)
         haskey(meta, :unit_x ) ||  (meta[:unit_x]  = "")
