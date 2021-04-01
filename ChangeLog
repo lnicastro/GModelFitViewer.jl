@@ -99,3 +99,7 @@
 2021-03-24 LN, ver. 0.1
 	- Added folded model as reference main model instead of the main reducer
 	- Updated example and data in test dir.
+
+2021-04-01 LN, ver. 0.1
+	- Page creation order changed to allow amCharts to get the exact plot area
+	- Code cleaning
