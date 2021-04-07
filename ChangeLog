@@ -112,3 +112,8 @@
 2021-04-07 LN, ver. 0.1
 	- local dir removed
 	- removed mksaviewer.sh script
+
+2021-04-07 LN, ver. 0.2
+	- version 0.2: removed external js and css dependences for offline html creation
+	- embedded base64 favicon and svg of used symbols
+	- removed FontAwesome dependence
