@@ -103,3 +103,8 @@
 2021-04-01 LN, ver. 0.1
 	- Page creation order changed to allow amCharts to get the exact plot area
 	- Code cleaning
+
+2021-04-07 LN, ver. 0.1
+	- Local version of amCharts updated
+	- First changes to allow the creation of a standolone html version
+	- Added the script mksaviewer.sh in src
