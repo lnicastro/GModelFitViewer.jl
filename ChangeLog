@@ -108,3 +108,7 @@
 	- Local version of amCharts updated
 	- First changes to allow the creation of a standolone html version
 	- Added the script mksaviewer.sh in src
+
+2021-04-07 LN, ver. 0.1
+	- local dir removed
+	- removed mksaviewer.sh script
