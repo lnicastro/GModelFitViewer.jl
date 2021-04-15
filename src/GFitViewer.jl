@@ -84,11 +84,10 @@ end
 function save_html(dict::OrderedDict, filename::AbstractString; offline=false)
     io = open(filename, "w")
     if offline
-        template = joinpath(artifact"GFitViewer_artifact_data", "vieweroffline.html")
+        template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
     else
-        template = joinpath(artifact"GFitViewer_artifact_data", "vieweronline.html")
+        template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
     end
-    @info template
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
     JSON.print(io, dict)
