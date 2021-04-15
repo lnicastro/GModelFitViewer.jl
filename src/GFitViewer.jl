@@ -84,9 +84,9 @@ end
 function save_html(dict::OrderedDict, filename::AbstractString; offline=false)
     io = open(filename, "w")
     if offline
-        template = joinpath(artifact"GFitViewer_offline_data", "viewer_offline.html")
+        template = joinpath(artifact"GFitViewer_artifact_data", "vieweroffline.html")
     else
-        template = joinpath(dirname(@__DIR__), "src/viewer.html")
+        template = joinpath(artifact"GFitViewer_artifact_data", "vieweronline.html")
     end
     @info template
     input = open(template)
