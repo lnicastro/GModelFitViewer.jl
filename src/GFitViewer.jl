@@ -1,6 +1,7 @@
 module GFitViewer
 
 using DataStructures, JSON, DefaultApplication, GFit
+using Pkg, Pkg.Artifacts
 
 export viewer
 
@@ -80,9 +81,13 @@ function tostring(dict::OrderedDict)
     return String(take!(io))
 end
 
-function save_html(dict::OrderedDict, filename::AbstractString)
+function save_html(dict::OrderedDict, filename::AbstractString; offline=false)
     io = open(filename, "w")
-    template = dirname(@__DIR__) * "/src/viewer.html"
+    if offline
+        template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
+    else
+        template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
+    end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
     JSON.print(io, dict)
@@ -103,7 +108,7 @@ end
 viewer(model::Model, data::GFit.Measures{1}; kw...) = viewer(model, [data]; kw...)
 viewer(model::Model, data::GFit.Measures{1}, bestfit::GFit.BestFitResult; kw...) = viewer(model, [data], bestfit; kw...)
 
-function viewer(args...; filename=nothing, kw...)
+function viewer(args...; filename=nothing, offline=false, kw...)
     dict = todict(args...; kw...)
     path = tempdir()
 
@@ -113,7 +118,7 @@ function viewer(args...; filename=nothing, kw...)
         fname = filename
     end
     save_json(dict, fname * ".json")
-    save_html(dict, fname)
+    save_html(dict, fname; offline=offline)
     DefaultApplication.open(fname)
 end
 
