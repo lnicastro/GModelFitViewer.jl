@@ -5,7 +5,6 @@ using Pkg, Pkg.Artifacts
 
 export ViewerData, viewer
 
-
 include("todict.jl")
 
 struct ViewerData
@@ -13,25 +12,52 @@ struct ViewerData
     gfit::OrderedDict
     extra::Vector{OrderedDict}
 
-    function ViewerData(args...; kw...)
-        params = OrderedDict()
-        gfit = todict(args...; kw...)
+    function ViewerData(model::Model,
+                        data::Union{Nothing, T, Vector{T}}=nothing,
+                        bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
+                        rebin::Int=1,
+                        showcomps::Union{Bool, Vector{Symbol}}=false) where T <: GFit.AbstractData
 
+        todict_opt[:rebin] = rebin
+        todict_opt[:showallcomps] = (isa(showcomps, Bool)  &&  showcomps)
+        todict_opt[:showcomps] = Vector{Symbol}()
+        if !isa(showcomps, Bool)
+            todict_opt[:showcomps] = showcomps
+        end
+
+        out = MDict()
+
+        out[:predictions] = Vector{MDict}()
+        for id in 1:length(model.preds)
+            push!(out[:predictions], todict(id, model.preds[id]))
+        end
+
+        if !isnothing(data)
+            out[:data] = Vector{MDict}()
+            if isa(data, Vector)
+                @assert length(model.preds) == length(data)
+                for id in 1:length(data)
+                    push!(out[:data], todict(model.preds[id], data[id]))
+                end
+            else
+                @assert length(model.preds) == 1
+                push!(out[:data], todict(model.preds[id], data))
+            end
+        end
+
+        if !isnothing(bestfit)
+            out[:bestfit] = todict(bestfit)
+        end
+
+        params = OrderedDict()
         extra = Vector{MDict}()
-        for id in 1:length(gfit[:predictions])
+        for id in 1:length(model.preds)
             push!(extra, MDict())
         end
-        return new(params, gfit, extra)
+        return new(params, out, extra)
     end
 end
 
-#=
-function tostring(dict::OrderedDict)
-    io = IOBuffer()
-    JSON.print(io, dict)
-    return String(take!(io))
-end
-=#
 
 function save_html(vd::ViewerData, filename::AbstractString; offline=false)
     io = open(filename, "w")
@@ -54,12 +80,21 @@ function save_html(vd::ViewerData, filename::AbstractString; offline=false)
     return filename
 end
 
+
 function save_json(vd::ViewerData, filename::AbstractString)
     io = open(filename, "w")
     JSON.print(io, vd.gfit)
     close(io)
     return filename
 end
+
+
+function tostring(vd::ViewerData)
+    io = IOBuffer()
+    JSON.print(io, vd.gfit)
+    return String(take!(io))
+end
+
 
 function viewer(vd::ViewerData; filename=nothing, offline=false)
     path = tempdir()

@@ -27,7 +27,6 @@ function rebin_data(rebin::Int, v, e)
     return (val, unc)
 end
 
-
 function todict(param::GFit.Parameter)
     out = MDict()
     out[:fixed] = param.fixed
@@ -40,7 +39,6 @@ function todict(param::GFit.Parameter)
     out[:meta][:note] = ""
     return out
 end
-
 
 function todict(name::Symbol, comp::GFit.AbstractComponent)
     out = MDict()
@@ -68,7 +66,6 @@ function todict(name::Symbol, comp::GFit.AbstractComponent)
     return out
 end
 
-
 function todict(name::Symbol, ceval::GFit.CompEval)
     y = ceval.buffer
     i = findall(isfinite.(y))
@@ -86,7 +83,6 @@ function todict(name::Symbol, ceval::GFit.CompEval)
     end
     return out
 end
-
 
 function todict(name::Symbol, reval::GFit.ReducerEval)
     y = reval.buffer
@@ -108,7 +104,6 @@ function todict(name::Symbol, reval::GFit.ReducerEval)
 
     return out
 end
-
 
 function todict(id, pred::GFit.Prediction)
     out = MDict()
@@ -142,7 +137,6 @@ function todict(id, pred::GFit.Prediction)
     return out
 end
 
-
 function todict(pred::GFit.Prediction, data::GFit.Measures{1})
     out = MDict()
     p = rebin_data(todict_opt[:rebin], GFit.geteval(pred))
@@ -160,7 +154,6 @@ function todict(pred::GFit.Prediction, data::GFit.Measures{1})
 
     return out
 end
-
 
 function todict(param::GFit.BestFitPar)
     out = MDict()
@@ -200,56 +193,5 @@ function todict(res::GFit.BestFitResult)
     out[:status] = res.status
     out[:log10testprob] = res.log10testprob
     out[:elapsed] = res.elapsed
-    return out
-end
-
-#=
-function recursive_copy!(from::MDict, to::MDict)
-    for (key, value) in from
-        if haskey(to, key)
-            @assert isa(value,   MDict)
-            @assert isa(to[key], MDict)
-            recursive_copy!(value, to[key])
-        else
-            haskey(to, :meta)  ||  (to[:meta] = MDict())
-            to[:meta][key] = value
-        end
-    end
-end
-=#
-
-todict(model::Model, data::T; kw...) where T <: GFit.AbstractData = todict(model, [data]; kw...)
-todict(model::Model, data::T, bestfit::GFit.BestFitResult; kw...) where T <: GFit.AbstractData = todict(model, [data], bestfit; kw...)
-function todict(model::Model,
-                data::Union{Nothing, Vector{T}}=nothing,
-                bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
-                rebin::Int=1, showcomps::Union{Bool, Vector{Symbol}}=false) where T <: GFit.AbstractData
-
-    todict_opt[:rebin] = rebin
-    todict_opt[:showallcomps] = (isa(showcomps, Bool)  &&  showcomps)
-    todict_opt[:showcomps] = Vector{Symbol}()
-    if !isa(showcomps, Bool)
-        todict_opt[:showcomps] = showcomps
-    end
-
-    out = MDict()
-
-    out[:predictions] = Vector{MDict}()
-    for id in 1:length(model.preds)
-        push!(out[:predictions], todict(id, model.preds[id]))
-    end
-
-    if !isnothing(data)
-        out[:data] = Vector{MDict}()
-        @assert length(model.preds) == length(data)
-        for id in 1:length(data)
-            push!(out[:data], todict(model.preds[id], data[id]))
-        end
-    end
-
-    if !isnothing(bestfit)
-        out[:bestfit] = todict(bestfit)
-    end
-
     return out
 end
