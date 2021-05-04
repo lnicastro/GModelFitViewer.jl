@@ -1,87 +1,39 @@
 module GFitViewer
 
-using DataStructures, JSON, DefaultApplication, GFit
+using DataStructures, JSON, DefaultApplication, GFit, Statistics
 using Pkg, Pkg.Artifacts
 
-export viewer
+export ViewerData, viewer
 
-function add_default_meta!(model::Model)
-    for id in 1:length(model.preds)
-        meta = model.meta[id]
-        haskey(meta, :rebin)   ||  (meta[:rebin] = GFit.todict_opt[:rebin])
-        haskey(meta, :label)   ||  (meta[:label] = "Prediction $id")
-        haskey(meta, :color  ) ||  (meta[:color] = "auto")
-        haskey(meta, :label_x) ||  (meta[:label_x] = "")
-        haskey(meta, :scale_x) ||  (meta[:scale_x] =  1)
-        haskey(meta, :unit_x ) ||  (meta[:unit_x]  = "")
-        haskey(meta, :label_y) ||  (meta[:label_y] = "")
-        haskey(meta, :scale_y) ||  (meta[:scale_y] =  1)
-        haskey(meta, :unit_y ) ||  (meta[:unit_y]  = "")
 
-        for (cname, cmeta) in model.meta[id][:components]
-            haskey(cmeta, :label)            ||  (cmeta[:label] = string(cname))
-            haskey(cmeta, :color)            ||  (cmeta[:color] = "auto")
-            haskey(cmeta, :default_visible)  ||  (cmeta[:default_visible] = false)
-            cmeta[:use_in_plot] = (GFit.todict_opt[:addcomps]  ||  (cname in GFit.todict_opt[:selcomps]))
-            for (pname, pmeta) in model.meta[id][:components][cname][:params]
-                haskey(pmeta, :scale)   ||  (pmeta[:unit] =  1)
-                haskey(pmeta, :unit )   ||  (pmeta[:unit] = "")
-                haskey(pmeta, :note )   ||  (pmeta[:note] = "")
-            end
+include("todict.jl")
+
+struct ViewerData
+    params::OrderedDict
+    gfit::OrderedDict
+    extra::Vector{OrderedDict}
+
+    function ViewerData(args...; kw...)
+        params = OrderedDict()
+        gfit = todict(args...; kw...)
+
+        extra = Vector{MDict}()
+        for id in 1:length(gfit[:predictions])
+            push!(extra, MDict())
         end
-
-        for (rname, rmeta) in model.meta[id][:reducers]
-            haskey(rmeta, :label)            ||  (rmeta[:label] = string(rname))
-            haskey(rmeta, :color)            ||  (rmeta[:color] = "auto")
-            haskey(rmeta, :default_visible)  ||  (rmeta[:default_visible] = true)
-            rmeta[:default_visible] = (rname != model[id].rsel)
-            rmeta[:use_in_plot] = true
-        end
+        return new(params, gfit, extra)
     end
 end
 
-function add_default_meta!(data::GFit.Measures{1})
-    haskey(data.meta, :label)            ||  (data.meta[:label] = "Empirical data")
-    haskey(data.meta, :use_in_plot)      ||  (data.meta[:use_in_plot] = true)
-    haskey(data.meta, :default_visible)  ||  (data.meta[:default_visible] = true)
-    haskey(data.meta, :color)            ||  (data.meta[:color] = "auto")
-end
-
-
-function todict(model::Model,
-                data::Union{Nothing, Vector{GFit.Measures{1}}}=nothing,
-                bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
-                rebin::Int=1, addcomps::Bool=false, selcomps=Vector{Symbol}())
-
-    GFit.todict_opt[:rebin] = rebin
-    GFit.todict_opt[:addcomps] = addcomps
-    GFit.todict_opt[:selcomps] = selcomps
-
-    add_default_meta!(model)
-    if !isnothing(data)
-        for d in data
-            add_default_meta!(d)
-        end
-    end
-
-    if isnothing(data)
-        dict = GFit.todict(model)
-    elseif isnothing(bestfit)
-        dict = GFit.todict(model, data)
-    else
-        dict = GFit.todict(model, data, bestfit)
-    end
-    return dict
-end
-
-
+#=
 function tostring(dict::OrderedDict)
     io = IOBuffer()
     JSON.print(io, dict)
     return String(take!(io))
 end
+=#
 
-function save_html(dict::OrderedDict, filename::AbstractString; offline=false)
+function save_html(vd::ViewerData, filename::AbstractString; offline=false)
     io = open(filename, "w")
     if offline
         template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
@@ -90,7 +42,11 @@ function save_html(dict::OrderedDict, filename::AbstractString; offline=false)
     end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, dict)
+    JSON.print(io, vd.gfit)
+    write(io, readuntil(input, "JSON_CUSTOM_PARAMS"))
+    JSON.print(io, vd.params)    
+    write(io, readuntil(input, "JSON_TAB_EXTRA"))
+    JSON.print(io, vd.extra)
     while !eof(input)
         write(io, readavailable(input))
     end
@@ -98,28 +54,28 @@ function save_html(dict::OrderedDict, filename::AbstractString; offline=false)
     return filename
 end
 
-function save_json(dict::OrderedDict, filename::AbstractString)
+function save_json(vd::ViewerData, filename::AbstractString)
     io = open(filename, "w")
-    JSON.print(io, dict)
+    JSON.print(io, vd.gfit)
     close(io)
     return filename
 end
 
-viewer(model::Model, data::GFit.Measures{1}; kw...) = viewer(model, [data]; kw...)
-viewer(model::Model, data::GFit.Measures{1}, bestfit::GFit.BestFitResult; kw...) = viewer(model, [data], bestfit; kw...)
-
-function viewer(args...; filename=nothing, offline=false, kw...)
-    dict = todict(args...; kw...)
+function viewer(vd::ViewerData; filename=nothing, offline=false)
     path = tempdir()
-
     if filename == nothing
         fname = "$(path)/gfitviewer.html"
     else
         fname = filename
     end
-    save_json(dict, fname * ".json")
-    save_html(dict, fname; offline=offline)
+    save_json(vd, fname * ".json")
+    save_html(vd, fname; offline=offline)
     DefaultApplication.open(fname)
+end
+
+function viewer(args...; filename=nothing, offline=false, kw...)
+    vd = ViewerData(args...; kw...)
+    viewer(vd, filename=filename, offline=offline)
 end
 
 end
