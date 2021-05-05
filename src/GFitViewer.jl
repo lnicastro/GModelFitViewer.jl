@@ -41,7 +41,7 @@ struct ViewerData
                 end
             else
                 @assert length(model.preds) == 1
-                push!(out[:data], todict(model.preds[id], data))
+                push!(out[:data], todict(model.preds[1], data))
             end
         end
 
