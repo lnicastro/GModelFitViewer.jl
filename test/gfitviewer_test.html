@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.2" />
-  <meta name="date" content="2021-04-23" />
+  <meta name="date" content="2021-05-06" />
 
   <link href="data:image/png;base64,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" sizes="16x16" rel="icon" type="image/x-icon" />
 
@@ -55,6 +55,11 @@ body {
 --danger: #d43f3a;
 --light: #f8f9fa;
 --dark: #343a40;
+
+--baseFg: dimgray;
+--baseBg: white;
+--accentFg: #69c;
+--accentBg: #bae1ff;
 }
 
 a:link, a:visited, a:active {
@@ -182,11 +187,11 @@ label {
   border-top-right-radius: 36px;
 }
 
-.contact-info {
+.app-info-div {
   float: right;
   font-size: .9rem;
   position: relative;
-  top: 40px;
+  top: 8px;
   right: 1em;
 }
 
@@ -214,25 +219,40 @@ label {
   border: 1px solid #adadad;
 }
 
-.p_btn {
-  border: none;
-  border-bottom: 2px solid #ccc;
+
+.dd-select {
+  font-size: inherit;
+  height: 2rem;
+  margin: 0;
+  padding-right: 1.5rem;
   color: #333;
-  padding: 5px 10px;
-  text-align: center;
-  margin: 4px 2px;
-  cursor: pointer;
-  min-width: 2rem;
+  border: 1px solid #666;
+  border-radius: 4px;
+  webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background-color: var(--baseBg);
+  background-image: linear-gradient(var(--baseFg), var(--baseFg)),
+    linear-gradient(-135deg, transparent 50%, var(--light) 50%),
+    linear-gradient(-225deg, transparent 50%, var(--light) 50%),
+    linear-gradient(var(--light) 42%, var(--accentFg) 42%);
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 1px 100%, 20px 22px, 20px 22px, 20px 100%;
+  background-position: right 20px center, right bottom, right bottom, right bottom;
 }
 
-.p_btn:hover {
-  background-color: #ddd;
+.dd-select:hover {
+background-image: linear-gradient(var(--accentFg), var(--accentFg)),
+    linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
+    linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
+    linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
 }
 
-.p_btn-selected {
-  background-color: #fff;
-  border-bottom: 2px solid #69c;
+select::-ms-expand {
+    display: none; /* Remove default arrow in Internet Explorer 10 and 11 */
 }
+
 
 .page_top_tbar {
   background-color: #f7f7f7;
@@ -263,8 +283,8 @@ label {
 
 .transp_button {
   padding: 0;
-  width: 2em;
-  height: 2em;
+  width: 32px;
+  height: 32px;
   margin-left: 0.5rem;
   border: 2px solid #e6e6e6;
   border-radius: 50%;
@@ -440,7 +460,6 @@ td.highlight_blue {
 }
 
 
-
 #pre_sel-div {
   font-size: 1rem;
   font-weight: bold;
@@ -610,10 +629,12 @@ td.highlight_blue {
   float: right;
   font-size: 40px;
   font-weight: 300;
-  margin-top: 12px;
   padding: 0px 4px 10px 4px;
+/*
+  margin-top: 12px;
   border: 3px solid #fff;
   border-radius: 18px;
+*/
 }
 
 .close:hover,
@@ -888,20 +909,26 @@ hr.style-two {
       <span style="font-size: 1rem; font-style: italic; color: #ccc;">Version 0.1</span>
     </div>
 
-    <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <a href="https://github.com/gcalderone/GFit.jl" style="color: #fff; font-weight: bold;" target="_new">GFit</a> 1D results </div>
-
+    <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <a href="https://github.com/gcalderone/GFit.jl" style="color: #fff; font-weight: bold;" target="_new">GFit</a> 1D results
+&minus;
+      <div class="inline" style="font-size: .8rem;"><a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a> &amp; <a style="color: #ccc;"  href="mailto:giorgio.calderone@inaf.it">G. Calderone</a> 2020-21</div> 
+    </div>
   </div>
 
-  <div class="contact-info"><a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a> &amp; <a style="color: #ccc;"  href="mailto:giorgio.calderone@inaf.it">G. Calderone</a> 2020-21</div> 
+<!-- This is TODO (now used for custom_params) -->
+  <div class="app-info-div">
+    <div id="app_info1">e.g. App name</div> <div id="app_info2">e.g. Version ID</div> <div id="app_info3" style="font-size:90%">e.g. Fit date</div>
+  </div> 
 
 </div>
 
 
 <section class="page_top_tbar">
-
+<!--
   <div id="pre_sel-div" class="div-hide">
-	Select dataset # <span id="p_selector"></span>
+	Select prediction <select id="p_selector" onchange="p_select()" class="dd-select" title="Select prediction"></select>
   </div>
+-->
 
   <div id="file_io-div" class="div-hide">
     <button class="submit_grey" type="submit" onclick="openLoadDiv()" id="myBtn">
@@ -956,6 +983,9 @@ hr.style-two {
   <section style="margin-top: 0.5em;">
 	<span id="p_title">GFitViewer info here...</span>
 
+  <div id="pre_sel-div" class="div-hide">
+	<select id="p_selector" onchange="p_select()" class="dd-select" title="Select prediction"></select>
+  </div>
   </section>
 
 
@@ -1033,44 +1063,76 @@ hr.style-two {
 	//var custom_params = JSON_CUSTOM_PARAMS;
 	//var tab_extra = JSON_TAB_EXTRA;
     var chart_data;
-    var custom_params = {};
-    var tab_extra = {
-	"extratab_1": {
-	  "label": "First extra table",
-	  "fields": {
-	    "fname_1": {
-		"meta": {"desc": "Optional. In case we want to add metedata."},
-		 "data": [102, 203, 304]
-		},
-	    "fname_2": {
-		"meta": {},
-		"data": [10.2, 20.3, 30.4]
-		},
-	    "fname_3": {
-		"meta": {},
-		 "data": ["String_1", "String_2", "String_3"]
-		}
-	  }
-	},
+    var custom_params = {"appname": "GFit", "version": "0.0", "fit_date": "2021-05-06 12:00:00" };
+    var tab_extra = [
+{
+  "extratab_1_1":{
+    "label":"First extra table",
+    "fields":{
+      "fname_1":{
+        "meta":{"desc":"Optional. In case we want to add metedata."},
+        "data":[102,203,304]
+      },
+      "fname_2":{
+        "meta":{},
+        "data":[10.2,20.3,30.4]
+      },
+      "fname_3":{
+        "meta":{},
+        "data":["String_1","String_2","String_3"]
+      }
+    }
+  },
+  "extratab_1_2":{
+    "label":"Second extra table",
+    "fields":{
+      "fname_1":{
+        "meta":{"desc":"Optional. In case we want to add metedata."},
+        "data":[102,203,304]},
+      "fname_2":{
+        "meta":{},
+        "data":[10.2,20.3,30.4]},
+      "fname_3":{
+        "meta":{},
+        "data":["String_1","String_2","String_3"]}
+    }
+  }
+},
 
-	"extratab_2": {
-	  "label": "Second extra table",
-	  "fields": {
-	    "fname_1": {
-		"meta": {"desc": "Optional. In case we want to add metedata."},
-		 "data": [1102, 1203, 1304]
-		},
-	    "fname_2": {
-		"meta": {},
-		"data": [110.2, 120.3, 130.4]
-		},
-	    "fname_3": {
-		"meta": {},
-		 "data": ["String_11", "String_12", "String_13"]
-		}
-	  }
-	}
-    };
+{
+  "extratab_2_1":{
+    "label":"First extra table",
+    "fields":{
+      "fname_1":{
+        "meta":{"desc":"Optional. In case we want to add metedata."},
+        "data":[2102,2203,2304]
+      },
+      "fname_2":{
+        "meta":{},
+        "data":[210.2,220.3,230.4]
+      },
+      "fname_3":{
+        "meta":{},
+        "data":["String_1","String_2","String_3"]
+      }
+    }
+  },
+  "extratab_2_2":{
+    "label":"Second extra table",
+    "fields":{
+      "fname_1":{
+        "meta":{"desc":"Optional. In case we want to add metedata."},
+        "data":[3102,3203,3304]},
+      "fname_2":{
+        "meta":{},
+        "data":[310.2,320.3,330.4]},
+      "fname_3":{
+        "meta":{},
+        "data":["String_1","String_2","String_3"]}
+    }
+  }
+}
+];
   </script>
 
 <script src="test_data.js"></script>
@@ -1398,6 +1460,16 @@ function toggleFullScreen(id_div) {
 
 var getauxinfo = function() {  // TODO
 
+// The custom_params management (max 3 entries; this is TODO)
+  if ( Object.keys(custom_params).length > 0 ) {
+	var cp_keys = Object.keys(custom_params);
+	var cp_vals = Object.values(custom_params);
+	for (var i = 0; i < cp_keys.length; i++)
+	  document.getElementById('app_info'+ (i + 1)).innerHTML = cp_keys[i] +': '+ cp_vals[i];
+  } else
+	for (var i = 0; i < 3; i++)
+	  document.getElementById('app_info'+ (i + 1)).innerHTML = '';
+
 // Multiple predictions for the same "object" are allowed (TODO)
   aux.n_p = chart_data.predictions.length;
   aux.n_d = (chart_data.data !== undefined) ? chart_data.data.length : 0;
@@ -1414,14 +1486,13 @@ var getauxinfo = function() {  // TODO
 
     n_x = chart_data.predictions[i].x.length;
 
-    desc = '<span style="color: #69c; font-weight: bold;">'+ chart_data.predictions[i].meta.label +'</span> &minus; ';
-    if ( aux.n_d > 0 && chart_data.data[i] !== undefined )
-	desc += chart_data.data[i].meta.label;
-    else
-	desc += 'None';
+    desc = '<span style="color: #69c; font-weight: bold;">'+ chart_data.predictions[i].meta.label +'</span> &minus; rebin factor: '+
+	   chart_data.predictions[i].meta.rebin;
+    //if ( aux.n_d > 0 && chart_data.data[i] !== undefined )
+	//desc += chart_data.data[i].meta.label;
+    //else
+	//desc += 'None';
 
-    desc += ' &minus; rebin factor: '+
-	    chart_data.predictions[i].meta.rebin;
 
     x_lab = chart_data.predictions[i].meta.label_x;
     if ( x_lab !== '' ) {
@@ -1486,14 +1557,13 @@ var getauxinfo = function() {  // TODO
 
   else {
     d.setAttribute('class', 'div-show-inline');
+
+// Append prediction select list
     for (var i = 0; i < aux.n_p; i++) {
-	b = document.createElement('button');
-	b.setAttribute('type', 'button');
-	b.setAttribute('class', 'p_btn');
-	b.setAttribute('onclick', 'p_select('+ i +')');
-	b.setAttribute('id', 'pred_'+ i);
-	b.innerHTML = ' '+ (i+1).toString() +' ';
- 	ss.appendChild(b);
+	var option = document.createElement('option');
+	option.value = i;
+	option.text = (i+1).toString() +': '+ chart_data.data[i].meta.label;
+	ss.appendChild(option);
     }
   }
   
@@ -1893,7 +1963,7 @@ console.log('  color:', mycolors[(icol + i) % n_myc].name, mycolors[(icol + i) %
 
 function p_select(isel, new_file) {
   if ( isel === undefined )
-	isel = 0;
+	isel = document.getElementById('p_selector').value;
 
   if ( new_file === undefined )
 	new_file = false;
@@ -1903,12 +1973,6 @@ function p_select(isel, new_file) {
 	chart.series.removeIndex( 0 );
     //chart.series.removeIndex( chart.series.indexOf(s) );
   });
-
-// Prediction selector buttons, if more than one
-  if ( aux.n_p > 1 ) {
-    document.getElementById('pred_'+ c_ipre).className = 'p_btn';
-    document.getElementById('pred_'+ isel).className = 'p_btn p_btn-selected';
-  }
 
   c_ipre = isel;  // Set index of selected prediction
 
@@ -1952,7 +2016,7 @@ am4core.ready(function() {
 
 // Highlight button for current prediction
     if ( aux.n_p > 1 )
-	document.getElementById('pred_'+ c_ipre).className = 'p_btn p_btn-selected';
+	document.getElementById('p_selector').value = c_ipre;
 
   } else {
     for (var j = 0; j < 2 * Math.PI; j += 0.1)
@@ -3066,19 +3130,22 @@ function createFitLogTabs() {
   }
 
 
-// Extra tables in a separate div
+// Extra tables in a separate div. If it exists for the current prediction.
   var divShowExtra = document.getElementById('extralog_div');
-  var n_extratab = Object.keys(tab_extra).length;
+  divShowExtra.innerHTML = '';
+
+  var n_extratab = 0;
+  if ( tab_extra[c_ipre] !== undefined )
+	n_extratab = Object.keys(tab_extra[c_ipre]).length;
 
   if ( n_extratab !== 0 ) {
 console.log('There are '+ n_extratab +' extra tables.');
 
-    divShowExtra.innerHTML = '';
     divShowExtra.className = 'div-show';
 
-    var extratabs = Object.keys(tab_extra);
+    var extratabs = Object.keys(tab_extra[c_ipre]);
     for (var i = 0; i < n_extratab; i++) {
-	tabdiv = tableFromJson(tab_extra[extratabs[i]], 4, i);
+	tabdiv = tableFromJson(tab_extra[c_ipre][extratabs[i]], 4, i);
 	divShowExtra.appendChild(tabdiv);  // Add the extra table to the container
     }
   } else
