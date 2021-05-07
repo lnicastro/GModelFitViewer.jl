@@ -136,3 +136,4 @@
 	- Changed pridiction selection management; now via drop-down menu
 	- tab_extra is now an array (one object per prediction is allowed)
 	- Updated gfitviewer_test.html (custom_params example added) and test_data.js
+	- Use Y axis labels in exponential notation for small values
