@@ -2345,6 +2345,14 @@ function ttAdapter(tooltip, target) {
 	scrollAxis.renderer.labels.template.disabled = true;
 	scrollAxis.renderer.grid.template.disabled = true;
 
+// Use exponential notation for Y axis labels when very small values are involved
+	var val_mp = aux.preinfo[c_ipre].y_max / 2;
+
+	if ( val_mp < 0.1 ) {
+	  valueAxis.numberFormatter = new am4core.NumberFormatter();
+	  valueAxis.numberFormatter.numberFormat = '#.00e';
+	}
+
 //document.getElementById('y_err-cb').checked = false;
 //document.getElementById('y_err_shade-cb').checked = false;
 	document.getElementById('cursor-cb').checked = false;
