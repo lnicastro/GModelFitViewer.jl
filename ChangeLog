@@ -131,3 +131,8 @@
 2021-04-23 LN, ver. 0.2
 	- Changed extra tables position
 	- Updated gfitviewer_test.html and test_data.js
+
+2021-05-07 LN, ver. 0.2
+	- Changed pridiction selection management; now via drop-down menu
+	- tab_extra is now an array (one object per prediction is allowed)
+	- Updated gfitviewer_test.html (custom_params example added) and test_data.js
