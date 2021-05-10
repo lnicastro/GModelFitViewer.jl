@@ -137,3 +137,6 @@
 	- tab_extra is now an array (one object per prediction is allowed)
 	- Updated gfitviewer_test.html (custom_params example added) and test_data.js
 	- Use Y axis labels in exponential notation for small values
+
+2021-05-10 LN, ver. 0.2
+	- Cursor creation and management moved to a dedicated function

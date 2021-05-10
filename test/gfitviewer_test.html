@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.2" />
-  <meta name="date" content="2021-05-06" />
+  <meta name="date" content="2021-05-10" />
 
   <link href="data:image/png;base64,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" sizes="16x16" rel="icon" type="image/x-icon" />
 
@@ -1959,6 +1959,79 @@ console.log('  color:', mycolors[(icol + i) % n_myc].name, mycolors[(icol + i) %
 
 
 //
+// -- Cursor creation and management
+
+function createCursor() {
+  chart.cursor = new am4charts.XYCursor();
+  chart.cursor.xAxis = vxAxis;
+  chart.cursor.yAxis = valueAxis;
+  chart.cursor.behavior = 'zoomXY';
+
+// Monitor cursor position
+  var cursorPosition = {
+	x: null,
+	y: null
+  };
+
+  chart.cursor.events.on("cursorpositionchanged", function(ev) {
+	var xAxis = ev.target.chart.xAxes.getIndex(0);
+	var yAxis = ev.target.chart.yAxes.getIndex(0);
+	cursorPosition.x = xAxis.positionToValue(xAxis.toAxisPosition(ev.target.xPosition));
+	cursorPosition.y = yAxis.positionToValue(yAxis.toAxisPosition(ev.target.yPosition));
+//
+	if ( cur_track )
+	  curXY.text = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
+  });
+
+  chart.plotContainer.events.on("hit", function(ev) {
+console.log(cursorPosition);
+	curXY.text = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
+  });
+
+
+// Need to manage manually the Y zoom (animation issue?)
+  chart.cursor.events.on("zoomended", function(ev) {
+	var xrange = ev.target.xRange,
+	  xaxis = ev.target.chart.xAxes.getIndex(0),
+	  x_min = xaxis.positionToValue(xrange.start),
+	  x_max = xaxis.positionToValue(xrange.end),
+	  yrange = ev.target.yRange,
+	  yaxis = ev.target.chart.yAxes.getIndex(0),
+	  y_min = yaxis.positionToValue(yrange.start),
+	  y_max = yaxis.positionToValue(yrange.end);
+	//y_min = yaxis.positionToValue(yaxis.toAxisPosition(yrange.start));
+	//y_max = yaxis.positionToValue(yaxis.toAxisPosition(yrange.end));
+
+console.log("X cursor selected from "+ x_min +" to "+ x_max);
+	x_range.lin.min = x_min;
+	x_range.lin.max = x_max;
+	(x_min > 0) ? x_range.log.min = x_min : x_range.log.min = 1e-4;  // TODO
+	x_range.log.max = x_max;
+
+console.log("Y cursor selected from "+ y_min +" to "+ y_max);
+	y_range.lin.min = y_min;
+	y_range.lin.max = y_max;
+
+	(y_min > 0) ? y_range.log.min = y_min : y_range.log.min = 1e-4;  // TODO
+	y_range.log.max = y_max;
+
+	xyin_ranges.xmin.value = x_min.toPrecision(4);
+	xyin_ranges.xmax.value = x_max.toPrecision(4);
+	xyin_ranges.ymin.value = y_min.toPrecision(4);
+	xyin_ranges.ymax.value = y_max.toPrecision(4);
+
+	if ( am_anim ) {
+// If animation is on, a delay is necessary to have the Y zoom
+	  setTimeout(function() {
+		valueAxis.zoomToValues(y_min, y_max);
+	  }, 100);
+	}
+  });
+
+}
+
+
+//
 // -- Select current prediction from multi-predictions list
 
 function p_select(isel, new_file) {
@@ -2091,37 +2164,9 @@ am4core.ready(function() {
   }
 
 
-// Cursor
-  chart.cursor = new am4charts.XYCursor();
-  chart.cursor.xAxis = vxAxis;
-  chart.cursor.yAxis = valueAxis;
-  chart.cursor.behavior = 'zoomXY';
-
 // Scrollbar disabling labels and grid
   chart.scrollbarX = new am4charts.XYChartScrollbar();
 
-// Increase contrast by taking every second color
-  //chart.colors.step = 2;
-
-// Monitor cursor position
-  var cursorPosition = {
-	x: null,
-	y: null
-  };
-  chart.cursor.events.on("cursorpositionchanged", function(ev) {
-	var xAxis = ev.target.chart.xAxes.getIndex(0);
-	var yAxis = ev.target.chart.yAxes.getIndex(0);
-	cursorPosition.x = xAxis.positionToValue(xAxis.toAxisPosition(ev.target.xPosition));
-	cursorPosition.y = yAxis.positionToValue(yAxis.toAxisPosition(ev.target.yPosition));
-
-	if ( cur_track )
-		curXY.text = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
-  });
-
-  chart.plotContainer.events.on("hit", function(ev) {
-  console.log(cursorPosition);
-	curXY.text = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
-  });
 
 // Create container to hold cursor X, Y values
   cur_container = chart.plotContainer.createChild(am4core.Container);
@@ -2150,7 +2195,7 @@ am4core.ready(function() {
   chart.scrollbarX.events.on("rangechanged", scrollAxisChanged);
 
 
-// Does not work in log scale !
+// This does not work in log scale !
 
   function scrollAxisChanged(ev) {
         //var x_min = ev.target.minZoomed;
@@ -2167,45 +2212,6 @@ console.log("New vxAxis range: " + x_min + " -- " + x_max);
 	x_range.log.max = x_max;
   }
 
-
-// Need to manage manually the Y zoom (animation issue?)
-  chart.cursor.events.on("zoomended", function(ev) {
-	var xrange = ev.target.xRange;
-	var xaxis = ev.target.chart.xAxes.getIndex(0);
-	var x_min = xaxis.positionToValue(xrange.start);
-	var x_max = xaxis.positionToValue(xrange.end);
-console.log("X cursor selected from "+ x_min +" to "+ x_max);
-	x_range.lin.min = x_min;
-	x_range.lin.max = x_max;
-	(x_min > 0) ? x_range.log.min = x_min : x_range.log.min = 1e-4;  // TODO
-	x_range.log.max = x_max;
-
-	var yrange = ev.target.yRange;
-	var yaxis = ev.target.chart.yAxes.getIndex(0);
-	//var y_min = yaxis.positionToValue(yaxis.toAxisPosition(yrange.start));
-	//var y_max = yaxis.positionToValue(yaxis.toAxisPosition(yrange.end));
-	var y_min = yaxis.positionToValue(yrange.start);
-	var y_max = yaxis.positionToValue(yrange.end);
-console.log("Y cursor selected from "+ y_min +" to "+ y_max);
-	y_range.lin.min = y_min;
-	y_range.lin.max = y_max;
-
-	(y_min > 0) ? y_range.log.min = y_min : y_range.log.min = 1e-4;  // TODO
-	y_range.log.max = y_max;
-
-	xyin_ranges.xmin.value = x_min.toPrecision(4);
-	xyin_ranges.xmax.value = x_max.toPrecision(4);
-	xyin_ranges.ymin.value = y_min.toPrecision(4);
-	xyin_ranges.ymax.value = y_max.toPrecision(4);
-
-	if ( am_anim ) {
-// If animation is on, a delay is necessary to have the Y zoom
-	  setTimeout(function() {
-		valueAxis.zoomToValues(y_min, y_max);
-	  }, 100);
-	}
-
-  });
 
 
 // Legends
@@ -2366,6 +2372,12 @@ function ttAdapter(tooltip, target) {
 	xy_rangein_reset();  // Clear manual range input fields
 
 	createFitLogTabs();  // The fit log tables
+  });
+
+
+// Cursor created once the plot is finished to get the ranges correct
+  chart.events.on('ready', function() {
+	createCursor();
   });
 
 });  // end am4core.ready()
