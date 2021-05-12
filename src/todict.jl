@@ -128,10 +128,10 @@ function todict(id, pred::GFit.Prediction)
     out[:meta][:label] = "Prediction $id"
     out[:meta][:color] = "auto"
     out[:meta][:label_x] = ""
-    out[:meta][:scale_x] =  1
+    out[:meta][:log10scale_x] = 0
     out[:meta][:unit_x]  = ""
     out[:meta][:label_y] = ""
-    out[:meta][:scale_y] =  1
+    out[:meta][:log10scale_y] = 0
     out[:meta][:unit_y]  = ""
 
     return out
