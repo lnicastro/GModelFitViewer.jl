@@ -140,3 +140,6 @@
 
 2021-05-10 LN, ver. 0.2
 	- Cursor creation and management moved to a dedicated function
+
+2021-05-12 LN, ver. 0.2
+	- New Y axis label/scale range management
