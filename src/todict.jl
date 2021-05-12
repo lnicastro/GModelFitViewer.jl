@@ -118,7 +118,7 @@ function todict(id, pred::GFit.Prediction)
     out[:reducers] = MDict()
     for (rname, reval) in pred.revals
         out[:reducers][rname] = todict(rname, reval)
-        out[:reducers][rname][:default_visible] = (rname != pred.rsel)
+        out[:reducers][rname][:meta][:default_visible] = (rname != pred.rsel)
     end
     out[:main_reducer] = pred.rsel
     out[:folded_model] = rebin_data(todict_opt[:rebin], pred.folded)
