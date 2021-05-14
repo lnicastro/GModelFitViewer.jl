@@ -9,6 +9,9 @@ const todict_opt = Dict(
 rebin_data(rebin, v) = rebin_data(rebin, v, ones(eltype(v), length(v)))[1]
 function rebin_data(rebin::Int, v, e)
     @assert length(v) == length(e)
+    if length(v) == 1
+        return (v, e)
+    end
     @assert 1 <= rebin <= length(v)
     (rebin == 1)  &&  (return (v, e))
     nin = length(v)
