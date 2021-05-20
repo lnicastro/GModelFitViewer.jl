@@ -1,6 +1,6 @@
 [GFitViewer_artifact]
-git-tree-sha1 = "3ccf085cc8110099ed612421147305de4824accd"
+git-tree-sha1 = "ce689d14600783d043aa91b793e42145e80ad4cb"
 
     [[GFitViewer_artifact.download]]
-    sha256 = "475819169add0ce8e353813f012d658468d25165f0d05649edf8d2a1fa2eea91"
+    sha256 = "af843f554be58b46309749b11ccdd61c31d655d7e3d4c10fb5a1d0b8c09e9179"
     url = "https://qsfit.inaf.it/GFitViewer/GFitViewer_artifact.tar.gz"
