@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.2" />
-  <meta name="date" content="2021-05-20" />
+  <meta name="date" content="2021-05-25" />
 
   <link href="data:image/png;base64,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" sizes="16x16" rel="icon" type="image/x-icon" />
 
@@ -670,6 +670,11 @@ visibility: hidden;
 #p_title {
   color: #666;
   font-size: 1.2rem;
+  vertical-align: middle;
+}
+
+#p_selector {
+  vertical-align: middle;
 }
 
 div.interface
@@ -989,6 +994,10 @@ hr.style-two {
 
   <div id="pre_sel-div" class="div-hide">
 	<select id="p_selector" onchange="p_select()" class="dd-select" title="Select prediction"></select>
+
+<!-- Add Prev / Next buttons -->
+    <button id="prev_prediction" class="submit_grey" type="submit" onclick="p_select('prev')"> Prev </button>
+    <button id="next_prediction" class="submit_grey" type="submit" onclick="p_select('next')"> Next </button>
   </div>
   </section>
 
@@ -1588,6 +1597,11 @@ var getauxinfo = function() {  // TODO
 	option.text = (i+1).toString() +': '+ chart_data.data[i].meta.label;
 	ss.appendChild(option);
     }
+
+    if ( c_ipre == 0 )
+	  document.getElementById('prev_prediction').classList.add('div-hide');
+    else if ( c_ipre == aux.n_p - 1 )
+	  document.getElementById('next_prediction').classList.add('div-hide');
   }
   
   for (var i = 0; i < aux.n_d; i++) {
@@ -2052,8 +2066,29 @@ console.log("Y cursor selected from "+ y_min +" to "+ y_max);
 // -- Select current prediction from multi-predictions list
 
 function p_select(isel, new_file) {
+  var ip = document.getElementById('p_selector').value;
+
   if ( isel === undefined )
-	isel = document.getElementById('p_selector').value;
+	isel = ip;
+  else {
+	if ( isel === 'prev' )
+	  isel = +ip - 1;
+	else if ( isel === 'next' )
+	  isel = +ip + 1;
+
+	document.getElementById('p_selector').value = isel;
+
+	if ( isel == 0 ) {
+	  document.getElementById('prev_prediction').classList.add('div-hide');
+	  document.getElementById('next_prediction').classList.remove('div-hide');
+	} else if ( isel == aux.n_p - 1 ) {
+	  document.getElementById('prev_prediction').classList.remove('div-hide');
+	  document.getElementById('next_prediction').classList.add('div-hide');
+	} else {
+	  document.getElementById('prev_prediction').classList.remove('div-hide');
+	  document.getElementById('next_prediction').classList.remove('div-hide');
+	}
+  }
 
   if ( new_file === undefined )
 	new_file = false;
@@ -2075,7 +2110,7 @@ function p_select(isel, new_file) {
 
 // On new file read, fit log tables are created by createFitLogTabs
   if ( ! new_file )
-	updatePredTabs(chart_data.predictions[c_ipre]);
+	updatePredTabs(chart_data.predictions[c_ipre], chart_data.bestfit.predictions[c_ipre]);
 }
 
 
@@ -2394,14 +2429,14 @@ function ttAdapter(tooltip, target) {
 	set_x_range();
 	set_y_range();
 	xy_rangein_reset();  // Clear manual range input fields
-
-	createFitLogTabs();  // The fit log tables
   });
 
 
 // Cursor created once the plot is finished to get the ranges correct
   chart.events.on('ready', function() {
 	createCursor();
+
+	createFitLogTabs();  // The fit log tables
   });
 
 });  // end am4core.ready()
@@ -2771,7 +2806,7 @@ var tableFromJson = function(obj, type, tab_id) {
 	break;
 
     case 3:
-	comp = obj.predictions[0].components;
+	comp = obj.predictions[c_ipre].components;
 
 	title = '<div id="'+ tab_id +'_angle_down" class="div-hide"><svg class="icon-angle" width="12" height="18"><use href="#angle-down"></use></svg></div>'+
 '<div id="'+ tab_id +'_angle_up" class="div-show-inline"><svg class="icon-angle" width="12" height="18"><use href="#angle-up"></use></svg></div>'+
@@ -3081,15 +3116,19 @@ var tableFromJson = function(obj, type, tab_id) {
 
 
 //
-// -- Update the prediction+reducer tables with current data
+// -- Update the prediction+reducer+fitres tables with current data
 
-function updatePredTabs(obj) {
+function updatePredTabs(obj, fre) {
   var comp = obj.compevals,
 	cname = Object.keys(comp),  // comp. names
 	nc = cname.length,
 	red = obj.reducers,
 	rname = Object.keys(red),  // red. names
 	nr = rname.length,
+
+	fres = fre.components,
+	fname = Object.keys(fres),
+	nf = fname.length,
 
 	tab = document.getElementById('pred_table-div'),  // predictions
 	tb = tab.getElementsByTagName("tbody")[0],
@@ -3121,6 +3160,7 @@ function updatePredTabs(obj) {
 
 	}
 
+
 	tab = document.getElementById('red_table-div');  // reducers
 	tb = tab.getElementsByTagName("tbody")[0];
 	tb.innerHTML = '';
@@ -3146,6 +3186,71 @@ function updatePredTabs(obj) {
 	    tabCell.innerHTML = cell;
 	  }
 
+	}
+
+
+	tab = document.getElementById('fitres_table-div');  // fit results
+	tb = tab.getElementsByTagName("tbody")[0];
+	tb.innerHTML = '';
+
+	for (var i = 0; i < nf; i++) {
+	  c = fres[fname[i]];  // comp. obj.
+	  var ncol = 6;
+	  var pname = Object.keys(c),
+		pkname = [];
+
+	  for (var key in c[pname[0]])  // Keys from first parameter
+	 	pkname.push(key);
+ 
+	  tr = tb.insertRow(-1);
+
+	  tabCell = tr.insertCell(-1);
+	  tabCell.innerHTML = fname[i];	 // First column is comp. name
+
+	  var cell = pname[0];
+
+	  for (var k = 1; k < pname.length; k++)
+		cell += '<br />'+ pname[k];  
+
+	  tabCell = tr.insertCell(-1);
+	  tabCell.innerHTML = cell;
+
+	  for (var j = 0; j < ncol - 2; j++) {  // Third+ columns are par. values
+	    var cell = '';
+	    var v = c[pname[0]][pkname[j]];
+	    if ( typeof v == 'number') {
+		v = +v.toPrecision(4);
+		if ( pkname[j] == 'patched' && v !== +c[pname[0]]['val'].toPrecision(4) )
+			v = '<span style="background: var(--danger); color: #fff;  padding-left: 5px;">'+ v +'</span>';
+	    } else if ( pkname[j] == 'unc' ) {  // null
+			v = '';
+	    } else if ( pkname[j] == 'fixed' ) {
+		if ( v )
+			v = 'fixed';
+		else
+			v = '';
+	    }
+	    cell = v;
+	    for (var k = 1; k < pname.length; k++) {
+		v = c[pname[k]][pkname[j]];
+		if ( typeof v == 'number') {
+		  v = +v.toPrecision(4);
+		  if ( pkname[j] == 'patched' && v !== +c[pname[k]]['val'].toPrecision(4) )
+			v = '<span style="background: var(--danger); color: #fff;  padding-left: 5px;">'+ v +'</span>';
+		} else if ( pkname[j] == 'unc' ) {  // null
+			v = '';
+		} else if ( pkname[j] == 'fixed' ) {
+		  if ( v )
+			v = 'fixed';
+		  else
+			v = '';
+		}
+		cell += '<br />'+ v;
+	    }
+	    tabCell = tr.insertCell(-1);
+	    tabCell.classList.add('al-right');
+	    tabCell.innerHTML = cell;
+	  }
 	}
 }
 

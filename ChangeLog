@@ -147,3 +147,7 @@
 2021-05-20 LN, ver. 0.2
 	- Additional changes to Y axis label/scale range management
 	- Added plot annotation tool
+
+2021-05-25 LN, ver. 0.2
+	- Fixed updating fit results table for each prediction
+	- Added prediction navigation button
