@@ -2077,17 +2077,17 @@ function p_select(isel, new_file) {
 	  isel = +ip + 1;
 
 	document.getElementById('p_selector').value = isel;
+  }
 
-	if ( isel == 0 ) {
-	  document.getElementById('prev_prediction').classList.add('div-hide');
-	  document.getElementById('next_prediction').classList.remove('div-hide');
-	} else if ( isel == aux.n_p - 1 ) {
-	  document.getElementById('prev_prediction').classList.remove('div-hide');
-	  document.getElementById('next_prediction').classList.add('div-hide');
-	} else {
-	  document.getElementById('prev_prediction').classList.remove('div-hide');
-	  document.getElementById('next_prediction').classList.remove('div-hide');
-	}
+  if ( isel == 0 ) {
+	document.getElementById('prev_prediction').classList.add('div-hide');
+	document.getElementById('next_prediction').classList.remove('div-hide');
+  } else if ( isel == aux.n_p - 1 ) {
+	document.getElementById('prev_prediction').classList.remove('div-hide');
+	document.getElementById('next_prediction').classList.add('div-hide');
+  } else {
+	document.getElementById('prev_prediction').classList.remove('div-hide');
+	document.getElementById('next_prediction').classList.remove('div-hide');
   }
 
   if ( new_file === undefined )
