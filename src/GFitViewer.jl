@@ -70,7 +70,7 @@ function save_html(vd::ViewerData, filename::AbstractString; offline=false)
     write(io, readuntil(input, "JSON_DATA"))
     JSON.print(io, vd.gfit)
     write(io, readuntil(input, "JSON_CUSTOM_PARAMS"))
-    JSON.print(io, vd.params)    
+    JSON.print(io, vd.params)
     write(io, readuntil(input, "JSON_TAB_EXTRA"))
     JSON.print(io, vd.extra)
     while !eof(input)
@@ -111,6 +111,37 @@ end
 function viewer(args...; filename=nothing, offline=false, kw...)
     vd = ViewerData(args...; kw...)
     viewer(vd, filename=filename, offline=offline)
+end
+
+
+function viewer(json::String; filename=nothing, offline=false)
+    path = tempdir()
+    if filename == nothing
+        fname = "$(path)/gfitviewer.html"
+    else
+        fname = filename
+    end
+
+    io = open(fname, "w")
+    if offline
+        template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
+    else
+        template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
+    end
+    input = open(template)
+    write(io, readuntil(input, "JSON_DATA"))
+
+    write(io, read(json))
+
+    write(io, readuntil(input, "JSON_CUSTOM_PARAMS"))
+    JSON.print(io, Dict{})
+    write(io, readuntil(input, "JSON_TAB_EXTRA"))
+    JSON.print(io, Dict{})
+    while !eof(input)
+        write(io, readavailable(input))
+    end
+    close(io)
+    DefaultApplication.open(fname)
 end
 
 end
