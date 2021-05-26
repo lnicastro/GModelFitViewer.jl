@@ -8,9 +8,7 @@ export ViewerData, viewer
 include("todict.jl")
 
 struct ViewerData
-    params::OrderedDict
-    gfit::OrderedDict
-    extra::Vector{OrderedDict}
+    dict::OrderedDict
 
     function ViewerData(model::Model,
                         data::Union{Nothing, T, Vector{T}}=nothing,
@@ -49,12 +47,12 @@ struct ViewerData
             out[:bestfit] = todict(bestfit)
         end
 
-        params = OrderedDict()
-        extra = Vector{MDict}()
+        out[:meta] = MDict()
+        out[:extra] = Vector{MDict}()
         for id in 1:length(model.preds)
-            push!(extra, MDict())
+            push!(out[:extra], MDict())
         end
-        return new(params, out, extra)
+        return new(out)
     end
 end
 
@@ -68,11 +66,7 @@ function save_html(vd::ViewerData, filename::AbstractString; offline=false)
     end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, vd.gfit)
-    write(io, readuntil(input, "JSON_CUSTOM_PARAMS"))
-    JSON.print(io, vd.params)
-    write(io, readuntil(input, "JSON_TAB_EXTRA"))
-    JSON.print(io, vd.extra)
+    JSON.print(io, vd.dict)
     while !eof(input)
         write(io, readavailable(input))
     end
@@ -83,7 +77,7 @@ end
 
 function save_json(vd::ViewerData, filename::AbstractString)
     io = open(filename, "w")
-    JSON.print(io, vd.gfit)
+    JSON.print(io, vd.dict)
     close(io)
     return filename
 end
@@ -91,7 +85,7 @@ end
 
 function tostring(vd::ViewerData)
     io = IOBuffer()
-    JSON.print(io, vd.gfit)
+    JSON.print(io, vd.dict)
     return String(take!(io))
 end
 
@@ -115,6 +109,7 @@ end
 
 
 function viewer(json::String; filename=nothing, offline=false)
+    @assert isfile(json)
     path = tempdir()
     if filename == nothing
         fname = "$(path)/gfitviewer.html"
@@ -130,13 +125,7 @@ function viewer(json::String; filename=nothing, offline=false)
     end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-
     write(io, read(json))
-
-    write(io, readuntil(input, "JSON_CUSTOM_PARAMS"))
-    JSON.print(io, Dict{})
-    write(io, readuntil(input, "JSON_TAB_EXTRA"))
-    JSON.print(io, Dict{})
     while !eof(input)
         write(io, readavailable(input))
     end
