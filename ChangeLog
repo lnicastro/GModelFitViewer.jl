@@ -151,3 +151,7 @@
 2021-05-25 LN, ver. 0.2
 	- Fixed updating fit results table for each prediction
 	- Added prediction navigation button
+
+2021-05-28 LN, ver. 0.2
+	- Changed summary table management
+	- Extra params and tables moved into chart_data

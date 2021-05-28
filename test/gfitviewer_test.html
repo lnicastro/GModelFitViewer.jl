@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.2" />
-  <meta name="date" content="2021-05-25" />
+  <meta name="date" content="2021-05-28" />
 
   <link href="data:image/png;base64,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" sizes="16x16" rel="icon" type="image/x-icon" />
 
@@ -487,22 +487,23 @@ td.highlight_blue {
   padding: 8px;
   position: absolute;
   z-index: 1;
-  bottom: 110%;
-  left: 0;
+  left: 110%;
+  bottom: 0;
   opacity: 0;
   transition: opacity 0.3s;
   font-size: 1rem;
+  width: 10rem;
 }
 
 .partip .partiptext::after {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 10%;
-  margin-left: -5px;
+  left: -10px;
+  bottom: 10px;
+  margin-top: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: transparent #555 transparent transparent;
 }
 
 .partip:hover .partiptext {
@@ -689,6 +690,7 @@ div.interface
 hr.style-one {
   border: 0; height: 1px; background: #fff;
   background-image: linear-gradient(to right, #f00, #0f0, #00f);
+  margin-top: 0;
 }
 
 /* Gradient transparent - color - transparent */
@@ -715,13 +717,21 @@ hr.style-two {
           transition: all 0.30s ease-in;
 }
 
+#fitlog_tables_container {
+ height: 28rem;
+ width: 38rem;
+ resize: vertical;
+ overflow: auto;
+ border-bottom: 2px solid black;
+ margin-bottom: 1rem;
+}
 
 #fitlog_sect {
   font-size: 1.5em;
   font-weight: 500;
 }
 
-#fitlog_tab {
+#fitlog_selector {
   width: auto;
   white-space: nowrap;
   margin-left: 1rem;
@@ -736,15 +746,15 @@ hr.style-two {
 
 .out_table {
   border: 0;
-  border-left: 3px solid #ddd;
   padding: 1em 0 1em 1em;
 }
 
 .toggle_table-hdr {
   border-bottom: 1px solid #ddd;
-  padding: 1em;
+  padding: .5em 1em;
   font-size: 1.1em;
   font-weight: 600;
+  display: inline-block;
 }
 
 .toggle_table-hdr:hover {
@@ -763,6 +773,12 @@ hr.style-two {
 .inline-div {
   display: inline-block;
   vertical-align: middle;
+  margin-left: 1rem;
+}
+
+.inline-top-div {
+  display: inline-block;
+  vertical-align: top;
   margin-left: 1rem;
 }
 
@@ -798,11 +814,10 @@ hr.style-two {
   height: auto;
   animation: 1s linear 0s fadeIn;
   transition: height 1.5s 0.3s ease-in-out; 
-  border-left: 3px solid #2d6ca2;
 }
 
 .div-selected {
-  border-color: #069;
+  border-color: #069 !important;
   border-left: 3px solid #2d6ca2;
   border-bottom: 0;
   background: #efefef;
@@ -996,22 +1011,23 @@ hr.style-two {
 	<select id="p_selector" onchange="p_select()" class="dd-select" title="Select prediction"></select>
 
 <!-- Add Prev / Next buttons -->
-    <button id="prev_prediction" class="submit_grey" type="submit" onclick="p_select('prev')"> Prev </button>
-    <button id="next_prediction" class="submit_grey" type="submit" onclick="p_select('next')"> Next </button>
+    <button id="prev_prediction" class="submit_grey" type="submit" onclick="p_select('prev')"> &lt; Prev </button>
+    <button id="next_prediction" class="submit_grey" type="submit" onclick="p_select('next')"> Next &gt; </button>
   </div>
   </section>
 
 
-  <div id="chartdiv"></div>
+<section id="plot-div" style="padding-bottom: 1rem; resize: vertical; background: linear-gradient(135deg, #fff 0, #fff 99%, rgb(0, 0, 255, .5) 99%);">
+  <div id="chartdiv" style="resize: vertical;"></div>
 
 
-<div class="box-resid-in" style="float: right;">
-  <div id="res_legenddiv"></div>
+  <div class="box-resid-in" style="float: right;">
+    <div id="res_legenddiv"></div>
 
 	<span style="vertical-align: middle;" title="Set the highlighted resid. range"> &pm; N&sigma;
 	  <input type="number" style="width: 2.5rem;" min="1.0" max="30.0" step="0.1" name="n_sigma" id="n_sigma" value="3.0" onchange="n_sigma_update(this)" />
 	</span>
-</div>
+  </div>
 
 
   <div id="controls-div">
@@ -1053,100 +1069,30 @@ hr.style-two {
 	</div>
 
   </div> <!-- controls-div -->
+</section>
+
 
 <hr class="style-one"></hr>
 
-<div class="toggle_table-hdr" id="fitlog_sect" onclick="fitlog_toggle()">
-<!-- <i id="fitlog_angle" class="fas fa-angle-down ud-angle"></i> -->
-<div id="fitlog_angle_down" class="div-show-inline"><svg class="icon-angle" width="14" height="22"><use href="#angle-down"></use></svg></div>
-<div id="fitlog_angle_up" class="div-hide"><svg class="icon-angle" width="14" height="22"><use href="#angle-up"></use></svg></div>
-<span class="ud-angle-l">GFit report</span>
+
+<section id="fitlog_div" style="overflow: scroll;">
+
+<!-- The table selector -->
+  <div id="fitlog_selector"></div>
+
+<!-- The table viewing section -->
+<div id="fitlog_tables_container">
+
+  <div id="fitlog_tables" style="border-left: 3px solid #069;"></div>
+
 </div>
 
-<div id="fitlog_div" class="div-hide">
-  <div id="fitlog_tab">ALL THE FIT SUMMARY TABLES TO BE DISPLAYED HERE</div>
-</div>
+</section>
 
-<div id="extralog_div" class="div-hide" style="border-top: 3px solid #069;">
-  ADDITIONAL TABLES TO BE DISPLAYED HERE
-</div>
 
   <script>
 	//var chart_data = JSON_DATA;
-	//var custom_params = JSON_CUSTOM_PARAMS;
-	//var tab_extra = JSON_TAB_EXTRA;
     var chart_data;
-    //var custom_params = {"appname": "GFit", "version": "0.0", "fit_date": "2021-05-06 12:00:00" };
-    var custom_params = {"banner": "GFit version: 0.1 <br /> App version: 0.0 <br /> fit_date: 2021-05-20 12:00:00"};
-    var tab_extra = [
-{
-  "extratab_1_1":{
-    "label":"First extra table",
-    "fields":{
-      "fname_1":{
-        "meta":{"desc":"Optional. In case we want to add metedata."},
-        "data":[102,203,304]
-      },
-      "fname_2":{
-        "meta":{},
-        "data":[10.2,20.3,30.4]
-      },
-      "fname_3":{
-        "meta":{},
-        "data":["String_1","String_2","String_3"]
-      }
-    }
-  },
-  "extratab_1_2":{
-    "label":"Second extra table",
-    "fields":{
-      "fname_1":{
-        "meta":{"desc":"Optional. In case we want to add metedata."},
-        "data":[102,203,304]},
-      "fname_2":{
-        "meta":{},
-        "data":[10.2,20.3,30.4]},
-      "fname_3":{
-        "meta":{},
-        "data":["String_1","String_2","String_3"]}
-    }
-  }
-},
-
-{
-  "extratab_2_1":{
-    "label":"First extra table",
-    "fields":{
-      "fname_1":{
-        "meta":{"desc":"Optional. In case we want to add metedata."},
-        "data":[2102,2203,2304]
-      },
-      "fname_2":{
-        "meta":{},
-        "data":[210.2,220.3,230.4]
-      },
-      "fname_3":{
-        "meta":{},
-        "data":["String_1","String_2","String_3"]
-      }
-    }
-  },
-  "extratab_2_2":{
-    "label":"Second extra table",
-    "fields":{
-      "fname_1":{
-        "meta":{"desc":"Optional. In case we want to add metedata."},
-        "data":[3102,3203,3304]},
-      "fname_2":{
-        "meta":{},
-        "data":[310.2,320.3,330.4]},
-      "fname_3":{
-        "meta":{},
-        "data":["String_1","String_2","String_3"]}
-    }
-  }
-}
-];
   </script>
 
 <script src="test_data.js"></script>
@@ -1175,6 +1121,9 @@ hr.style-two {
 	curXY,		// The text Label in the cursor Container
 	legend2,	// The second legend used for residuals
 	range, range2,	// Used to highlight +/- N sigma residuals
+
+	custom_params,  // Additional GFit provided custom parameters
+	tab_extra,      // Additional GFit provided summary tables
 
 	p_title = document.getElementById('p_title'),
 	xyin_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
@@ -1482,6 +1431,9 @@ function toggleFullScreen(id_div) {
 
 var getauxinfo = function() {  // TODO
 
+  custom_params = chart_data.meta;
+  tab_extra = chart_data.extra;
+
 // The custom_params management (max 3 entries; this is TODO)
   if ( Object.keys(custom_params).length > 0 ) {
 	//var cp_keys = Object.keys(custom_params);
@@ -1493,6 +1445,7 @@ var getauxinfo = function() {  // TODO
 	//for (var i = 0; i < 3; i++)
 	  document.getElementById('app_info').innerHTML = '';
   }
+
 
 // Multiple predictions for the same "object" are allowed (TODO)
   aux.n_p = chart_data.predictions.length;
@@ -1754,30 +1707,6 @@ function createDataSeries(isel) {
   hs = sdata.segments.template.states.create("hover");
   hs.properties.strokeWidth = 5;
 
-// Error bars (unused)
-/*
-  errorBullet = sdata.bullets.create(am4charts.ErrorBullet);
-  errorBullet.isDynamic = true;
-  errorBullet.strokeWidth = 1;
-  errorBullet.width = 1;
-
-// Adapter adjusts height of a bullet
-  errorBullet.adapter.add("pixelHeight", function(pixelHeight, target) {
-    var dataItem = target.dataItem;
-
-    if ( dataItem ) {
-        var value = dataItem.valueY;
-        var errorTopValue = value + dataItem.dataContext.error;
-        var errorTopY = valueAxis.valueToPoint(errorTopValue).y;
-
-        var errorBottomValue = value - dataItem.dataContext.error;
-        var errorBottomY = valueAxis.valueToPoint(errorBottomValue).y;
-
-        return Math.abs(errorTopY - errorBottomY);
-    }
-    return pixelHeight;
-  });
-*/
 
   chart.scrollbarX.series.push(sdata);
 
@@ -1826,7 +1755,9 @@ function createDataSeries(isel) {
 	resid.fill = rcolor.hex;
     }
 
+if ( legend2.data.length == 0 )
     legend2.data.push({name: resid.name, fill: resid.fill, visible: sdata.resid_visible});
+
     legend2.tooltipText = 'Show/hide residuals';
     legend2.tooltip.background.opacity = 0.7;
     legend2.tooltip.pointerOrientation = 'right';
@@ -2107,10 +2038,6 @@ function p_select(isel, new_file) {
 
 // Change plot labels
   document.getElementById('p_title').innerHTML = aux.preinfo[c_ipre].title;
-
-// On new file read, fit log tables are created by createFitLogTabs
-  if ( ! new_file )
-	updatePredTabs(chart_data.predictions[c_ipre], chart_data.bestfit.predictions[c_ipre]);
 }
 
 
@@ -2280,7 +2207,6 @@ console.log("New vxAxis range: " + x_min + " -- " + x_max);
   legend2.marginTop = 20;
   legend2.marginLeft = 0;
   legend2.labels.template.text = "[bold]{name}[/]";
-  legend2.useDefaultMarker = true;
 
   chart.legend = new am4charts.Legend();
   chart.legend.marginTop = 20;
@@ -2423,12 +2349,23 @@ function ttAdapter(tooltip, target) {
 	document.getElementById('cursor-cb').checked = false;
 	document.getElementById('x_log-cb').checked = false;
 	document.getElementById('y_log-cb').checked = false;
+	vxAxis.logarithmic = false;
+	valueAxis.logarithmic = false;
+
+	legend2.data[0].visible = sdata.resid_visible;
+	valueAxis2.renderer.ticks.template.strokeOpacity = 0;
+
+//var marker = legend2.markers.template.children.getIndex(0);
+//marker.setState(marker.defaultState);
+
 //errorBullet.hide();
-//valueAxis.logarithmic = false;
 //valueAxis.precision = 0;
 	set_x_range();
 	set_y_range();
 	xy_rangein_reset();  // Clear manual range input fields
+
+// Fit log tables are ri-created by createFitLogTabs for each prediction
+	createFitLogTabs();  // The fit log tables
   });
 
 
@@ -2436,7 +2373,6 @@ function ttAdapter(tooltip, target) {
   chart.events.on('ready', function() {
 	createCursor();
 
-	createFitLogTabs();  // The fit log tables
   });
 
 });  // end am4core.ready()
@@ -2702,44 +2638,36 @@ function xy_rangein_reset() {
 
 
 //
-// -- Show/hide the fit log tables
-
-function fitlog_toggle() {
-  var e = document.getElementById('fitlog_div');
-  if ( ! isHidden(e) ) {
-    e.className = 'div-hide';
-    document.getElementById('fitlog_sect').className = 'toggle_table-hdr';
-    document.getElementById('fitlog_angle_down').className = 'div-show-inline';
-    document.getElementById('fitlog_angle_up').className = 'div-hide';
-  } else {
-    e.className = 'rep_div-show';
-    document.getElementById('fitlog_sect').className = 'toggle_table-hdr div-selected';
-    document.getElementById('fitlog_angle_down').className = 'div-hide';
-    document.getElementById('fitlog_angle_up').className = 'div-show-inline';
-  }
-}
-
-
-//
 // -- Show/hide the components / predictions / reducers / extra log tables
 
 function gfit_table_toggle(id) {
-  var e = document.getElementById(id +'-div');
-  if ( ! isHidden(e) ) {
-    e.className = 'div-hide';
-    document.getElementById(id +'_sect').className = 'toggle_table-hdr';
-    document.getElementById(id +'_angle_down').className = 'div-show-inline';
-    document.getElementById(id +'_angle_up').className = 'div-hide';
-    if ( id.startsWith('fitres') )
-      document.getElementById('summ-div').className = 'div-hide';
-  } else {
-    e.className = 'out_table rep_div-show';
-    document.getElementById(id +'_sect').className = 'toggle_table-hdr div-selected';
-    document.getElementById(id +'_angle_down').className = 'div-hide';
-    document.getElementById(id +'_angle_up').className = 'div-show-inline';
-    if ( id.startsWith('fitres') )
-      document.getElementById('summ-div').className = 'summ-div';
+  var   divid = id +'-div',
+	e = document.getElementById(divid),
+	sdiv = document.getElementById('fitlog_selector'),  // Selectors divs
+	tdiv = document.getElementById('fitlog_tables'), // Tables divs
+	i = 0;
+
+  while (tdiv.childNodes[i]) {
+//console.log('id:', tdiv.childNodes[i].id )
+    if ( tdiv.childNodes[i].id !== divid || ! isHidden(e) ) { 
+	tdiv.childNodes[i].className = 'div-hide';
+	sdiv.childNodes[i].className = 'toggle_table-hdr';
+	sdiv.childNodes[i].childNodes[0].className = 'div-show-inline';
+	sdiv.childNodes[i].childNodes[1].className = 'div-hide';
+    } else {
+	tdiv.childNodes[i].className = 'out_table rep_div-show';
+	sdiv.childNodes[i].className = 'toggle_table-hdr div-selected';
+	sdiv.childNodes[i].childNodes[0].className = 'div-hide';
+	sdiv.childNodes[i].childNodes[1].className = 'div-show-inline';
+	//e.className = 'out_table rep_div-show';
+	//document.getElementById(id +'_sect').className = 'toggle_table-hdr div-selected';
+	//document.getElementById(id +'_angle_down').className = 'div-hide';
+	//document.getElementById(id +'_angle_up').className = 'div-show-inline';
+    }
+    i++;
   }
+
+  //document.getElementById('fitlog_div').scrollIntoView();
 }
 
 
@@ -2846,11 +2774,11 @@ var tableFromJson = function(obj, type, tab_id) {
 
 // Create a table with its id
 
-  tabdiv = document.createElement('div');
-  tabdiv.appendChild(tlab);
+  //tabdiv = document.createElement('div');
+  //tabdiv.appendChild(tlab);
 
   contentdiv = document.createElement('div');
-  tabdiv.appendChild(contentdiv);
+  //tabdiv.appendChild(contentdiv);
 
   if ( tab_id !== undefined )
 	contentdiv.setAttribute('id', tab_id +'-div');
@@ -3090,7 +3018,8 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	summdiv.appendChild(div);
 
-	tabdiv.appendChild(summdiv);
+	//tabdiv.appendChild(summdiv);
+	contentdiv.appendChild(summdiv);
 
 	break;
 
@@ -3111,147 +3040,8 @@ var tableFromJson = function(obj, type, tab_id) {
 	console.log(`Sorry, option not recognised: ${type}.`);
   }
 
-  return tabdiv;
-}
-
-
-//
-// -- Update the prediction+reducer+fitres tables with current data
-
-function updatePredTabs(obj, fre) {
-  var comp = obj.compevals,
-	cname = Object.keys(comp),  // comp. names
-	nc = cname.length,
-	red = obj.reducers,
-	rname = Object.keys(red),  // red. names
-	nr = rname.length,
-
-	fres = fre.components,
-	fname = Object.keys(fres),
-	nf = fname.length,
-
-	tab = document.getElementById('pred_table-div'),  // predictions
-	tb = tab.getElementsByTagName("tbody")[0],
-	pcol = ['counter', 'min', 'max', 'mean', 'error'],
-	c, cell, tr, tabCell;
-
-	tb.innerHTML = '';
-
-	for (var i = 0; i < nc; i++) {
-	  c = comp[cname[i]];  // comp. obj.
- 
-	  tr = tb.insertRow(-1);
-
-	  tabCell = tr.insertCell(-1);
-	  tabCell.innerHTML = cname[i];	 // 1st column is comp. name
-
-	  for (var j = 0; j < pcol.length; j++) {
-	    if ( typeof c[pcol[j]] == 'number' ) {
-		if ( j == 0 || j == 4 )   // "error" is a counter
-		  cell = parseInt(c[pcol[j]]);
-		else
-		  cell = +c[pcol[j]].toPrecision(4);
-	    } else
-		cell = '';
-	    tabCell = tr.insertCell(-1);
-	    tabCell.classList.add('al-right');
-	    tabCell.innerHTML = cell;
-	  }
-
-	}
-
-
-	tab = document.getElementById('red_table-div');  // reducers
-	tb = tab.getElementsByTagName("tbody")[0];
-	tb.innerHTML = '';
-
-	for (var i = 0; i < nr; i++) {
-	  c = red[rname[i]];  // comp. obj.
- 
-	  tr = tb.insertRow(-1);
-
-	  tabCell = tr.insertCell(-1);
-	  tabCell.innerHTML = rname[i];	 // 1st column is comp. name
-
-	  for (var j = 0; j < pcol.length; j++) {
-	    if ( typeof c[pcol[j]] == 'number' ) {
-		if ( j == 0 || j == 4 )   // "error" is a counter
-		  cell = parseInt(c[pcol[j]]);
-		else
-		  cell = +c[pcol[j]].toPrecision(4);
-	    } else
-		cell = '';
-	    tabCell = tr.insertCell(-1);
-	    tabCell.classList.add('al-right');
-	    tabCell.innerHTML = cell;
-	  }
-
-	}
-
-
-	tab = document.getElementById('fitres_table-div');  // fit results
-	tb = tab.getElementsByTagName("tbody")[0];
-	tb.innerHTML = '';
-
-	for (var i = 0; i < nf; i++) {
-	  c = fres[fname[i]];  // comp. obj.
-	  var ncol = 6;
-	  var pname = Object.keys(c),
-		pkname = [];
-
-	  for (var key in c[pname[0]])  // Keys from first parameter
-	 	pkname.push(key);
- 
-	  tr = tb.insertRow(-1);
-
-	  tabCell = tr.insertCell(-1);
-	  tabCell.innerHTML = fname[i];	 // First column is comp. name
-
-	  var cell = pname[0];
-
-	  for (var k = 1; k < pname.length; k++)
-		cell += '<br />'+ pname[k];  
-
-	  tabCell = tr.insertCell(-1);
-	  tabCell.innerHTML = cell;
-
-	  for (var j = 0; j < ncol - 2; j++) {  // Third+ columns are par. values
-	    var cell = '';
-	    var v = c[pname[0]][pkname[j]];
-	    if ( typeof v == 'number') {
-		v = +v.toPrecision(4);
-		if ( pkname[j] == 'patched' && v !== +c[pname[0]]['val'].toPrecision(4) )
-			v = '<span style="background: var(--danger); color: #fff;  padding-left: 5px;">'+ v +'</span>';
-	    } else if ( pkname[j] == 'unc' ) {  // null
-			v = '';
-	    } else if ( pkname[j] == 'fixed' ) {
-		if ( v )
-			v = 'fixed';
-		else
-			v = '';
-	    }
-	    cell = v;
-	    for (var k = 1; k < pname.length; k++) {
-		v = c[pname[k]][pkname[j]];
-		if ( typeof v == 'number') {
-		  v = +v.toPrecision(4);
-		  if ( pkname[j] == 'patched' && v !== +c[pname[k]]['val'].toPrecision(4) )
-			v = '<span style="background: var(--danger); color: #fff;  padding-left: 5px;">'+ v +'</span>';
-		} else if ( pkname[j] == 'unc' ) {  // null
-			v = '';
-		} else if ( pkname[j] == 'fixed' ) {
-		  if ( v )
-			v = 'fixed';
-		  else
-			v = '';
-		}
-		cell += '<br />'+ v;
-	    }
-	    tabCell = tr.insertCell(-1);
-	    tabCell.classList.add('al-right');
-	    tabCell.innerHTML = cell;
-	  }
-	}
+// Selector label and table returned separately
+  return {"selector": tlab, "table": contentdiv};
 }
 
 
@@ -3259,29 +3049,33 @@ function updatePredTabs(obj, fre) {
 // -- The fit log tables sections
 
 function createFitLogTabs() {
-  var divShowData = document.getElementById('fitlog_tab');
+  var divSelectData = document.getElementById('fitlog_selector');
+  var divShowData = document.getElementById('fitlog_tables');
+  divSelectData.innerHTML = '',
   divShowData.innerHTML = '';
 
   tabdiv = tableFromJson(chart_data.predictions[c_ipre], 0, 'comp_table');
-  divShowData.appendChild(tabdiv);  // Add the components table to the container
+  divSelectData.appendChild(tabdiv.selector);  // Add the components table to the container
+  divShowData.appendChild(tabdiv.table);
 
 // Current prediction/reducer tables
   tabdiv = tableFromJson(chart_data.predictions[c_ipre], 1, 'pred_table');
-  divShowData.appendChild(tabdiv);  // Add the prediction table to the container
+  divSelectData.appendChild(tabdiv.selector);  // Add the prediction table to the container
+  divShowData.appendChild(tabdiv.table);
 
 // Add the reducer table to the prediction container
   tabdiv = tableFromJson(chart_data.predictions[c_ipre], 2, 'red_table');
-  document.getElementById('pred_table-div').appendChild(tabdiv);
+  document.getElementById('pred_table-div').appendChild(tabdiv.selector);
+  document.getElementById('pred_table-div').appendChild(tabdiv.table);
 
   if ( chart_data.bestfit !== undefined && chart_data.bestfit !== null ) {
     tabdiv = tableFromJson(chart_data.bestfit, 3, 'fitres_table');
-    divShowData.appendChild(tabdiv);  // Add the fit_res table to the container
+    divSelectData.appendChild(tabdiv.selector);  // Add the fit_res table to the container
+    divShowData.appendChild(tabdiv.table);
   }
 
 
 // Extra tables in a separate div. If it exists for the current prediction.
-  var divShowExtra = document.getElementById('extralog_div');
-  divShowExtra.innerHTML = '';
 
   var n_extratab = 0;
   if ( tab_extra[c_ipre] !== undefined )
@@ -3290,15 +3084,20 @@ function createFitLogTabs() {
   if ( n_extratab !== 0 ) {
 console.log('There are '+ n_extratab +' extra tables.');
 
-    divShowExtra.className = 'div-show';
+    //var divShowExtra = document.createElement('div');
+    //divSelectExtra.style.borderLeft = '3px solid #069';
 
     var extratabs = Object.keys(tab_extra[c_ipre]);
     for (var i = 0; i < n_extratab; i++) {
 	tabdiv = tableFromJson(tab_extra[c_ipre][extratabs[i]], 4, i);
-	divShowExtra.appendChild(tabdiv);  // Add the extra table to the container
+	if ( i == 0 )
+	  tabdiv.selector.style.borderLeft = '3px solid #ccc';
+	divSelectData.appendChild(tabdiv.selector);  // Add the extra table to the container
+	divShowData.appendChild(tabdiv.table);
     }
-  } else
-    divShowExtra.className = 'div-hide';
+    //divShowData.appendChild(divShowExtra);
+  } //else
+    //divShowExtra.classList.add('div-hide');
 }
 </script>
 
