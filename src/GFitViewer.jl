@@ -11,8 +11,18 @@ struct ViewerData
     dict::OrderedDict
 
     function ViewerData(model::Model,
-                        data::Union{Nothing, T, Vector{T}}=nothing,
+                        data::Union{Nothing, T}=nothing,
                         bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
+                        kw...) where T <: GFit.AbstractData
+        multi = MultiModel(model)
+        isnothing(data)  ||  (data = [data])
+        isnothing(bestfit)  ||  (bestfit = GFit.BestFitMultiResult([bestfit.comps], getproperty.(Ref(bestfit), propertynames(bestfit)[2:end])...))
+        return ViewerData(multi, data, bestfit; kw...)
+    end
+
+    function ViewerData(multi::MultiModel,
+                        data::Union{Nothing, Vector{T}}=nothing,
+                        bestfit::Union{Nothing, GFit.BestFitMultiResult}=nothing;
                         rebin::Int=1,
                         showcomps::Union{Bool, Vector{Symbol}}=false) where T <: GFit.AbstractData
 
@@ -26,20 +36,15 @@ struct ViewerData
         out = MDict()
 
         out[:predictions] = Vector{MDict}()
-        for id in 1:length(model.preds)
-            push!(out[:predictions], todict(id, model.preds[id]))
+        for id in 1:length(multi.models)
+            push!(out[:predictions], todict(id, multi.models[id]))
         end
 
         if !isnothing(data)
             out[:data] = Vector{MDict}()
-            if isa(data, Vector)
-                @assert length(model.preds) == length(data)
-                for id in 1:length(data)
-                    push!(out[:data], todict(model.preds[id], data[id]))
-                end
-            else
-                @assert length(model.preds) == 1
-                push!(out[:data], todict(model.preds[1], data))
+            @assert length(multi.models) == length(data)
+            for id in 1:length(data)
+                push!(out[:data], todict(multi.models[id], data[id]))
             end
         end
 
@@ -49,7 +54,7 @@ struct ViewerData
 
         out[:meta] = MDict()
         out[:extra] = Vector{MDict}()
-        for id in 1:length(model.preds)
+        for id in 1:length(multi.models)
             push!(out[:extra], MDict())
         end
         return new(out)

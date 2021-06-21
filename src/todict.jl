@@ -108,27 +108,27 @@ function todict(name::Symbol, reval::GFit.ReducerEval)
     return out
 end
 
-function todict(id, pred::GFit.Prediction)
+function todict(id, model::GFit.Model)
     out = MDict()
-    out[:x] = rebin_data(todict_opt[:rebin], pred.domain[:])
+    out[:x] = rebin_data(todict_opt[:rebin], model.domain[:])
     out[:components] = MDict()
     out[:compevals]  = MDict()
-    for (cname, ceval) in pred.cevals
+    for (cname, ceval) in model.cevals
         out[:components][cname] = todict(cname, ceval.comp)
         out[:components][cname][:fixed] = (ceval.cfixed >= 1)
         out[:compevals][ cname] = todict(cname, ceval)
     end
     out[:reducers] = MDict()
-    for (rname, reval) in pred.revals
+    for (rname, reval) in model.revals
         out[:reducers][rname] = todict(rname, reval)
-        out[:reducers][rname][:meta][:default_visible] = (rname != pred.rsel)
+        out[:reducers][rname][:meta][:default_visible] = (rname != model.rsel)
     end
-    out[:main_reducer] = pred.rsel
-    out[:folded_model] = rebin_data(todict_opt[:rebin], pred.folded)
+    out[:main_reducer] = model.rsel
+    out[:folded_model] = rebin_data(todict_opt[:rebin], model())
 
     out[:meta] = MDict()
     out[:meta][:rebin] = todict_opt[:rebin]
-    out[:meta][:label] = "Prediction $id"
+    out[:meta][:label] = "Model $id"
     out[:meta][:color] = "auto"
     out[:meta][:label_x] = ""
     out[:meta][:log10scale_x] = 0
@@ -140,9 +140,9 @@ function todict(id, pred::GFit.Prediction)
     return out
 end
 
-function todict(pred::GFit.Prediction, data::GFit.Measures{1})
+function todict(model::GFit.Model, data::GFit.Measures{1})
     out = MDict()
-    p = rebin_data(todict_opt[:rebin], GFit.geteval(pred))
+    p = rebin_data(todict_opt[:rebin], GFit.geteval(model))
     y, err = rebin_data(todict_opt[:rebin], data.val, data.unc)
     out[:meta] = MDict()
     out[:y] = y
@@ -158,7 +158,7 @@ function todict(pred::GFit.Prediction, data::GFit.Measures{1})
     return out
 end
 
-function todict(param::GFit.BestFitPar)
+function todict(param::GFit.BestFitParam)
     out = MDict()
     out[:val] = param.val
     out[:unc] = param.unc
@@ -181,15 +181,15 @@ function todict(comp::GFit.BestFitComp)
     return out
 end
 
-function todict(res::GFit.BestFitResult)
+function todict(res::GFit.BestFitMultiResult)
     out = MDict()
-    preds = [MDict(:components => MDict()) for id in 1:length(res.preds)]
-    for id in 1:length(res.preds)
-        for (cname, comp) in res.preds[id]
-            preds[id][:components][cname] = todict(comp)
+    models = [MDict(:components => MDict()) for id in 1:length(res.models)]
+    for id in 1:length(res.models)
+        for (cname, comp) in res.models[id]
+            models[id][:components][cname] = todict(comp)
         end
     end
-    out[:predictions] = preds
+    out[:predictions] = models
     out[:ndata] = res.ndata
     out[:dof] = res.dof
     out[:cost] = res.cost
