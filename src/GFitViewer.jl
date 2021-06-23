@@ -102,7 +102,12 @@ function viewer(vd::ViewerData; filename=nothing, offline=false)
     else
         fname = filename
     end
-    save_json(vd, fname * ".json")
+    if splitext(fname)[2] == ".html"
+        json_fname = splitext(fname)[1] * ".json"
+    else
+        json_fname = fname * ".json"
+    end
+    save_json(vd, json_fname)
     save_html(vd, fname; offline=offline)
     DefaultApplication.open(fname)
 end
