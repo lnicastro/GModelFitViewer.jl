@@ -189,7 +189,7 @@ function todict(res::GFit.BestFitMultiResult)
             models[id][:components][cname] = todict(comp)
         end
     end
-    out[:predictions] = models
+    out[:models] = models
     out[:ndata] = res.ndata
     out[:dof] = res.dof
     out[:cost] = res.cost

@@ -35,9 +35,9 @@ struct ViewerData
 
         out = MDict()
 
-        out[:predictions] = Vector{MDict}()
+        out[:models] = Vector{MDict}()
         for id in 1:length(multi.models)
-            push!(out[:predictions], todict(id, multi.models[id]))
+            push!(out[:models], todict(id, multi.models[id]))
         end
 
         if !isnothing(data)
