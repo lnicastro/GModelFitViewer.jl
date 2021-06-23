@@ -1,6 +1,6 @@
 module GFitViewer
 
-using DataStructures, JSON, DefaultApplication, GFit, Statistics
+using DataStructures, JLD2, JSON, DefaultApplication, GFit, Statistics
 using Pkg, Pkg.Artifacts
 
 export ViewerData, viewer
@@ -9,6 +9,8 @@ include("todict.jl")
 
 struct ViewerData
     dict::OrderedDict
+
+    ViewerData(dict::OrderedDict) = new(dict)
 
     function ViewerData(model::Model,
                         data::Union{Nothing, T}=nothing,
@@ -88,6 +90,12 @@ function save_json(vd::ViewerData, filename::AbstractString)
 end
 
 
+function save_binary(vd::ViewerData, filename::AbstractString)
+    JLD2.save(filename, "vd", vd.dict, compress=true)
+    return filename
+end
+
+
 function tostring(vd::ViewerData)
     io = IOBuffer()
     JSON.print(io, vd.dict)
@@ -108,6 +116,12 @@ function viewer(vd::ViewerData; filename=nothing, offline=false)
         json_fname = fname * ".json"
     end
     save_json(vd, json_fname)
+    if splitext(fname)[2] == ".html"
+        binary_fname = splitext(fname)[1] * ".jld2"
+    else
+        binary_fname = fname * ".jld2"
+    end
+    save_binary(vd, binary_fname)
     save_html(vd, fname; offline=offline)
     DefaultApplication.open(fname)
 end
