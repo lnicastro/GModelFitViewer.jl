@@ -10,8 +10,6 @@ include("todict.jl")
 struct ViewerData
     dict::OrderedDict
 
-    ViewerData(dict::OrderedDict) = new(dict)
-
     function ViewerData(model::Model,
                         data::Union{Nothing, T}=nothing,
                         bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
@@ -91,7 +89,7 @@ end
 
 
 function save_binary(vd::ViewerData, filename::AbstractString)
-    JLD2.save(filename, "vd", vd.dict, compress=true)
+    JLD2.save_object(filename, vd)
     return filename
 end
 
