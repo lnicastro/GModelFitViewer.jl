@@ -16,7 +16,11 @@ struct ViewerData
                         kw...) where T <: GFit.AbstractData
         multi = MultiModel(model)
         isnothing(data)  ||  (data = [data])
-        isnothing(bestfit)  ||  (bestfit = GFit.BestFitMultiResult([bestfit.comps], getproperty.(Ref(bestfit), propertynames(bestfit)[2:end])...))
+        if !isnothing(bestfit)
+            bestfit = GFit.BestFitMultiResult(bestfit.timestamp, bestfit.elapsed, bestfit.mzer,
+                                              [bestfit.comps],
+                                              GFit.MDMultiComparison(multi, data))
+        end
         return ViewerData(multi, data, bestfit; kw...)
     end
 
@@ -35,9 +39,9 @@ struct ViewerData
 
         out = MDict()
 
-        out[:predictions] = Vector{MDict}()
+        out[:models] = Vector{MDict}()
         for id in 1:length(multi.models)
-            push!(out[:predictions], todict(id, multi.models[id]))
+            push!(out[:models], todict(id, multi.models[id]))
         end
 
         if !isnothing(data)

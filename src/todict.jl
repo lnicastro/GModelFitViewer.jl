@@ -189,12 +189,12 @@ function todict(res::GFit.BestFitMultiResult)
             models[id][:components][cname] = todict(comp)
         end
     end
-    out[:predictions] = models
-    out[:ndata] = res.ndata
-    out[:dof] = res.dof
-    out[:cost] = res.cost
-    out[:status] = res.status
-    out[:log10testprob] = res.log10testprob
+    out[:models] = models
+    out[:ndata] = res.mdc.ndata
+    out[:dof] = res.mdc.dof
+    out[:cost] = res.mdc.fitstat
+    out[:status] = split(string(typeof(res.mzer)), "MinimizerStatus")[2]
+    out[:log10testprob] = res.mdc.log10testprob
     out[:elapsed] = res.elapsed
     return out
 end
