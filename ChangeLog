@@ -155,3 +155,8 @@
 2021-05-28 LN, ver. 0.2
 	- Changed summary table management
 	- Extra params and tables moved into chart_data
+
+2021-06-29 LN, ver. 0.3
+	- Prediction is now named Model; source changed accordingly
+	- Minor source code changes
+	- test html and json data updated
