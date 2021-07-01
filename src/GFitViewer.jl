@@ -159,4 +159,7 @@ function viewer(json::String; filename=nothing, offline=false)
     DefaultApplication.open(fname)
 end
 
+
+include("gnuplot.jl")
+
 end
