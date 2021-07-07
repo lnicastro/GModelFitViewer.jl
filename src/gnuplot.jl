@@ -30,5 +30,5 @@ end
 
 
 Gnuplot.recipe(dd::Tuple{Measures{1}, Model}) =
-    out = [Gnuplot.recipe(dd[2])...,
-           Gnuplot.recipe((domain(dd[2]), dd[1]))]
+    out = [Gnuplot.recipe((domain(dd[2]), dd[1])),
+           Gnuplot.recipe(dd[2])...]
