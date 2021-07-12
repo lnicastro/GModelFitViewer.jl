@@ -48,6 +48,9 @@ struct ViewerData
             out[:data] = Vector{MDict}()
             @assert length(multi.models) == length(data)
             for id in 1:length(data)
+                # Avoid displaying selected reducer (it will be shown
+                # as model in the corresponding dataset)
+                out[:models][id][:reducers][multi.models[id].rsel][:meta][:use_in_plot] = false
                 push!(out[:data], todict(multi.models[id], data[id]))
             end
         end
