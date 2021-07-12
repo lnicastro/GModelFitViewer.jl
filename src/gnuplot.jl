@@ -25,7 +25,7 @@ function Gnuplot.recipe(model::Model)
     push!(out, Gnuplot.PlotElement(
         data=Gnuplot.DatasetBin(domain(model)[:], model()),
         plot="with lines t 'Model' lc rgb 'black' lw 2"))
-    return reverse(out)
+    return out
 end
 
 
