@@ -3,15 +3,8 @@ import Gnuplot.recipe
 
 Gnuplot.recipe(data::Measures{1}) =
     Gnuplot.PlotElement(cmds=["set bars 0"],
-                        data=Gnuplot.DatasetBin(collect(1:length(data)), data.val, data.unc),
+                        data=Gnuplot.DatasetBin(data.domain[:], data.val, data.unc),
                         plot="with yerr t 'Data' lc rgb 'gray'")
-
-
-Gnuplot.recipe(data::Tuple{Domain{1}, Measures{1}}) =
-    Gnuplot.PlotElement(cmds=["set grid", "set bars 0"],
-                        data=Gnuplot.DatasetBin(data[1][:], data[2].val, data[2].unc),
-                        plot="with yerr t 'Data' lc rgb 'gray'")
-
 
 function Gnuplot.recipe(model::Model)
     @assert ndims(domain(model)) == 1
