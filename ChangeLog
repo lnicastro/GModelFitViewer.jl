@@ -160,3 +160,7 @@
 	- Prediction is now named Model; source changed accordingly
 	- Minor source code changes
 	- test html and json data updated
+
+2021-07-15 LN, ver. 0.4
+	- New json structure (folded_model removed) etc.
+	- test html and json data updated

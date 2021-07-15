@@ -11,8 +11,8 @@
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
-  <meta name="version" content="0.3" />
-  <meta name="date" content="2021-06-29" />
+  <meta name="version" content="0.4" />
+  <meta name="date" content="2021-07-15" />
 
   <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAACwVBMVEVLQTkAAAAQNQDv9vqWWUIYSADPv8T///8fAABWIgBpNQBXCwB4LwBsEAAxmQCaNACMJwCGFAA8sQCrOgBtAACWGABByADFRwCsGABJ4wDWVACrGQBU9gD2dADtYQAAPAAJDQAJDQALDQAMDQANDAANCwDKnZPKn5axf3GMYlZwVlEKAAACAAAJFAALEwAPEwAREgAREAAPDwDIl4uMbmaAZ2C0kIiVZ1kOAAAQAAAPAAAMJAAOHgAWGQAVGQAUFwASEgAAAACziH1yV06beG4XAAAWAAATAAANAAAQNQAQNQChdWerfnCjg3uNcGipg3kAAAAqAAAhAAAcAAAVAAAXSAAYSAClgnj7xbdiNyRYLBhAAAA4AAAsAAAiAAAaAAAdWQApZABDcgBWaQBhXwBiUQBjUABUGQBTGABfIQBEAABAAAA2AAArAAAdAAAkbQAybwBHcQBfbwBsZwBqWABpVABqHwBpHABqGABKAABCAAA3AAAcAAAqgwA0dgBNcQBndgBxcABtYABrVgB8JQB6HwB5GQBaAABOAABBAAAqAAAumQAxmQCPLQCOIwCTHABoAABbAABLAAAoAAA2sAA8sQClNACjJwCfHQB4AABoAABXAAA0AAA8xwBCxwDFSwC8PgC5HQCIAAB1AABiAAA/AABE4QBJ4wDWVgDSSADRHACWAACDAABrAABVAABM+QBU9wDvZQDqUgDqFgDyAACMAABxAABSAABQ/wBo/wCo/wDc/wD78QD8ywD6oAD2dQDzEgDyAADQAACWAAByAABTAABS/wB0/wCk/wDc/wD78QD8ygD5ogD3ewDwAADOAAChAAB2AABTAABS/wB0/wCk/wDc/wD78QD8ygD5owD3fAD0WAD0NwDzEQDwAADOAAChAAB3AABTAABNNSm8KgDPLwDnMwD0WAD0NwDzEQD////W1nz1AAAA43RSTlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHp7e3t9RhQoCwkBAgL77Onp7YMZtuOYLwyOc9s/KCoqKhVR+JMT1qwD1BocRovAPAEl2bMW1BoFARZULcr48NLbPygqKicIK5EEE2Tly1/87evr7NorR8APE9asA+Z7a2xsZBRh3x4T1qwD1Bp98DAT1qwD1Bqb/k4T1qwD1BoHum0T1q4D1Boa2JIPzcUQ1BpC9MQOkfi2iSEREhISGp70XRMpkcnQ0dLS0tHa+u/XycbO+fn5+fn5+Pb19fX2+Pn5+dfu6+cAAAABYktHRAcWYYjrAAAAB3RJTUUH5QQICR4OhkGH6QAAARtJREFUGNMBEAHv/gAgISEiIyQlACYnKCkqKywBAC0uLzAwMTIzNDU2Nzg5OisAOzw9Pj9AQUJD40QBRUZHSABJSgIBAwRLTE1OT1BRUlNUAFVWBQEGB1dYWVoIW1xdXl8AYGFiY2RlZglnaGlqa2xtbgBvcHFyc3R1CnZ3eAt5ent8AH1+f4CBgoMMhIWGDYeIiYoAi4wOAQEBDxCNjo8RkJGSkwCUlRIBAQETFJaXmBWZmpucAJ2eFgEBARefoOShGKKjpKUApqcZAQEBGqip5aobq6ytrgCvsBwBAR0esbLms7Qftba3ALi5uru8vb6/5+jAwcLDxMUAxsfIycrLzM3n6OnOz9DR0gDT1NXW19jZ2tvc3d7f4OHiz4ts2nSh7t4AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDQtMDhUMDk6MzA6MTQrMDI6MDANVBBwAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA0LTA4VDA5OjMwOjE0KzAyOjAwfAmozAAAAFd6VFh0UmF3IHByb2ZpbGUgdHlwZSBpcHRjAAB4nOPyDAhxVigoyk/LzEnlUgADIwsuYwsTIxNLkxQDEyBEgDTDZAMjs1Qgy9jUyMTMxBzEB8uASKBKLgDqFxF08kI1lQAAAABJRU5ErkJggg==" sizes="16x16" rel="icon" type="image/x-icon" />
 
@@ -1481,8 +1481,8 @@ var getauxinfo = function() {  // TODO
     } else
 	x_lab = 'X label';
     
-    y_min = Math.min(...(chart_data.models[i].folded_model));
-    y_max = Math.max(...(chart_data.models[i].folded_model));
+    y_min = Math.min(...(chart_data.data[i].model));
+    y_max = Math.max(...(chart_data.data[i].model));
 
 // Scale Y axis for values < 0.01 or > 100
     var y_scale = 1,
@@ -1585,8 +1585,11 @@ console.log('isel:', isel);
 // X values rounded to the N sig. factional digits
   for (var i = 0; i < p.x.length; i++) {
 	vals = {};
-	vals['x'] = Math.round(p.x[i] * fscale) / fscale;
+	vals['comp_x'] = Math.round(p.x[i] * fscale) / fscale;
 	if ( aux.n_d > 0 ) {
+	  vals['x'] = Math.round(chart_data.data[isel].x[i] * fscale) / fscale;
+	  vals['model'] = chart_data.data[isel].model[i] / aux.modinfo[isel].y_scale;
+
 	  vals['y'] = chart_data.data[isel].y[i] / aux.modinfo[isel].y_scale;
 	  vals['error'] = chart_data.data[isel].err[i];
 	  vals['resid'] = chart_data.data[isel].residuals[i];
@@ -1594,8 +1597,6 @@ console.log('isel:', isel);
 	  vals['err_lo'] = (chart_data.data[isel].y[i] - chart_data.data[isel].err[i]) / aux.modinfo[isel].y_scale;
 	  vals['err_up'] = (chart_data.data[isel].y[i] + chart_data.data[isel].err[i]) / aux.modinfo[isel].y_scale;
 	}
-
-	vals['folded_model'] = p.folded_model[i] / aux.modinfo[isel].y_scale;  // Folded model
 
 	for (var j = 0; j < aux.modinfo[isel].n_reds; j++) {  // Reducers
           if ( !p.reducers[rnames[j]].meta.use_in_plot )
@@ -1605,7 +1606,7 @@ console.log('isel:', isel);
 	}
 
 	for (var j = 0; j < aux.modinfo[isel].n_comps; j++) { // Components
-          if ( !p.components[cnames[j]].meta.use_in_plot )
+          if ( !p.compevals[cnames[j]].meta.use_in_plot )
 		continue;
 	  //if ( p.compevals[cnames[j]].y[i] > 0 )
 	  vals[cnames[j]] = p.compevals[cnames[j]].y[i] / aux.modinfo[isel].y_scale;
@@ -1621,6 +1622,7 @@ console.log('isel:', isel);
 //
 // -- Create series for the the main reducer of a model.
 //    2021/03/24: Changed to folded_model
+//    2021/07/14: Removed folded_model
 //    If xsc_series=true then use it also for the X window scrolling. 
 
 function createMainReducer(isel, xsc_series) {
@@ -1629,11 +1631,11 @@ function createMainReducer(isel, xsc_series) {
 
   var hs;
 
-console.log('Create "folded_model" model');
+console.log('Create "first" model');
 
   var series = chart.series.push(new am4charts.LineSeries());
   series.dataFields.valueX = 'x';
-  series.dataFields.valueY = 'folded_model';
+  series.dataFields.valueY = 'model';
 
   series.name = 'Model';
   series.strokeWidth = 2;
@@ -1841,7 +1843,7 @@ function createCompSeries(isel) {
     isel = c_imod;
 
   var	p = chart_data.models[isel],
-	data = [], cname, rname, component, reducer, hs, icol = 0;
+	data = [], cname, rname, compevals, reducer, hs, icol = 0;
 
   vxAxis.title.text = aux.modinfo[isel].x_label;
   valueAxis.title.text = aux.modinfo[isel].y_label;
@@ -1849,24 +1851,24 @@ function createCompSeries(isel) {
 // -- Components
   for (var i = 0; i < aux.modinfo[isel].n_comps; i++) {  // Components in a model
 	cname = aux.modinfo[isel].components[i];
-	component = p.components[cname];
+	compevals = p.compevals[cname];
     
-	if ( !component.meta.use_in_plot )  // Component has data?
+	if ( !compevals.meta.use_in_plot )  // Component has data?
 	  continue;
 
 console.log('Create component:', cname);
     
 	var series = chart.series.push(new am4charts.LineSeries());
-	series.dataFields.valueX = 'x';
+	series.dataFields.valueX = 'comp_x';
 	series.dataFields.valueY = cname;
 
 	series.name = cname;
 	series.strokeWidth = 2;
 	series.showOnInit = false;
 
-	if ( component.meta.color !== 'auto' ) {  // User selected color?
-	  series.stroke = component.meta.color;
-	  series.fill = component.meta.color;
+	if ( compevals.meta.color !== 'auto' ) {  // User selected color?
+	  series.stroke = compevals.meta.color;
+	  series.fill = compevals.meta.color;
 	} else {
 	  series.stroke = mycolors[icol % n_myc].hex;
 	  series.fill = mycolors[icol % n_myc].hex;
@@ -1874,7 +1876,7 @@ console.log('  color:', mycolors[icol % n_myc].name, mycolors[icol % n_myc].hex)
 	  icol++;
 	}
 
-	if ( !component.meta.default_visible )  // Component to hide?
+	if ( !compevals.meta.default_visible )  // Component to hide?
 	  series.visible = false;
 
 // Highlight when cursor on legend item
@@ -1888,9 +1890,6 @@ console.log('  color:', mycolors[icol % n_myc].name, mycolors[icol % n_myc].hex)
   for (var i = 0; i < aux.modinfo[isel].n_reds; i++) {  // Reducers in a model
     var rname = aux.modinfo[isel].reducers[i];
 
-    //if ( rname.indexOf(aux.modinfo[isel].main_reducer) == 0 )  // This is the main reducers: skip - no more
-	//continue;
-
     if ( !p.reducers[rname].meta.use_in_plot )
 	continue;
 
@@ -1898,7 +1897,7 @@ console.log('Create reducer:', rname);
  
     reducer = p.reducers[rname];
     var series = chart.series.push(new am4charts.LineSeries());
-    series.dataFields.valueX = 'x';
+    series.dataFields.valueX = 'comp_x';
     series.dataFields.valueY = rname;
 
     series.name = rname;
