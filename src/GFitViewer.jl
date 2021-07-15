@@ -16,15 +16,11 @@ struct ViewerData
                         kw...) where T <: GFit.AbstractData
         multi = MultiModel(model)
         isnothing(data)  ||  (data = [data])
-<<<<<<< HEAD
         if !isnothing(bestfit)
             bestfit = GFit.BestFitMultiResult(bestfit.timestamp, bestfit.elapsed, bestfit.mzer,
                                               [bestfit.comps],
                                               GFit.MDMultiComparison(multi, data))
         end
-=======
-        isnothing(bestfit)  ||  (bestfit = GFit.BestFitMultiResult([bestfit.comps], getproperty.(Ref(bestfit), propertynames(bestfit)[2:end])...))
->>>>>>> Multimodel_refactor
         return ViewerData(multi, data, bestfit; kw...)
     end
 
@@ -35,10 +31,10 @@ struct ViewerData
                         showcomps::Union{Bool, Vector{Symbol}}=false) where T <: GFit.AbstractData
 
         todict_opt[:rebin] = rebin
-        todict_opt[:showallcomps] = (isa(showcomps, Bool)  &&  showcomps)
-        todict_opt[:showcomps] = Vector{Symbol}()
+        todict_opt[:keepallcevals] = (isa(showcomps, Bool)  &&  showcomps)
+        todict_opt[:keepcevals] = Vector{Symbol}()
         if !isa(showcomps, Bool)
-            todict_opt[:showcomps] = showcomps
+            todict_opt[:keepcevals] = showcomps
         end
 
         out = MDict()
@@ -52,12 +48,9 @@ struct ViewerData
             out[:data] = Vector{MDict}()
             @assert length(multi.models) == length(data)
             for id in 1:length(data)
-<<<<<<< HEAD
                 # Avoid displaying selected reducer (it will be shown
                 # as model in the corresponding dataset)
                 out[:models][id][:reducers][multi.models[id].rsel][:meta][:use_in_plot] = false
-=======
->>>>>>> Multimodel_refactor
                 push!(out[:data], todict(multi.models[id], data[id]))
             end
         end
