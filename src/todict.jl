@@ -60,6 +60,7 @@ function todict(name::Symbol, comp::GFit.AbstractComponent)
         out[:params][parname] = todict(param)
     end
 
+    # TODO: move the following meta block into CompEval
     out[:meta] = MDict()
     out[:meta][:label] = string(name)
     out[:meta][:color] = "auto"
@@ -123,8 +124,13 @@ function todict(id, model::GFit.Model)
         out[:reducers][rname] = todict(rname, reval)
         out[:reducers][rname][:meta][:default_visible] = (rname != model.rsel)
     end
+<<<<<<< HEAD
+    out[:selected_reducer] = model.rsel
+    out[:folded_model] = rebin_data(todict_opt[:rebin], model())  # TODO: drop this entry
+=======
     out[:main_reducer] = model.rsel
     out[:folded_model] = rebin_data(todict_opt[:rebin], model())
+>>>>>>> Multimodel_refactor
 
     out[:meta] = MDict()
     out[:meta][:rebin] = todict_opt[:rebin]
@@ -142,12 +148,19 @@ end
 
 function todict(model::GFit.Model, data::GFit.Measures{1})
     out = MDict()
+<<<<<<< HEAD
+    m      = rebin_data(todict_opt[:rebin], model())
+    x      = rebin_data(todict_opt[:rebin], data.domain[:])
+=======
     p = rebin_data(todict_opt[:rebin], GFit.geteval(model))
+>>>>>>> Multimodel_refactor
     y, err = rebin_data(todict_opt[:rebin], data.val, data.unc)
     out[:meta] = MDict()
+    out[:x] = x
     out[:y] = y
     out[:err] = err
-    out[:residuals] = (y .- p) ./ err
+    out[:model] = m
+    out[:residuals] = (y .- m) ./ err
 
     out[:meta] = MDict()
     out[:meta][:label] = "Empirical data"
@@ -190,11 +203,19 @@ function todict(res::GFit.BestFitMultiResult)
         end
     end
     out[:models] = models
+<<<<<<< HEAD
+    out[:ndata] = res.mdc.ndata
+    out[:dof] = res.mdc.dof
+    out[:cost] = res.mdc.fitstat
+    out[:status] = split(string(typeof(res.mzer)), "MinimizerStatus")[2]
+    out[:log10testprob] = res.mdc.log10testprob
+=======
     out[:ndata] = res.ndata
     out[:dof] = res.dof
     out[:cost] = res.cost
     out[:status] = res.status
     out[:log10testprob] = res.log10testprob
+>>>>>>> Multimodel_refactor
     out[:elapsed] = res.elapsed
     return out
 end
