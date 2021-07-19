@@ -34,6 +34,8 @@ function todict(param::GFit.Parameter)
     out = MDict()
     out[:fixed] = param.fixed
     out[:value] = param.val
+    out[:uncert] = param.unc
+    out[:patched] = param.patched
     out[:low] = param.low
     out[:high] = param.high
     out[:error] = !(param.low <= param.val <= param.high)
@@ -163,43 +165,13 @@ function todict(model::GFit.Model, data::GFit.Measures{1})
     return out
 end
 
-function todict(param::GFit.BestFitParam)
+function todict(fitres::GFit.FitResult)
     out = MDict()
-    out[:val] = param.val
-    out[:unc] = param.unc
-    out[:fixed] = param.fixed
-    out[:patched] = param.patched
-    return out
-end
-
-function todict(comp::GFit.BestFitComp)
-    out = MDict()
-    for (pname, params) in comp
-        if isa(params, AbstractArray)
-            for i in 1:length(params)
-                out[Symbol(pname, "[", i, "]")] = todict(params[i])
-            end
-        else
-            out[pname] = todict(params)
-        end
-    end
-    return out
-end
-
-function todict(res::GFit.BestFitMultiResult)
-    out = MDict()
-    models = [MDict(:components => MDict()) for id in 1:length(res.models)]
-    for id in 1:length(res.models)
-        for (cname, comp) in res.models[id]
-            models[id][:components][cname] = todict(comp)
-        end
-    end
-    out[:models] = models
-    out[:ndata] = res.mdc.ndata
-    out[:dof] = res.mdc.dof
-    out[:cost] = res.mdc.fitstat
-    out[:status] = split(string(typeof(res.mzer)), "MinimizerStatus")[2]
-    out[:log10testprob] = res.mdc.log10testprob
-    out[:elapsed] = res.elapsed
+    out[:ndata] = fitres.ndata
+    out[:dof] = fitres.dof
+    out[:cost] = fitres.fitstat
+    out[:status] = split(string(typeof(fitres.mzer)), "MinimizerStatus")[2]
+    out[:log10testprob] = fitres.log10testprob
+    out[:elapsed] = fitres.elapsed
     return out
 end

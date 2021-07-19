@@ -12,21 +12,16 @@ struct ViewerData
 
     function ViewerData(model::Model,
                         data::Union{Nothing, T}=nothing,
-                        bestfit::Union{Nothing, GFit.BestFitResult}=nothing;
+                        fitres::Union{Nothing, GFit.FitResult}=nothing;
                         kw...) where T <: GFit.AbstractData
         multi = MultiModel(model)
         isnothing(data)  ||  (data = [data])
-        if !isnothing(bestfit)
-            bestfit = GFit.BestFitMultiResult(bestfit.timestamp, bestfit.elapsed, bestfit.mzer,
-                                              [bestfit.comps],
-                                              GFit.MDMultiComparison(multi, data))
-        end
-        return ViewerData(multi, data, bestfit; kw...)
+        return ViewerData(multi, data, fitres; kw...)
     end
 
     function ViewerData(multi::MultiModel,
                         data::Union{Nothing, Vector{T}}=nothing,
-                        bestfit::Union{Nothing, GFit.BestFitMultiResult}=nothing;
+                        fitres::Union{Nothing, GFit.FitResult}=nothing;
                         rebin::Int=1,
                         showcomps::Union{Bool, Vector{Symbol}}=false) where T <: GFit.AbstractData
 
@@ -55,8 +50,38 @@ struct ViewerData
             end
         end
 
-        if !isnothing(bestfit)
-            out[:bestfit] = todict(bestfit)
+        if !isnothing(fitres)
+            out[:bestfit] = todict(fitres)
+
+            # TODO: remove these
+            function tbr_todict(param::GFit.Parameter)
+                aa = MDict()
+                aa[:val] = param.val
+                aa[:unc] = param.unc
+                aa[:fixed] = param.fixed
+                aa[:patched] = param.patched
+                return aa
+            end
+
+            function tbr_todict(comp::GFit.AbstractComponent)
+                bb = MDict()
+                for (pid, param) in GFit.getparams(comp)
+                    bb[pid.name] = tbr_todict(param)
+                end
+                return bb
+            end
+
+            function tbr_todict(res)
+                cc = [MDict(:components => MDict()) for id in 1:length(res.models)]
+                for id in 1:length(res.models)
+                    for cname in keys(res.models[id])
+                        comp = res.models[id][cname]
+                        cc[id][:components][cname] = tbr_todict(comp)
+                    end
+                end
+                return cc
+            end
+            out[:bestfit][:models] = tbr_todict(multi)
         end
 
         out[:meta] = MDict()
