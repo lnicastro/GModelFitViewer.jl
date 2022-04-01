@@ -1,6 +1,6 @@
 module GFitViewer
 
-using DataStructures, JLD2, JSON, DefaultApplication, GFit, Statistics
+using DataStructures, JSON, DefaultApplication, GFit, Statistics
 using Pkg, Pkg.Artifacts
 
 export ViewerData, viewer
@@ -94,84 +94,27 @@ struct ViewerData
 end
 
 
-function save_html(vd::ViewerData, filename::AbstractString; offline=false)
-    io = open(filename, "w")
-    if offline
-        template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
-    else
-        template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
-    end
-    input = open(template)
-    write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, vd.dict)
-    while !eof(input)
-        write(io, readavailable(input))
-    end
-    close(io)
-    return filename
-end
-
-
-function save_json(vd::ViewerData, filename::AbstractString)
+save_json(args...; filename=nothing, kw...) = save_json(ViewerData(args...; kw...), filename)
+function save_json(vd::ViewerData, filename::Union{Nothing, AbstractString}=nothing)
+    isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.json"))
     io = open(filename, "w")
     JSON.print(io, vd.dict)
     close(io)
     return filename
 end
 
-
-function save_binary(vd::ViewerData, filename::AbstractString)
-    JLD2.save_object(filename, vd)
-    return filename
-end
-
-
+#=
 function tostring(vd::ViewerData)
     io = IOBuffer()
     JSON.print(io, vd.dict)
     return String(take!(io))
 end
+=#
 
-
-function viewer(vd::ViewerData; filename=nothing, offline=false)
-    path = tempdir()
-    if filename == nothing
-        fname = "$(path)/gfitviewer.html"
-    else
-        fname = filename
-    end
-    if splitext(fname)[2] == ".html"
-        json_fname = splitext(fname)[1] * ".json"
-    else
-        json_fname = fname * ".json"
-    end
-    save_json(vd, json_fname)
-    if splitext(fname)[2] == ".html"
-        binary_fname = splitext(fname)[1] * ".jld2"
-    else
-        binary_fname = fname * ".jld2"
-    end
-    save_binary(vd, binary_fname)
-    save_html(vd, fname; offline=offline)
-    DefaultApplication.open(fname)
-end
-
-function viewer(args...; filename=nothing, offline=false, kw...)
-    vd = ViewerData(args...; kw...)
-    viewer(vd, filename=filename, offline=offline)
-end
-
-
-function viewer(json::String; filename=nothing, offline=false)
-    @assert isfile(json)
-    path = tempdir()
-    if filename == nothing
-        fname = "$(path)/gfitviewer.html"
-    else
-        fname = filename
-    end
-
-    io = open(fname, "w")
+save_html(args...; filename=nothing, offline=false, kw...) = save_html(ViewerData(args...; kw...), filename; offline=offline)
+function save_html(vd::ViewerData, filename::Union{Nothing, AbstractString}=nothing; offline=false)
+    isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.html"))
+    io = open(filename, "w")
     if offline
         template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
     else
@@ -179,14 +122,19 @@ function viewer(json::String; filename=nothing, offline=false)
     end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    write(io, read(json))
+    JSON.print(io, vd.dict)
     while !eof(input)
         write(io, readavailable(input))
     end
     close(io)
-    DefaultApplication.open(fname)
+    return filename
 end
 
+viewer(args...; filename=nothing, offline=false, kw...) = viewer(ViewerData(args...; kw...), filename; offline=offline)
+function viewer(vd::ViewerData; filename=nothing, offline=false)
+    filename = save_html(vd, filename; offline=offline)
+    DefaultApplication.open(filename)
+end
 
 include("gnuplot.jl")
 
