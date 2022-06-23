@@ -23,15 +23,10 @@ struct ViewerData
                         data::Union{Nothing, Vector{T}}=nothing,
                         fitres::Union{Nothing, GFit.FitResult}=nothing;
                         rebin::Int=1,
-                        showcomps::Union{Bool, Vector{Symbol}}=false) where T <: GFit.AbstractData
+                        comps::Union{Nothing, Vector{Symbol}, Regex}=r".+") where T <: GFit.AbstractData
 
         todict_opt[:rebin] = rebin
-        todict_opt[:keepallcevals] = (isa(showcomps, Bool)  &&  showcomps)
-        todict_opt[:keepcevals] = Vector{Symbol}()
-        if !isa(showcomps, Bool)
-            todict_opt[:keepcevals] = showcomps
-        end
-
+        todict_opt[:include] = comps
         out = MDict()
 
         out[:models] = Vector{MDict}()
@@ -43,9 +38,6 @@ struct ViewerData
             out[:data] = Vector{MDict}()
             @assert length(multi.models) == length(data)
             for id in 1:length(data)
-                # Avoid displaying selected reducer (it will be shown
-                # as model in the corresponding dataset)
-                # TODO out[:models][id][:reducers][multi.models[id].rsel][:meta][:use_in_plot] = false
                 push!(out[:data], todict(multi.models[id], data[id]))
             end
         end
@@ -67,19 +59,12 @@ end
 save_json(args...; filename=nothing, kw...) = save_json(ViewerData(args...; kw...), filename)
 function save_json(vd::ViewerData, filename::Union{Nothing, AbstractString}=nothing)
     isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.json"))
-    io = open(filename, "w")
+    io = open(filename, "w")  # io = IOBuffer()
     JSON.print(io, vd.dict)
-    close(io)
+    close(io)                 # String(take!(io))
     return filename
 end
 
-#=
-function tostring(vd::ViewerData)
-    io = IOBuffer()
-    JSON.print(io, vd.dict)
-    return String(take!(io))
-end
-=#
 
 save_html(args...; filename=nothing, offline=false, kw...) = save_html(ViewerData(args...; kw...), filename; offline=offline)
 function save_html(vd::ViewerData, filename::Union{Nothing, AbstractString}=nothing; offline=false)
@@ -90,6 +75,7 @@ function save_html(vd::ViewerData, filename::Union{Nothing, AbstractString}=noth
     else
         template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
     end
+    # template = joinpath(dirname(pathof(GFitViewer)), "gfitviewer_test.html")
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
     JSON.print(io, vd.dict)
