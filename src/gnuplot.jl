@@ -9,8 +9,8 @@ Gnuplot.recipe(data::Measures{1}) =
 function Gnuplot.recipe(model::Model)
     @assert ndims(domain(model)) == 1
     out = Vector{Gnuplot.PlotElement}()
-    for (k,v) in model.revals
-        (k == model.rsel)  &&  continue
+    for (k,v) in model.cevals
+        (k == model.maincomp)  &&  continue
         push!(out, Gnuplot.PlotElement(
             data=Gnuplot.DatasetBin(domain(model)[:], model(k)),
             plot="with lines t '$(k)'"))

@@ -35,10 +35,13 @@ function todict(param::GFit.Parameter)
     out[:fixed] = param.fixed
     out[:value] = param.val
     out[:uncert] = param.unc
-    out[:patched] = param.patched
+    out[:actual] = param.pval
+    out[:patch] = ""
+    isa(param.patch, Symbol)       &&  (out[:patch] = string(param.patch))
+    isa(param.patch, GFit.λFunct)  &&  (out[:patch] = param.patch.display)
+    isa(param.mpatch,GFit.λFunct)  &&  (out[:patch] = param.mpatch.display)
     out[:low] = param.low
     out[:high] = param.high
-    out[:error] = !(param.low <= param.val <= param.high)
     out[:meta] = MDict()
     out[:meta][:unit] = 1
     out[:meta][:note] = ""
@@ -54,12 +57,8 @@ function todict(name::Symbol, comp::GFit.AbstractComponent)
     out[:type] = ctype
 
     out[:params] = MDict()
-    for (pid, param) in GFit.getparams(comp)
-        parname = pid.name
-        if pid.index >= 1
-            parname = Symbol(parname, "[", pid.index, "]")
-        end
-        out[:params][parname] = todict(param)
+    for (pname, param) in GFit.getparams(comp)
+        out[:params][pname] = todict(param)
     end
 
     return out
@@ -86,27 +85,6 @@ function todict(name::Symbol, ceval::GFit.CompEval)
     return out
 end
 
-function todict(name::Symbol, reval::GFit.ReducerEval)
-    y = reval.buffer
-    i = findall(isfinite.(y))
-
-    out = MDict()
-    out[:counter] = reval.counter
-    out[:min] = minimum(y[i])
-    out[:max] = maximum(y[i])
-    out[:mean] = mean(y[i])
-    out[:error] = (length(i) == length(y))
-    out[:y] = rebin_data(todict_opt[:rebin], y)
-
-    out[:meta] = MDict()
-    out[:meta][:label] = string(name)
-    out[:meta][:color] = "auto"
-    out[:meta][:default_visible] = true
-    out[:meta][:use_in_plot] = true
-
-    return out
-end
-
 function todict(id, model::GFit.Model)
     out = MDict()
     out[:x] = rebin_data(todict_opt[:rebin], model.domain[:])
@@ -121,14 +99,7 @@ function todict(id, model::GFit.Model)
             out[:compevals][cname][:meta][:use_in_plot] = false
         end
     end
-    out[:reducers] = MDict()
-    for (rname, reval) in model.revals
-        out[:reducers][rname] = todict(rname, reval)
-        # Reducers evaluating to array whose length is different wrt the
-        # model domain shall not be used in plot
-        out[:reducers][rname][:meta][:use_in_plot] = (length(domain(model)) == length(model(rname)))
-    end
-    out[:selected_reducer] = model.rsel
+    out[:selected_reducer] = model.maincomp
 
     out[:meta] = MDict()
     out[:meta][:rebin] = todict_opt[:rebin]
@@ -170,7 +141,7 @@ function todict(fitres::GFit.FitResult)
     out[:ndata] = fitres.ndata
     out[:dof] = fitres.dof
     out[:cost] = fitres.fitstat
-    out[:status] = split(string(typeof(fitres.mzer)), "MinimizerStatus")[2]
+    out[:status] = split(string(typeof(fitres.status)), "MinimizerStatus")[2]
     out[:log10testprob] = fitres.log10testprob
     out[:elapsed] = fitres.elapsed
     return out

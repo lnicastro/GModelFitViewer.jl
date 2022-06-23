@@ -45,43 +45,13 @@ struct ViewerData
             for id in 1:length(data)
                 # Avoid displaying selected reducer (it will be shown
                 # as model in the corresponding dataset)
-                out[:models][id][:reducers][multi.models[id].rsel][:meta][:use_in_plot] = false
+                # TODO out[:models][id][:reducers][multi.models[id].rsel][:meta][:use_in_plot] = false
                 push!(out[:data], todict(multi.models[id], data[id]))
             end
         end
 
         if !isnothing(fitres)
-            out[:bestfit] = todict(fitres)
-
-            # TODO: remove these
-            function tbr_todict(param::GFit.Parameter)
-                aa = MDict()
-                aa[:val] = param.val
-                aa[:unc] = param.unc
-                aa[:fixed] = param.fixed
-                aa[:patched] = param.patched
-                return aa
-            end
-
-            function tbr_todict(comp::GFit.AbstractComponent)
-                bb = MDict()
-                for (pid, param) in GFit.getparams(comp)
-                    bb[pid.name] = tbr_todict(param)
-                end
-                return bb
-            end
-
-            function tbr_todict(res)
-                cc = [MDict(:components => MDict()) for id in 1:length(res.models)]
-                for id in 1:length(res.models)
-                    for cname in keys(res.models[id])
-                        comp = res.models[id][cname]
-                        cc[id][:components][cname] = tbr_todict(comp)
-                    end
-                end
-                return cc
-            end
-            out[:bestfit][:models] = tbr_todict(multi)
+            out[:fitresult] = todict(fitres)
         end
 
         out[:meta] = MDict()
@@ -130,7 +100,7 @@ function save_html(vd::ViewerData, filename::Union{Nothing, AbstractString}=noth
     return filename
 end
 
-viewer(args...; filename=nothing, offline=false, kw...) = viewer(ViewerData(args...; kw...), filename; offline=offline)
+viewer(args...; filename=nothing, offline=false, kw...) = viewer(ViewerData(args...; kw...); filename=filename, offline=offline)
 function viewer(vd::ViewerData; filename=nothing, offline=false)
     filename = save_html(vd, filename; offline=offline)
     DefaultApplication.open(filename)
