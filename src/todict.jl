@@ -100,7 +100,7 @@ function todict(id, model::GFit.Model)
             out[:compevals][cname][:meta][:use_in_plot] = false
         end
     end
-    out[:selected_reducer] = model.maincomp
+    out[:selected_reducer] = GFit.find_maincomp(model)
 
     out[:meta] = MDict()
     out[:meta][:rebin] = todict_opt[:rebin]
