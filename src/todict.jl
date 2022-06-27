@@ -2,7 +2,7 @@ const MDict = OrderedDict{Symbol, Any}
 
 const todict_opt = MDict(
     :rebin => 1,
-    :include => nothing
+    :include => true
 )
 
 rebin_data(rebin, v) = rebin_data(rebin, v, ones(eltype(v), length(v)))[1]
@@ -93,9 +93,9 @@ function todict(id, model::GFit.Model)
         out[:components][cname] = todict(cname, ceval.comp)
         out[:components][cname][:fixed] = (ceval.cfixed >= 1)
         out[:compevals][cname] = todict(cname, ceval)
-        if isnothing(todict_opt[:include])                                                     ||
-            (isa(todict_opt[:include], Vector{Symbol})  &&  !(cname in todict_opt[:include]))  ||
-            (isa(todict_opt[:include], Regex)           &&  isnothing(match(todict_opt[:include], string(cname))))
+        if  (isa(todict_opt[:include], Bool)            &&  !(todict_opt[:include]))                               ||
+            (isa(todict_opt[:include], Vector{Symbol})  &&  !(cname in todict_opt[:include]))                      ||
+            (isa(todict_opt[:include], Function)        &&  !(todict_opt[:include](cname, typeof(ceval.comp))))
             out[:compevals][cname][:y] = []  # to avoid producing unnecessary large dictionaries
             out[:compevals][cname][:meta][:use_in_plot] = false
         end

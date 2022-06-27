@@ -24,7 +24,7 @@ function ViewerData(multi::MultiModel,
                     data::Union{Nothing, Vector{T}}=nothing,
                     fitres::Union{Nothing, GFit.FitResult}=nothing;
                     rebin::Int=1,
-                    comps::Union{Nothing, Vector{Symbol}, Regex}=r".+") where T <: GFit.AbstractData
+                    comps::Union{Bool, Vector{Symbol}, Function}=true) where T <: GFit.AbstractData
 
     todict_opt[:rebin] = rebin
     todict_opt[:include] = comps
