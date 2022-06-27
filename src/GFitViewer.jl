@@ -9,50 +9,50 @@ include("todict.jl")
 
 struct ViewerData
     dict::OrderedDict
+end
 
-    function ViewerData(model::Model,
-                        data::Union{Nothing, T}=nothing,
-                        fitres::Union{Nothing, GFit.FitResult}=nothing;
-                        kw...) where T <: GFit.AbstractData
-        multi = MultiModel(model)
-        isnothing(data)  ||  (data = [data])
-        return ViewerData(multi, data, fitres; kw...)
+function ViewerData(model::Model,
+                    data::Union{Nothing, T}=nothing,
+                    fitres::Union{Nothing, GFit.FitResult}=nothing;
+                    kw...) where T <: GFit.AbstractData
+    multi = MultiModel(model)
+    isnothing(data)  ||  (data = [data])
+    return ViewerData(multi, data, fitres; kw...)
+end
+
+function ViewerData(multi::MultiModel,
+                    data::Union{Nothing, Vector{T}}=nothing,
+                    fitres::Union{Nothing, GFit.FitResult}=nothing;
+                    rebin::Int=1,
+                    comps::Union{Nothing, Vector{Symbol}, Regex}=r".+") where T <: GFit.AbstractData
+
+    todict_opt[:rebin] = rebin
+    todict_opt[:include] = comps
+    out = MDict()
+
+    out[:models] = Vector{MDict}()
+    for id in 1:length(multi.models)
+        push!(out[:models], todict(id, multi.models[id]))
     end
 
-    function ViewerData(multi::MultiModel,
-                        data::Union{Nothing, Vector{T}}=nothing,
-                        fitres::Union{Nothing, GFit.FitResult}=nothing;
-                        rebin::Int=1,
-                        comps::Union{Nothing, Vector{Symbol}, Regex}=r".+") where T <: GFit.AbstractData
-
-        todict_opt[:rebin] = rebin
-        todict_opt[:include] = comps
-        out = MDict()
-
-        out[:models] = Vector{MDict}()
-        for id in 1:length(multi.models)
-            push!(out[:models], todict(id, multi.models[id]))
+    if !isnothing(data)
+        out[:data] = Vector{MDict}()
+        @assert length(multi.models) == length(data)
+        for id in 1:length(data)
+            push!(out[:data], todict(multi.models[id], data[id]))
         end
-
-        if !isnothing(data)
-            out[:data] = Vector{MDict}()
-            @assert length(multi.models) == length(data)
-            for id in 1:length(data)
-                push!(out[:data], todict(multi.models[id], data[id]))
-            end
-        end
-
-        if !isnothing(fitres)
-            out[:fitresult] = todict(fitres)
-        end
-
-        out[:meta] = MDict()
-        out[:extra] = Vector{MDict}()
-        for id in 1:length(multi.models)
-            push!(out[:extra], MDict())
-        end
-        return new(out)
     end
+
+    if !isnothing(fitres)
+        out[:fitresult] = todict(fitres)
+    end
+
+    out[:meta] = MDict()
+    out[:extra] = Vector{MDict}()
+    for id in 1:length(multi.models)
+        push!(out[:extra], MDict())
+    end
+    return ViewerData(out)
 end
 
 
@@ -75,7 +75,7 @@ function save_html(vd::ViewerData, filename::Union{Nothing, AbstractString}=noth
     else
         template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
     end
-    # template = joinpath(dirname(pathof(GFitViewer)), "gfitviewer_test.html")
+    # template = joinpath(dirname(pathof(GFitViewer)), "vieweronline.html")
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
     JSON.print(io, vd.dict)
