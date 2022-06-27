@@ -56,8 +56,8 @@ function ViewerData(multi::MultiModel,
 end
 
 
-save_json(args...; filename=nothing, kw...) = save_json(ViewerData(args...; kw...), filename)
-function save_json(vd::ViewerData, filename::Union{Nothing, AbstractString}=nothing)
+save_json(args...; filename=nothing, kw...) = save_json(ViewerData(args...; kw...), filename=filename)
+function save_json(vd::ViewerData; filename::Union{Nothing, AbstractString}=nothing)
     isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.json"))
     io = open(filename, "w")  # io = IOBuffer()
     JSON.print(io, vd.dict)
@@ -66,8 +66,8 @@ function save_json(vd::ViewerData, filename::Union{Nothing, AbstractString}=noth
 end
 
 
-save_html(args...; filename=nothing, offline=false, kw...) = save_html(ViewerData(args...; kw...), filename; offline=offline)
-function save_html(vd::ViewerData, filename::Union{Nothing, AbstractString}=nothing; offline=false)
+save_html(args...; filename=nothing, offline=false, kw...) = save_html(ViewerData(args...; kw...), filename=filename, offline=offline)
+function save_html(vd::ViewerData; filename::Union{Nothing, AbstractString}=nothing, offline=false)
     isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.html"))
     io = open(filename, "w")
     if offline
@@ -75,7 +75,7 @@ function save_html(vd::ViewerData, filename::Union{Nothing, AbstractString}=noth
     else
         template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
     end
-    # template = joinpath(dirname(pathof(GFitViewer)), "vieweronline.html")
+    template = joinpath(dirname(pathof(GFitViewer)), "vieweronline.html")
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
     JSON.print(io, vd.dict)
@@ -86,9 +86,9 @@ function save_html(vd::ViewerData, filename::Union{Nothing, AbstractString}=noth
     return filename
 end
 
-viewer(args...; filename=nothing, offline=false, kw...) = viewer(ViewerData(args...; kw...); filename=filename, offline=offline)
+viewer(args...; filename=nothing, offline=false, kw...) = viewer(ViewerData(args...; kw...), filename=filename, offline=offline)
 function viewer(vd::ViewerData; filename=nothing, offline=false)
-    filename = save_html(vd, filename; offline=offline)
+    filename = save_html(vd, filename=filename, offline=offline)
     DefaultApplication.open(filename)
 end
 
