@@ -75,7 +75,7 @@ function save_html(vd::ViewerData; filename::Union{Nothing, AbstractString}=noth
     else
         template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
     end
-    template = joinpath(dirname(pathof(GFitViewer)), "vieweronline.html")
+    # template = joinpath(dirname(pathof(GFitViewer)), "vieweronline.html")
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
     JSON.print(io, vd.dict)
