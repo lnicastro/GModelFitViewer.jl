@@ -14,7 +14,7 @@ end
 function ViewerData(model::Model,
                     data::Union{Nothing, T}=nothing,
                     fitres::Union{Nothing, GFit.FitResult}=nothing;
-                    kw...) where T <: GFit.AbstractData
+                    kw...) where T <: GFit.AbstractMeasures
     multi = MultiModel(model)
     isnothing(data)  ||  (data = [data])
     return ViewerData(multi, data, fitres; kw...)
@@ -24,7 +24,7 @@ function ViewerData(multi::MultiModel,
                     data::Union{Nothing, Vector{T}}=nothing,
                     fitres::Union{Nothing, GFit.FitResult}=nothing;
                     rebin::Int=1,
-                    comps::Union{Bool, Vector{Symbol}, Function}=true) where T <: GFit.AbstractData
+                    comps::Union{Bool, Vector{Symbol}, Function}=true) where T <: GFit.AbstractMeasures
 
     todict_opt[:rebin] = rebin
     todict_opt[:include] = comps

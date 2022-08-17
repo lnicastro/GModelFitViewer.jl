@@ -34,7 +34,7 @@ function todict(param::GFit.Parameter)
     out[:fixed] = param.fixed
     out[:value] = param.val
     out[:uncert] = param.unc
-    out[:actual] = param.pval
+    out[:actual] = param.actual
     out[:patch] = ""
     isa(param.patch, Symbol)       &&  (out[:patch] = string(param.patch))
     isa(param.patch, GFit.λFunct)  &&  (out[:patch] = param.patch.display)
@@ -86,7 +86,7 @@ end
 
 function todict(id, model::GFit.Model)
     out = MDict()
-    out[:x] = rebin_data(todict_opt[:rebin], model.domain[:])
+    out[:x] = rebin_data(todict_opt[:rebin], coords(model.domain))
     out[:components] = MDict()
     out[:compevals]  = MDict()
     for (cname, ceval) in model.cevals
@@ -119,8 +119,8 @@ end
 function todict(model::GFit.Model, data::GFit.Measures{1})
     out = MDict()
     m      = rebin_data(todict_opt[:rebin], model())
-    x      = rebin_data(todict_opt[:rebin], data.domain[:])
-    y, err = rebin_data(todict_opt[:rebin], data.val, data.unc)
+    x      = rebin_data(todict_opt[:rebin], coords(data.domain))
+    y, err = rebin_data(todict_opt[:rebin], values(data), uncerts(data))
     out[:meta] = MDict()
     out[:x] = x
     out[:y] = y
@@ -143,7 +143,7 @@ function todict(fitres::GFit.FitResult)
     out[:dof] = fitres.dof
     out[:cost] = fitres.fitstat
     out[:status] = split(string(typeof(fitres.status)), "MinimizerStatus")[2]
-    out[:log10testprob] = fitres.log10testprob
+    out[:log10testprob] = NaN
     out[:elapsed] = fitres.elapsed
     return out
 end
