@@ -37,8 +37,8 @@ function todict(param::GFit.Parameter)
     out[:actual] = param.actual
     out[:patch] = ""
     isa(param.patch, Symbol)       &&  (out[:patch] = string(param.patch))
-    isa(param.patch, GFit.λFunct)  &&  (out[:patch] = param.patch.display)
-    isa(param.mpatch,GFit.λFunct)  &&  (out[:patch] = param.mpatch.display)
+    isa(param.patch, GFit.FunctDesc)  &&  (out[:patch] = param.patch.display)
+    isa(param.mpatch,GFit.FunctDesc)  &&  (out[:patch] = param.mpatch.display)
     out[:low] = param.low
     out[:high] = param.high
     out[:meta] = MDict()
