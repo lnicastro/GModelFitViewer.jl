@@ -1,73 +1,112 @@
 module GFitViewer
 
-using DataStructures, JSON, DefaultApplication, GFit, Statistics
 using Pkg, Pkg.Artifacts
+using JSON
 
-export ViewerData, viewer
+using DefaultApplication, StructC14N, GFit
 
-include("todict.jl")
 
-struct ViewerData
-    dict::OrderedDict
+struct Meta
+    title::String
+    xlabel::String
+    ylabel::String
+    xrange::Union{Nothing, Vector{Float64}}
+    yrange::Union{Nothing, Vector{Float64}}
+    xlog::Bool
+    ylog::Bool
+    rebin::Int
 end
 
-function ViewerData(model::Model,
-                    data::Union{Nothing, T}=nothing,
-                    fitres::Union{Nothing, GFit.FitResult}=nothing;
-                    kw...) where T <: GFit.AbstractMeasures
-    multi = MultiModel(model)
-    isnothing(data)  ||  (data = [data])
-    return ViewerData(multi, data, fitres; kw...)
+
+function Meta(; kwargs...)
+    template = (title=AbstractString,
+                xlabel=AbstractString,
+                ylabel=AbstractString,
+                xrange=NTuple{2, Real},
+                yrange=NTuple{2, Real},
+                xlog=Bool,
+                ylog=Bool,
+                rebin=Int)
+    kw = canonicalize(template; kwargs...)
+
+    return Meta((ismissing(kw.title)   ?  ""      :  kw.title),
+                (ismissing(kw.xlabel)  ?  ""      :  kw.xlabel),
+                (ismissing(kw.ylabel)  ?  ""      :  kw.ylabel),
+                (ismissing(kw.xrange)  ?  nothing :  [kw.xrange...]),
+                (ismissing(kw.yrange)  ?  nothing :  [kw.yrange...]),
+                (ismissing(kw.xlog)    ?  false   :  kw.xlog),
+                (ismissing(kw.ylog)    ?  false   :  kw.ylog),
+                (ismissing(kw.rebin)   ?  1       :  kw.rebin))
 end
 
-function ViewerData(multi::MultiModel,
-                    data::Union{Nothing, Vector{T}}=nothing,
-                    fitres::Union{Nothing, GFit.FitResult}=nothing;
-                    rebin::Int=1,
-                    comps::Union{Bool, Vector{Symbol}, Function}=true) where T <: GFit.AbstractMeasures
+export viewer
 
-    todict_opt[:rebin] = rebin
-    todict_opt[:include] = comps
-    out = MDict()
 
-    out[:models] = Vector{MDict}()
-    for id in 1:length(multi.models)
-        push!(out[:models], todict(id, multi.models[id]))
-    end
 
-    if !isnothing(data)
-        out[:data] = Vector{MDict}()
-        @assert length(multi.models) == length(data)
-        for id in 1:length(data)
-            push!(out[:data], todict(multi.models[id], data[id]))
+function prepare_dict(args;
+                      meta::Union{Nothing, Meta, Vector{Meta}}=nothing,
+                      kws...)
+
+    function addmeta!(dict, meta)
+        function isModelSnapshot(arg)
+            if isa(arg, AbstractDict)
+                if haskey(arg, "_structtype")
+                    if arg["_structtype"] == "GFit.ModelSnapshot"
+                        return true
+                    end
+                end
+            end
+            return false
+        end
+
+        function isVectorModelSnapshot(arg)
+            if isa(arg, Vector)
+                if all(isModelSnapshot.(arg))
+                    return true
+                end
+            end
+            return false
+        end
+        
+        if isModelSnapshot(dict)
+            @assert !isa(meta, Vector)
+            dict["meta"] = meta
+            return true
+        elseif isVectorModelSnapshot(dict)
+            if !isa(meta, Vector)
+                for i in 1:length(dict)
+                    dict[i]["meta"] = meta
+                end
+            else
+                @assert length(dict) == length(meta)
+                for i in 1:length(dict)
+                    dict[i]["meta"] = meta[i]
+                end
+            end
+        else
+            if isa(dict, Vector)
+                for i in 1:length(dict)
+                    addmeta!(dict[i], meta)
+                end
+            end
         end
     end
 
-    if !isnothing(fitres)
-        out[:fitresult] = todict(fitres)
+    if isnothing(meta)
+        meta = Meta(; kws...)
     end
-
-    out[:meta] = MDict()
-    out[:extra] = Vector{MDict}()
-    for id in 1:length(multi.models)
-        push!(out[:extra], MDict())
-    end
-    return ViewerData(out)
+    dict = GFit._serialize(args)
+    addmeta!(dict, GFit._serialize_struct(meta))
+    return dict
 end
 
 
-save_json(args...; filename=nothing, kw...) = save_json(ViewerData(args...; kw...), filename=filename)
-function save_json(vd::ViewerData; filename::Union{Nothing, AbstractString}=nothing)
-    isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.json"))
-    io = open(filename, "w")  # io = IOBuffer()
-    JSON.print(io, vd.dict)
-    close(io)                 # String(take!(io))
-    return filename
-end
+function save_html(args;
+                   filename::Union{Nothing, AbstractString}=nothing,
+                   offline=false,
+                   kws...)
 
-
-save_html(args...; filename=nothing, offline=false, kw...) = save_html(ViewerData(args...; kw...), filename=filename, offline=offline)
-function save_html(vd::ViewerData; filename::Union{Nothing, AbstractString}=nothing, offline=false)
+    dict = prepare_dict(args; kws...)
     isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.html"))
     io = open(filename, "w")
     if offline
@@ -75,10 +114,9 @@ function save_html(vd::ViewerData; filename::Union{Nothing, AbstractString}=noth
     else
         template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
     end
-    # template = joinpath(dirname(pathof(GFitViewer)), "vieweronline.html")
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, vd.dict)
+    JSON.print(io, dict)
     while !eof(input)
         write(io, readavailable(input))
     end
@@ -86,9 +124,9 @@ function save_html(vd::ViewerData; filename::Union{Nothing, AbstractString}=noth
     return filename
 end
 
-viewer(args...; filename=nothing, offline=false, kw...) = viewer(ViewerData(args...; kw...), filename=filename, offline=offline)
-function viewer(vd::ViewerData; filename=nothing, offline=false)
-    filename = save_html(vd, filename=filename, offline=offline)
+
+function viewer(args...; kws...)
+    filename = save_html(args...; kws...)
     DefaultApplication.open(filename)
 end
 
