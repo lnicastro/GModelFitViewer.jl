@@ -107,10 +107,8 @@ function apply_meta!(arg::AbstractVector, meta::Vector{Meta})
     cc = 0
     for i in 1:length(arg)
         if length(arg) == length(meta)
-            @info "AAA"
             cc += apply_meta!(arg[i], meta[i])
         else
-            @info "BBB"
             cc += apply_meta!(arg[i], meta)
         end
     end
