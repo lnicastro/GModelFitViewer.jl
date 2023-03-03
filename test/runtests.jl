@@ -18,11 +18,16 @@ data = GFit.mock(Measures, model)
 best, res = fit(model, data)
 
 
-GFitViewer.save_html(best)
-GFitViewer.save_html([data, best, res])
-GFitViewer.save_html(best, rebin=10)
-GFitViewer.save_html([data, best, res], rebin=10)
-GFitViewer.save_html([data, best, res], filename="GFitViewer_test1.jhtml", title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3], rebin=2)
+GFitViewer.save_json(filename="gfitviewer_test01.json", best)
+GFitViewer.save_json(filename="gfitviewer_test02.json", [best, data])
+GFitViewer.save_json(filename="gfitviewer_test03.json", [res, best])
+GFitViewer.save_json(filename="gfitviewer_test04.json", [data, best, res])
+GFitViewer.save_json(filename="gfitviewer_test05.json", rebin=2, best)
+GFitViewer.save_json(filename="gfitviewer_test06.json", rebin=2, [best, data])
+GFitViewer.save_json(filename="gfitviewer_test07.json", rebin=2, [res, best])
+GFitViewer.save_json(filename="gfitviewer_test08.json", rebin=2, [data, best, res])
+GFitViewer.save_json(filename="gfitviewer_test09.json", rebin=2, [data, best, res],
+                     title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3])
 
 
 
@@ -41,12 +46,7 @@ data = GFit.mock(Measures, multi)
 best, res = fit(multi, data)
 
 
-GFitViewer.save_html(best)
-GFitViewer.save_html([[data1, data2], best, res])
-GFitViewer.save_html(best, rebin=10)
-GFitViewer.save_html([[data1, data2], best, res], rebin=10)
-
-meta = fill(GFitViewer.Meta(title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3], rebin=2), 2)
-meta[1].title = "First"
-meta[2].title = "Second"
-GFitViewer.save_html([data, best, res], meta, filename="GFitViewer_test2.jhtml", )
+meta1 = GFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2)
+meta2 = GFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2)
+GFitViewer.save_json(filename="gfitviewer_test10.json",
+                     [data, best, res], [meta1, meta2])

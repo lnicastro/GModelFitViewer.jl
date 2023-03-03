@@ -16,7 +16,6 @@ mutable struct Meta
     xlog::Bool
     ylog::Bool
     rebin::Int
-    used::Bool
 end
 
 function Meta(; kwargs...)
@@ -37,8 +36,7 @@ function Meta(; kwargs...)
                 (ismissing(kw.yrange)  ?  nothing :  [kw.yrange...]),
                 (ismissing(kw.xlog)    ?  false   :  kw.xlog),
                 (ismissing(kw.ylog)    ?  false   :  kw.ylog),
-                (ismissing(kw.rebin)   ?  1       :  kw.rebin),
-                false)
+                (ismissing(kw.rebin)   ?  1       :  kw.rebin))
 end
 
 
@@ -72,10 +70,7 @@ end
 function apply_meta!(arg::AbstractDict, meta::Meta)
     if haskey(arg, "_structtype")
         if arg["_structtype"] == "GFit.ModelSnapshot"
-            mm = GFit._serialize_struct(meta)
-            delete!(mm, "used")
-            arg["meta"] = mm
-            meta.used = true
+            arg["meta"] = GFit._serialize_struct(meta)
             @assert arg["domain"]["_structtype"] == "Domain{1}"
             if meta.rebin > 1
                 vv = rebin_data(meta.rebin, arg["domain"]["axis"][1])
@@ -85,6 +80,7 @@ function apply_meta!(arg::AbstractDict, meta::Meta)
                     arg["buffers"][kk] = rebin_data(meta.rebin, vv)
                 end
             end
+            return 1
         end
         if arg["_structtype"] == "Measures{1}"
             vv = rebin_data(meta.rebin, arg["values"][1])
@@ -94,45 +90,58 @@ function apply_meta!(arg::AbstractDict, meta::Meta)
             push!( arg["values"], ee)
         end
     end
+    return 0
 end
 
 function apply_meta!(arg::AbstractVector, meta::Meta)
+    cc = 0
     for i in 1:length(arg)
-        apply_meta!(arg[i], meta)
+        cc += apply_meta!(arg[i], meta)
     end
+    return cc
 end
+
+apply_meta!(arg::AbstractDict, meta::Vector{Meta}) = 0
 
 function apply_meta!(arg::AbstractVector, meta::Vector{Meta})
-    @assert length(arg) == length(meta)
+    cc = 0
     for i in 1:length(arg)
-        apply_meta!(arg[i], typename, meta[i])
+        if length(arg) == length(meta)
+            @info "AAA"
+            cc += apply_meta!(arg[i], meta[i])
+        else
+            @info "BBB"
+            cc += apply_meta!(arg[i], meta)
+        end
     end
+    return cc
 end
 
-function prepare_dict(args; kws...)
-    meta = Meta(; kws...)
-    meta.used = false
+function prepare_dict(args, meta=Vector{Meta}(); kws...)
+    if length(meta) == 0
+        meta = Meta(; kws...)
+    end
     dict = GFit._serialize(args)
-    apply_meta!(dict, meta)
-    @assert meta.used "No ModelSnapshot found in argument(s)"
+    @assert apply_meta!(dict, meta) > 0 "No ModelSnapshot found in argument(s)"
     return dict
 end
 
-function prepare_dict(args, meta::Vector{Meta})
-    setfield!.(meta, :used, false)
-    dict = GFit._serialize(args)
-    apply_meta!(dict, meta)
-    @assert all(getfield.(meta, :used)) "No ModelSnapshot found in argument(s)"
-    return dict
+function save_json(args, meta=Vector{Meta}();
+                   filename::Union{Nothing, AbstractString}=nothing,
+                   kws...)
+    dict = prepare_dict(args, meta; kws...)
+    isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.json"))
+    io = open(filename, "w")
+    JSON.print(io, dict)
+    close(io)
+    return filename
 end
-
 
 function save_html(args, meta=Vector{Meta}();
                    filename::Union{Nothing, AbstractString}=nothing,
                    offline=false,
                    kws...)
-    dict = prepare_dict(args; kws...)
-
+    dict = prepare_dict(args, meta; kws...)
     isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.html"))
     io = open(filename, "w")
     if offline
