@@ -20,9 +20,9 @@ best, res = fit(model, data)
 
 GFitViewer.save_html(best)
 GFitViewer.save_html([data, best, res])
-
 GFitViewer.save_html(best, rebin=10)
 GFitViewer.save_html([data, best, res], rebin=10)
+GFitViewer.save_html([data, best, res], filename="GFitViewer_test1.jhtml", title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3], rebin=2)
 
 
 
@@ -43,6 +43,10 @@ best, res = fit(multi, data)
 
 GFitViewer.save_html(best)
 GFitViewer.save_html([[data1, data2], best, res])
-
 GFitViewer.save_html(best, rebin=10)
 GFitViewer.save_html([[data1, data2], best, res], rebin=10)
+
+meta = fill(GFitViewer.Meta(title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3], rebin=2), 2)
+meta[1].title = "First"
+meta[2].title = "Second"
+GFitViewer.save_html([data, best, res], meta, filename="GFitViewer_test2.jhtml", )

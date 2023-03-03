@@ -72,7 +72,9 @@ end
 function apply_meta!(arg::AbstractDict, meta::Meta)
     if haskey(arg, "_structtype")
         if arg["_structtype"] == "GFit.ModelSnapshot"
-            arg["meta"] = GFit._serialize_struct(meta)
+            mm = GFit._serialize_struct(meta)
+            delete!(mm, "used")
+            arg["meta"] = mm
             meta.used = true
             @assert arg["domain"]["_structtype"] == "Domain{1}"
             if meta.rebin > 1
