@@ -13,6 +13,10 @@ mutable struct Meta
     ylabel::String
     xrange::Union{Nothing, Vector{Float64}}
     yrange::Union{Nothing, Vector{Float64}}
+    xscale::Float64
+    yscale::Float64
+    xunit::String
+    yunit::String
     xlog::Bool
     ylog::Bool
     rebin::Int
@@ -24,6 +28,10 @@ function Meta(; kwargs...)
                 ylabel=AbstractString,
                 xrange=NTuple{2, Real},
                 yrange=NTuple{2, Real},
+                xscale=Real,
+                yscale=Real,
+                xunit=AbstractString,
+                yunit=AbstractString,
                 xlog=Bool,
                 ylog=Bool,
                 rebin=Int)
@@ -34,6 +42,10 @@ function Meta(; kwargs...)
                 (ismissing(kw.ylabel)  ?  ""      :  kw.ylabel),
                 (ismissing(kw.xrange)  ?  nothing :  [kw.xrange...]),
                 (ismissing(kw.yrange)  ?  nothing :  [kw.yrange...]),
+                (ismissing(kw.xscale)  ?  1       :  kw.xscale),
+                (ismissing(kw.yscale)  ?  1       :  kw.yscale),
+                (ismissing(kw.xunit)   ?  ""      :  kw.xunit),
+                (ismissing(kw.yunit)   ?  ""      :  kw.yunit),
                 (ismissing(kw.xlog)    ?  false   :  kw.xlog),
                 (ismissing(kw.ylog)    ?  false   :  kw.ylog),
                 (ismissing(kw.rebin)   ?  1       :  kw.rebin))

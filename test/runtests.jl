@@ -27,7 +27,8 @@ GFitViewer.save_json(filename="gfitviewer_test06.json", rebin=2, [best, data])
 GFitViewer.save_json(filename="gfitviewer_test07.json", rebin=2, [res, best])
 GFitViewer.save_json(filename="gfitviewer_test08.json", rebin=2, [data, best, res])
 GFitViewer.save_json(filename="gfitviewer_test09.json", rebin=2, [data, best, res],
-                     title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3])
+                     title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
+                     xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 
 
 
@@ -46,7 +47,7 @@ data = GFit.mock(Measures, multi)
 best, res = fit(multi, data)
 
 
-meta1 = GFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2)
-meta2 = GFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2)
+meta1 = GFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
+meta2 = GFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 GFitViewer.save_json(filename="gfitviewer_test10.json",
                      [data, best, res], [meta1, meta2])
