@@ -11,7 +11,7 @@ function Gnuplot.recipe(model::Model)
     out = Vector{Gnuplot.PlotElement}()
     for (k,v) in model.cevals
         (k == GFit.find_maincomp(model))  &&  continue
-        isa(v.comp, GFit.λComp)  ||  isa(v.comp, GFit.SumReducer)  ||  continue
+        #isa(v.comp, GFit.FComp)  ||  isa(v.comp, GFit.SumReducer)  ||  continue
         push!(out, Gnuplot.PlotElement(
             data=Gnuplot.DatasetBin(coords(domain(model)), model(k)),
             plot="with lines t '$(k)'"))

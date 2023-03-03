@@ -4,7 +4,6 @@ authors = ["Giorgio Calderone <giorgio.calderone@gmail.com>"]
 version = "0.1.0"
 
 [deps]
-DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 DefaultApplication = "3f0dd361-4fe0-5fc6-8523-80b14ec94d85"
 GFit = "ac42e6ba-c0bf-4fcf-827d-deea44b16255"
 Gnuplot = "dc211083-a33a-5b79-959f-2ff34033469d"
