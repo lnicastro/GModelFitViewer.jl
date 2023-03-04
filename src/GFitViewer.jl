@@ -188,10 +188,10 @@ end
 
 # Serialize to HTML
 serialize_html(args...; kws...) =
-    serialize_json(joinpath(tempdir(), "gfitviewer.html"), args...; kws...)
+    serialize_html(joinpath(tempdir(), "gfitviewer.html"), args...; kws...)
 
 function serialize_html(filename::String, args...; offline=false, kws...)
-    dict = allowed_serializable(args...; kws...)
+    data = allowed_serializable(args...; kws...)
     io = open(filename, "w")
     if offline
         template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
