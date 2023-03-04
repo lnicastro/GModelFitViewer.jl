@@ -90,8 +90,10 @@ function rebin!(dict::AbstractDict, nn::Int)
             end
         end
         if dict["_structtype"] == "Measures{1}"
-            vv = rebin(dict["values"][1], nn)
-            ee = rebin(dict["values"][2], nn)
+            vv = rebin(dict["domain"]["axis"][1], nn)
+            empty!(dict["domain"]["axis"])
+            push!( dict["domain"]["axis"], vv)
+            vv, ee = rebin(dict["values"][1], dict["values"][2], nn)
             empty!(dict["values"])
             push!( dict["values"], vv)
             push!( dict["values"], ee)
@@ -101,31 +103,49 @@ end
 
 
 
-
-prepare_dict(model::Model; kws...) = prepare_dict(GFit.ModelSnapshot(model); kws...)
-function prepare_dict(model::GFit.ModelSnapshot; kws...)
+# Single model, using keywords for meta
+allowed_serializable(model::Model; kws...) = allowed_serializable(GFit.ModelSnapshot(model); kws...)
+function allowed_serializable(model::GFit.ModelSnapshot; kws...)
     meta = Meta(; kws...)
-    out = GFit._serialize([model])
+    out = [GFit.allowed_serializable(model)] # Output is always a vector to simplify JavaScript code
     rebin!(out[1], meta.rebin)
     out[1]["meta"] = meta
     return out
 end
 
-function prepare_dict(model::GFit.ModelSnapshot, fitstats::GFit.FitStats, data::GFit.AbstractMeasures; kws...)
+function allowed_serializable(model::GFit.ModelSnapshot, fitstats::GFit.FitStats; kws...)
     meta = Meta(; kws...)
-    out = GFit._serialize([model, fitstats, data])
+    out = GFit.allowed_serializable(model, fitstats)
+    rebin!(out[1], meta.rebin)
+    out[1]["meta"] = meta
+    return out
+end
+
+function allowed_serializable(model::GFit.ModelSnapshot, fitstats::GFit.FitStats, data::GFit.AbstractMeasures; kws...)
+    meta = Meta(; kws...)
+    out = GFit.allowed_serializable(model, fitstats, data)
     rebin!(out[1], meta.rebin)
     rebin!(out[3], meta.rebin)
     out[1]["meta"] = meta
     return out
 end
 
-prepare_dict(multi::Vector{Model}             ; kws...) = prepare_dict(GFit.ModelSnapshot.(multi), fill(Meta(; kws...), length(multi)))
-prepare_dict(multi::Vector{GFit.ModelSnapshot}; kws...) = prepare_dict(multi                     , fill(Meta(; kws...), length(multi)))
-prepare_dict(multi::Vector{Model}, meta::Vector{Meta})  = prepare_dict(GFit.ModelSnapshot.(multi), meta)
-function prepare_dict(multi::Vector{GFit.ModelSnapshot}, meta::Vector{Meta})
-    @assert length(multi) == length(multi)
-    out = GFit._serialize([multi])
+# Multi model, using keywords for meta (to replicate for all models)
+allowed_serializable(multi::Vector{Model}                                                       ; kws...)                                   = allowed_serializable(GFit.ModelSnapshot.(multi)               , fill(Meta(; kws...), length(multi)))
+allowed_serializable(multi::Vector{GFit.ModelSnapshot}                                          ; kws...)                                   = allowed_serializable(multi                                    , fill(Meta(; kws...), length(multi)))
+allowed_serializable(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats                 ; kws...)                                   = allowed_serializable(multi                     , fistats      , fill(Meta(; kws...), length(multi)))
+allowed_serializable(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats, data::Vector{T}; kws...)  where T <: GFit.AbstractMeasures = allowed_serializable(multi                     , fistats, data, fill(Meta(; kws...), length(multi)))
+
+
+# Multi model, using last argument for meta
+function allowed_serializable(multi::Vector{Model},
+                              meta::Vector{Meta})
+    allowed_serializable(GFit.ModelSnapshot.(multi), meta)
+end
+
+function allowed_serializable(multi::Vector{GFit.ModelSnapshot}, meta::Vector{Meta})
+    @assert length(multi) == length(meta)
+    out = [GFit.allowed_serializable(multi)] # Output is always a vector to simplify JavaScript code
     for i in 1:length(multi)
         rebin!(out[1][i], meta[i].rebin)
         out[1][i]["meta"] = meta[i]
@@ -133,11 +153,19 @@ function prepare_dict(multi::Vector{GFit.ModelSnapshot}, meta::Vector{Meta})
     return out
 end
 
-prepare_dict(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats, data::Vector{T}; kws...) where T <: GFit.AbstractMeasures =
-    prepare_dict(multi, fitstats, data, fill(Meta(; kws...), length(multi)))
-function prepare_dict(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats, data::Vector{T}, meta::Vector{Meta}) where T <: GFit.AbstractMeasures
-    @assert length(multi) == length(multi)
-    out = GFit._serialize([multi, fitstats, data])
+function allowed_serializable(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats, meta::Vector{Meta})
+    @assert length(multi) == length(meta)
+    out = GFit.allowed_serializable(multi, fitstats)
+    for i in 1:length(multi)
+        rebin!(out[1][i], meta[i].rebin)
+        out[1][i]["meta"] = meta[i]
+    end
+    return out
+end
+
+function allowed_serializable(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats, data::Vector{T}, meta::Vector{Meta}) where T <: GFit.AbstractMeasures
+    @assert length(multi) == length(meta) == length(data)
+    out = GFit.allowed_serializable(multi, fitstats, data)
     for i in 1:length(multi)
         rebin!(out[1][i], meta[i].rebin)
         rebin!(out[3][i], meta[i].rebin)
@@ -146,25 +174,24 @@ function prepare_dict(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats
     return out
 end
 
+# Serialize to JSON
+serialize_json(args...; kws...) =
+    serialize_json(joinpath(tempdir(), "gfitviewer.json"), args...; kws...)
 
-
-function save_json(args...;
-                   filename::Union{Nothing, AbstractString}=nothing,
-                   kws...)
-    dict = prepare_dict(args...; kws...)
-    isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.json"))
+function serialize_json(filename::String, args...; kws...)
+    data = allowed_serializable(args...; kws...)
     io = open(filename, "w")
-    JSON.print(io, dict)
+    JSON.print(io, data)
     close(io)
     return filename
 end
 
-function save_html(args...;
-                   filename::Union{Nothing, AbstractString}=nothing,
-                   offline=false,
-                   kws...)
-    dict = prepare_dict(args...; kws...)
-    isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.html"))
+# Serialize to HTML
+serialize_html(args...; kws...) =
+    serialize_json(joinpath(tempdir(), "gfitviewer.html"), args...; kws...)
+
+function serialize_html(filename::String, args...; offline=false, kws...)
+    dict = allowed_serializable(args...; kws...)
     io = open(filename, "w")
     if offline
         template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
@@ -173,7 +200,7 @@ function save_html(args...;
     end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, dict)
+    JSON.print(io, data)
     while !eof(input)
         write(io, readavailable(input))
     end
@@ -183,7 +210,7 @@ end
 
 
 function viewer(args...; kws...)
-    filename = save_html(args...; kws...)
+    filename = serialize_html(args...; kws...)
     DefaultApplication.open(filename)
 end
 
