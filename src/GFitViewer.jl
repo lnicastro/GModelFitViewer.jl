@@ -53,93 +53,105 @@ end
 
 
 
-rebin_data(rebin, v) = rebin_data(rebin, v, ones(eltype(v), length(v)))[1]
-function rebin_data(rebin::Int, v, e)
+rebin(vv, nn) = rebin(vv, ones(eltype(vv), length(vv)), nn)[1]
+function rebin(v, e, nn::Int)
     @assert length(v) == length(e)
     if length(v) == 1
         return (v, e)
     end
-    @assert 1 <= rebin <= length(v)
-    (rebin == 1)  &&  (return (v, e))
+    @assert 1 <= nn <= length(v)
+    (nn == 1)  &&  (return (v, e))
     nin = length(v)
-    nout = div(nin, rebin)
+    nout = div(nin, nn)
     val = zeros(eltype(v), nout)
     unc = zeros(eltype(e), nout)
     w = 1 ./ (e.^2)
     for i in 1:nout-1
-        r = (i-1)*rebin+1:i*rebin
+        r = (i-1)*nn+1:i*nn
         val[i] = sum(w[r] .* v[r]) ./ sum(w[r])
         unc[i] = sqrt(1 / sum(w[r]))
     end
-    r = (nout-1)*rebin+1:nin
+    r = (nout-1)*nn+1:nin
     val[nout] = sum(w[r] .* v[r]) ./ sum(w[r])
     unc[nout] = sqrt(1 / sum(w[r]))
     return (val, unc)
 end
 
-
-
-function apply_meta!(arg::AbstractDict, meta::Meta)
-    if haskey(arg, "_structtype")
-        if arg["_structtype"] == "GFit.ModelSnapshot"
-            arg["meta"] = GFit._serialize_struct(meta)
-            @assert arg["domain"]["_structtype"] == "Domain{1}"
-            if meta.rebin > 1
-                vv = rebin_data(meta.rebin, arg["domain"]["axis"][1])
-                empty!(arg["domain"]["axis"])
-                push!( arg["domain"]["axis"], vv)
-                for (kk, vv) in arg["buffers"]
-                    arg["buffers"][kk] = rebin_data(meta.rebin, vv)
-                end
+function rebin!(dict::AbstractDict, nn::Int)
+    (nn > 1)  ||  return
+    if haskey(dict, "_structtype")
+        if dict["_structtype"] == "GFit.ModelSnapshot"
+            @assert dict["domain"]["_structtype"] == "Domain{1}"
+            vv = rebin(dict["domain"]["axis"][1], nn)
+            empty!(dict["domain"]["axis"])
+            push!( dict["domain"]["axis"], vv)
+            for (kk, vv) in dict["buffers"]
+                dict["buffers"][kk] = rebin(vv, nn)
             end
-            return 1
         end
-        if arg["_structtype"] == "Measures{1}"
-            vv = rebin_data(meta.rebin, arg["values"][1])
-            ee = rebin_data(meta.rebin, arg["values"][2])
-            empty!(arg["values"])
-            push!( arg["values"], vv)
-            push!( arg["values"], ee)
-        end
-    end
-    return 0
-end
-
-function apply_meta!(arg::AbstractVector, meta::Meta)
-    cc = 0
-    for i in 1:length(arg)
-        cc += apply_meta!(arg[i], meta)
-    end
-    return cc
-end
-
-apply_meta!(arg::AbstractDict, meta::Vector{Meta}) = 0
-
-function apply_meta!(arg::AbstractVector, meta::Vector{Meta})
-    cc = 0
-    for i in 1:length(arg)
-        if length(arg) == length(meta)
-            cc += apply_meta!(arg[i], meta[i])
-        else
-            cc += apply_meta!(arg[i], meta)
+        if dict["_structtype"] == "Measures{1}"
+            vv = rebin(dict["values"][1], nn)
+            ee = rebin(dict["values"][2], nn)
+            empty!(dict["values"])
+            push!( dict["values"], vv)
+            push!( dict["values"], ee)
         end
     end
-    return cc
 end
 
-function prepare_dict(args, meta=Vector{Meta}(); kws...)
-    if length(meta) == 0
-        meta = Meta(; kws...)
+
+
+
+prepare_dict(model::Model; kws...) = prepare_dict(GFit.ModelSnapshot(model); kws...)
+function prepare_dict(model::GFit.ModelSnapshot; kws...)
+    meta = Meta(; kws...)
+    out = GFit._serialize([model])
+    rebin!(out[1], meta.rebin)
+    out[1]["meta"] = meta
+    return out
+end
+
+function prepare_dict(model::GFit.ModelSnapshot, fitstats::GFit.FitStats, data::GFit.AbstractMeasures; kws...)
+    meta = Meta(; kws...)
+    out = GFit._serialize([model, fitstats, data])
+    rebin!(out[1], meta.rebin)
+    rebin!(out[3], meta.rebin)
+    out[1]["meta"] = meta
+    return out
+end
+
+prepare_dict(multi::Vector{Model}             ; kws...) = prepare_dict(GFit.ModelSnapshot(model), fill(Meta(; kws...), length(multi)))
+prepare_dict(multi::Vector{GFit.ModelSnapshot}; kws...) = prepare_dict(multi                    , fill(Meta(; kws...), length(multi)))
+prepare_dict(multi::Vector{Model}, meta::Vector{Meta})  = prepare_dict(GFit.ModelSnapshot.(multi), meta)
+function prepare_dict(multi::Vector{GFit.ModelSnapshot}, meta::Vector{Meta})
+    @assert length(multi) == length(multi)
+    out = GFit._serialize([multi])
+    for i in 1:length(multi)
+        rebin!(out[1][i], meta[i].rebin)
+        out[1][i]["meta"] = meta[i]
     end
-    dict = GFit._serialize(args)
-    @assert apply_meta!(dict, meta) > 0 "No ModelSnapshot found in argument(s)"
-    return dict
+    return out
 end
 
-function save_json(args, meta=Vector{Meta}();
+prepare_dict(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats, data::Vector{T}; kws...) where T <: GFit.AbstractMeasures =
+    prepare_dict(multi, fitstats, data, fill(Meta(; kws...), length(multi)))
+function prepare_dict(multi::Vector{GFit.ModelSnapshot}, fitstats::GFit.FitStats, data::Vector{T}, meta::Vector{Meta}) where T <: GFit.AbstractMeasures
+    @assert length(multi) == length(multi)
+    out = GFit._serialize([multi, fitstats, data])
+    for i in 1:length(multi)
+        rebin!(out[1][i], meta[i].rebin)
+        rebin!(out[3][i], meta[i].rebin)
+        out[1][i]["meta"] = meta[i]
+    end
+    return out
+end
+
+
+
+function save_json(args...;
                    filename::Union{Nothing, AbstractString}=nothing,
                    kws...)
-    dict = prepare_dict(args, meta; kws...)
+    dict = prepare_dict(args...; kws...)
     isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.json"))
     io = open(filename, "w")
     JSON.print(io, dict)
@@ -147,11 +159,11 @@ function save_json(args, meta=Vector{Meta}();
     return filename
 end
 
-function save_html(args, meta=Vector{Meta}();
+function save_html(args...;
                    filename::Union{Nothing, AbstractString}=nothing,
                    offline=false,
                    kws...)
-    dict = prepare_dict(args, meta; kws...)
+    dict = prepare_dict(args...; kws...)
     isnothing(filename)  &&  (filename = joinpath(tempdir(), "gfitviewer.html"))
     io = open(filename, "w")
     if offline
