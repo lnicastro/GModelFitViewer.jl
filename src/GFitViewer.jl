@@ -120,8 +120,8 @@ function prepare_dict(model::GFit.ModelSnapshot, fitstats::GFit.FitStats, data::
     return out
 end
 
-prepare_dict(multi::Vector{Model}             ; kws...) = prepare_dict(GFit.ModelSnapshot(model), fill(Meta(; kws...), length(multi)))
-prepare_dict(multi::Vector{GFit.ModelSnapshot}; kws...) = prepare_dict(multi                    , fill(Meta(; kws...), length(multi)))
+prepare_dict(multi::Vector{Model}             ; kws...) = prepare_dict(GFit.ModelSnapshot.(multi), fill(Meta(; kws...), length(multi)))
+prepare_dict(multi::Vector{GFit.ModelSnapshot}; kws...) = prepare_dict(multi                     , fill(Meta(; kws...), length(multi)))
 prepare_dict(multi::Vector{Model}, meta::Vector{Meta})  = prepare_dict(GFit.ModelSnapshot.(multi), meta)
 function prepare_dict(multi::Vector{GFit.ModelSnapshot}, meta::Vector{Meta})
     @assert length(multi) == length(multi)

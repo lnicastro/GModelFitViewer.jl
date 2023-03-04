@@ -44,6 +44,6 @@ best, res = fit(multi, data)
 
 meta1 = GFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 meta2 = GFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
-GFitViewer.save_json(filename="gfitviewer_test5.json", multi, [meta1, meta2])
+GFitViewer.save_json(filename="gfitviewer_test5.json", multi, xlab="Abscissa", ylab="Ordinate", xr=[-4, 4])
 GFitViewer.save_json(filename="gfitviewer_test6.json", best, [meta1, meta2])
 GFitViewer.save_json(filename="gfitviewer_test7.json", best, res, data, [meta1, meta2])
