@@ -214,6 +214,4 @@ function viewer(args...; kws...)
     DefaultApplication.open(filename)
 end
 
-include("gnuplot.jl")
-
 end
