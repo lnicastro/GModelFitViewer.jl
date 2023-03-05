@@ -1,0 +1,169 @@
+2020-10-21 LN, ver. 0.1b
+	- Remove +/- error from data value in legend.valueLabels.
+	- Increase by 10% the legend.valueLabels to keep width fixed at run time.
+
+2020-11-10 LN, ver. 0.1c
+	- Added residuals Nsigma highlighted range selection
+	- Added lin / log Y-axis selection and management
+
+2020-11-11 LN, ver. 0.1c
+	- Better lin / log Y-axis plotting management
+
+2020-11-12 LN, ver. 0.1d
+	- Fixes for plots with reducers only (no original fitted data and residuals)
+	- Added X / Y plot range manual selection
+	- Residuals grid replaced with ticks
+	- Fit report restyling
+
+2020-11-16 LN, ver. 0.1e
+	- Use an extra X ValueAxis to plot axis labels and grid
+	- Several changes to account for the previous item
+	- Some style changes
+
+2020-11-18 LN, ver. 0.1e
+	- Removed labels and grid from X scrollbar
+	- Removed amCharts logo and added acknowledgment
+	- Prediction selector shown only if more than one
+
+2020-11-19 LN, ver. 0.1f
+	- Top bar for file I/O only visible if passed "type=fileio" param in the URL 
+	- Fix for prediction selector management
+	- Style changes
+	- Code cleaning
+
+2020-11-20 LN, ver. 0.1g
+	- Modal screen removed if not I/O interface
+	- Code cleaning
+
+2020-11-28 LN, ver. 0.1g
+	- Removed limits in the manual Y range settings
+	- Style changes
+
+2020-11-30 LN, ver. 0.1g
+	- Check if X values are equispaced or not to decide visible axis (valueAxis or categoryAxis)
+	- Fit log tables recreated on new file read
+	- Code cleaning
+
+2020-12-02 LN, ver. 0.2a
+	- First version with categoryAxis no longer used; only valueAxis
+	- Y error bars disabled
+	- X lin / log selector added
+	- CSS style file included in viewer.html
+	- Several style changes
+
+2020-12-16 LN, ver. 0.1
+	- Version change for consistency
+	- Y range calculated using all the data
+	- Colors table changes
+	- Several style changes
+
+2020-12-17 LN, ver. 0.1
+	- Added Y error range shaded area
+
+2020-12-18 LN, ver. 0.1
+	- Y error range shaded area managed in legend items
+
+2020-12-19 LN, ver. 0.1
+	- SVG version of the INAF logo 
+	- Code cleaning
+
+2020-12-21 LN, ver. 0.1
+	- New JSON data structure
+	- Code cleaning
+	- X axis zoom management
+	- Data shade area series highlighted in the legend
+
+2020-12-22 LN, ver. 0.1
+	- log X axis management
+	- Code cleaning
+
+2020-12-24 LN, ver. 0.1
+	- Style changes
+
+2021-01-02 LN, ver. 0.1
+	- Changed components visibility management
+	- Changed lin/log toggle management
+	- Cursor position values tracking and display
+	- Style changes
+
+2021-01-16 LN, ver. 0.1
+	- Changed the residuals Y axis management
+
+2021-01-20 LN, ver. 0.1
+	- Various style changes
+
+2021-03-11 LN, ver. 0.1
+	- Package cleaning
+	- Updated example and data in test dir.
+
+2021-03-24 LN, ver. 0.1
+	- Added folded model as reference main model instead of the main reducer
+	- Updated example and data in test dir.
+
+2021-04-01 LN, ver. 0.1
+	- Page creation order changed to allow amCharts to get the exact plot area
+	- Code cleaning
+
+2021-04-07 LN, ver. 0.1
+	- Local version of amCharts updated
+	- First changes to allow the creation of a standolone html version
+	- Added the script mksaviewer.sh in src
+
+2021-04-07 LN, ver. 0.1
+	- local dir removed
+	- removed mksaviewer.sh script
+
+2021-04-07 LN, ver. 0.2
+	- Version 0.2: removed external js and css dependences for offline html creation
+	- Embedded base64 favicon and svg of used symbols
+	- Removed FontAwesome dependence
+
+2021-04-08 LN, ver. 0.2
+	- Site icon changed
+
+2021-04-15 GC, ver. 0.2
+	- Removed viewer.html and added Artifacts.toml in src
+
+2021-04-16 LN, ver. 0.2
+	- test_data.js updated
+	- Allows extra tables to be passed via tab_extra JSON object
+
+2021-04-23 LN, ver. 0.2
+	- Changed extra tables position
+	- Updated gfitviewer_test.html and test_data.js
+
+2021-05-07 LN, ver. 0.2
+	- Changed pridiction selection management; now via drop-down menu
+	- tab_extra is now an array (one object per prediction is allowed)
+	- Updated gfitviewer_test.html (custom_params example added) and test_data.js
+	- Use Y axis labels in exponential notation for small values
+
+2021-05-10 LN, ver. 0.2
+	- Cursor creation and management moved to a dedicated function
+
+2021-05-12 LN, ver. 0.2
+	- New Y axis label/scale range management
+
+2021-05-20 LN, ver. 0.2
+	- Additional changes to Y axis label/scale range management
+	- Added plot annotation tool
+
+2021-05-25 LN, ver. 0.2
+	- Fixed updating fit results table for each prediction
+	- Added prediction navigation button
+
+2021-05-28 LN, ver. 0.2
+	- Changed summary table management
+	- Extra params and tables moved into chart_data
+
+2021-06-29 LN, ver. 0.3
+	- Prediction is now named Model; source changed accordingly
+	- Minor source code changes
+	- test html and json data updated
+
+2021-07-15 LN, ver. 0.4
+	- New json structure (folded_model removed) etc.
+	- test html and json data updated
+
+2021-11-30 LN, ver. 0.4
+	- INAF logo modification
