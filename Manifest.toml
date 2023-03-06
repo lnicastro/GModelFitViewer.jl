@@ -2,7 +2,7 @@
 
 julia_version = "1.8.4"
 manifest_format = "2.0"
-project_hash = "face9444173f7dc270594a9686371eb4ea3bfa61"
+project_hash = "034fbda861ecbce7e578ccda0120eaccfff0f64e"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra", "Requires"]
@@ -152,9 +152,9 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.Distributions]]
 deps = ["ChainRulesCore", "DensityInterface", "FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsBase", "StatsFuns", "Test"]
-git-tree-sha1 = "fb372fc76a20edda014dfc2cdb33f23ef80feda6"
+git-tree-sha1 = "da9e1a9058f8d3eec3a8c9fe4faacfb89180066b"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.85"
+version = "0.25.86"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -210,13 +210,13 @@ version = "0.10.35"
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
-[[deps.GFit]]
-deps = ["CMPFit", "DataStructures", "Dates", "Distributions", "GZip", "JSON", "LsqFit", "MacroTools", "PrettyTables", "Printf", "ProgressMeter", "Random", "Statistics", "Test"]
-git-tree-sha1 = "104ebfc41b2d5079c9dd68d3d1cc6326fc31973e"
-repo-rev = "master"
-repo-url = "https://github.com/gcalderone/GFit.jl/"
+[[deps.GModelFit]]
+deps = ["CMPFit", "DataStructures", "Dates", "Distributions", "GZip", "Gnuplot", "JSON", "LsqFit", "MacroTools", "PrettyTables", "Printf", "ProgressMeter", "Random", "Statistics", "Test"]
+git-tree-sha1 = "4ebc9b51afbedb1ebbe5e4797d73348999427cdf"
+repo-rev = "v0.1.0"
+repo-url = "https://github.com/gcalderone/GModelFit.jl"
 uuid = "ac42e6ba-c0bf-4fcf-827d-deea44b16255"
-version = "0.0.1"
+version = "0.1.0"
 
 [[deps.GZip]]
 deps = ["Libdl"]
