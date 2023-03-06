@@ -1,4 +1,4 @@
-# GFitViewer
+# GModelFitViewer
 
 The **GModelFitViewer.jl** package provides tools to visualize 1D [**GModelFit.jl**](https://github.com/gcalderone/GModelFit.jl/blob/master/docs/src/misc.md) objects in a HTML page.  Specifically, it allows to display a plot of the best fit model (along with all its component) and of the empirical data.  Moreover, it shows all relevant model and best fit quantities.
 
