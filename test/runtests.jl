@@ -1,4 +1,4 @@
-using GModelFit, GFitViewer
+using GModelFit, GModelFitViewer
 dom = Domain(0:0.1:5)
 model = Model(dom, :bkg => GModelFit.OffsetSlope(1, 1, 0.1),
                    :l1 => GModelFit.Gaussian(1, 2, 0.2),
@@ -18,10 +18,10 @@ data = GModelFit.mock(Measures, model)
 best, fitstats = fit(model, data)
 
 
-GFitViewer.serialize_json("gfitviewer_test01.json", best)
-GFitViewer.serialize_json("gfitviewer_test02.json", best, fitstats)
-GFitViewer.serialize_json("gfitviewer_test03.json", rebin=2, best)
-GFitViewer.serialize_json("gfitviewer_test04.json", rebin=2, best, fitstats, data,
+GModelFitViewer.serialize_json("gfitviewer_test01.json", best)
+GModelFitViewer.serialize_json("gfitviewer_test02.json", best, fitstats)
+GModelFitViewer.serialize_json("gfitviewer_test03.json", rebin=2, best)
+GModelFitViewer.serialize_json("gfitviewer_test04.json", rebin=2, best, fitstats, data,
                           title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
                           xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 
@@ -42,8 +42,8 @@ data = GModelFit.mock(Measures, multi)
 best, fitstats = fit(multi, data)
 
 
-meta1 = GFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
-meta2 = GFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
-GFitViewer.serialize_json("gfitviewer_test05.json", multi, xlab="Abscissa", ylab="Ordinate", xr=[-4, 4])
-GFitViewer.serialize_json("gfitviewer_test06.json", best, fitstats, [meta1, meta2])
-GFitViewer.serialize_json("gfitviewer_test07.json", best, fitstats, data, [meta1, meta2])
+meta1 = GModelFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
+meta2 = GModelFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
+GModelFitViewer.serialize_json("gfitviewer_test05.json", multi, xlab="Abscissa", ylab="Ordinate", xr=[-4, 4])
+GModelFitViewer.serialize_json("gfitviewer_test06.json", best, fitstats, [meta1, meta2])
+GModelFitViewer.serialize_json("gfitviewer_test07.json", best, fitstats, data, [meta1, meta2])
