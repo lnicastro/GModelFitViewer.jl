@@ -1,4 +1,4 @@
-module GFitViewer
+module GModelFitViewer
 
 using Pkg, Pkg.Artifacts
 using JSON
@@ -176,7 +176,7 @@ end
 
 # Serialize to JSON
 serialize_json(args...; kws...) =
-    serialize_json(joinpath(tempdir(), "gfitviewer.json"), args...; kws...)
+    serialize_json(joinpath(tempdir(), "gmodelfitviewer.json"), args...; kws...)
 
 function serialize_json(filename::String, args...; kws...)
     data = allowed_serializable(args...; kws...)
@@ -188,7 +188,7 @@ end
 
 # Serialize to HTML
 serialize_html(args...; kws...) =
-    serialize_html(joinpath(tempdir(), "gfitviewer.html"), args...; kws...)
+    serialize_html(joinpath(tempdir(), "gmodelfitviewer.html"), args...; kws...)
 
 function serialize_html(filename::String, args...; offline=false, kws...)
     data = allowed_serializable(args...; kws...)
