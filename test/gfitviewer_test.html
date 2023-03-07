@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The GFit viewer</title>
+  <title>The GModelFit viewer</title>
   <meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
   <meta http-equiv=Content-Script-Type content="text/javascript" />
   <meta http-equiv=Content-Style-Type content="text/css" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="GFitViewer - web viewer for the GFit produced results" />
+  <meta name="description" content="GModelFitViewer - web viewer for the GModelFit produced results" />
   <meta name="generator" content="vi+LN" />
   <meta name="author" content="Luciano Nicastro, INAF" />
   <meta name="publisher" content="INAF" />
@@ -840,11 +840,11 @@ hr.style-two {
   </div>
 
   <div class="inline-div">
-    <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GFitViewer.jl" target="_new">GFitViewer</a> &minus;
+    <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GModelFitViewer.jl" target="_new">GModelFitViewer</a> &minus;
       <span style="font-size: 1rem; font-style: italic; color: #ccc;">Version 0.9a</span>
     </div>
 
-    <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <a href="https://github.com/gcalderone/GFit.jl" style="color: #fff; font-weight: bold;" target="_new">GFit</a> 1D results
+    <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <a href="https://github.com/gcalderone/GModelFit.jl" style="color: #fff; font-weight: bold;" target="_new">GModelFit</a> 1D results
 &minus;
       <div class="inline" style="font-size: .8rem;"><a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a> &amp; <a style="color: #ccc;"  href="mailto:giorgio.calderone@inaf.it">G. Calderone</a> 2020-23</div> 
     </div>
@@ -882,14 +882,14 @@ hr.style-two {
 
 	<div class="modal-header">
 		<span class="close" title="Close">&times;</span>
-		<h3 class="modal-header-text">GFitViewer file selector ...</h3>
+		<h3 class="modal-header-text">GModelFitViewer file selector ...</h3>
 	</div>
 
 	<div id="modal-logdiv" class="modal-body">
 
 		<div id="dropzone">
 		  <div>
-			Drag &amp; drop a GFit file here...
+			Drag &amp; drop a GModelFit file here...
 			<br />or<br />
 			<label for="selfile" class="custom-file-select">
 			<svg class="icon-search" width="20" height="20"><use href="#search"></use></svg><span class="ud-angle-l">Browse ...</span>
@@ -906,7 +906,7 @@ hr.style-two {
   </div>
 
   <section style="margin-top: 0.5em;">
-	<div id="p_title" class="inline">GFitViewer info here...</div>
+	<div id="p_title" class="inline">GModelFitViewer info here...</div>
 
   <div id="mod_sel-div" class="div-hide">
 	<select id="p_selector" onchange="p_select()" class="dd-select" title="Select model"></select>
@@ -993,7 +993,8 @@ hr.style-two {
 
 
   <script>
-    var chart_data = JSON_DATA;
+    //var chart_data = JSON_DATA;
+    var chart_data;
   </script>
 
 <script src="test_data.js"></script>
@@ -1026,7 +1027,7 @@ hr.style-two {
 	legend2,	// The second legend used for residuals
 	range, range2,	// Used to highlight +/- N sigma residuals
 
-	tab_extra,      // Additional GFit provided summary tables
+	tab_extra,      // Additional GModelFit provided summary tables
 
 	p_title = document.getElementById('p_title'),
 	xyin_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
@@ -1394,7 +1395,7 @@ console.log('i_mod, maincomp:', i_mod, cdata.maincomp);
 console.log('Measures:');
 console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 
-	} else if ( i_fit < 0 && cdata._structtype.substring(0,14) == 'GFit.FitStats' ) {
+	} else if ( i_fit < 0 && cdata._structtype.indexOf('FitStats') >= 0 ) {
 		i_fit = i;
 	}
   }
