@@ -20,8 +20,8 @@ mutable struct Meta
     xlog::Bool
     ylog::Bool
     rebin::Int
-    keep::Vector{String}
-    skip::Vector{String}
+    keep
+    skip
 end
 
 
@@ -38,8 +38,8 @@ function Meta(; kwargs...)
                 xlog=Bool,
                 ylog=Bool,
                 rebin=Int,
-                keep=Vector{String},
-                skip=Vector{String})
+                keep=Any,
+                skip=Any)
     kw = canonicalize(template; kwargs...)
 
     return Meta((ismissing(kw.title)   ?  ""       :  kw.title),
@@ -54,8 +54,8 @@ function Meta(; kwargs...)
                 (ismissing(kw.xlog)    ?  false    :  kw.xlog),
                 (ismissing(kw.ylog)    ?  false    :  kw.ylog),
                 (ismissing(kw.rebin)   ?  1        :  kw.rebin),
-                (ismissing(kw.keep)    ?  String[] :  kw.keep),
-                (ismissing(kw.skip)    ?  String[] :  kw.skip))
+                (ismissing(kw.keep)    ?  nothing  :  kw.keep),
+                (ismissing(kw.skip)    ?  nothing  :  kw.skip))
 end
 
 
@@ -85,35 +85,20 @@ function rebin(v, e, nn::Int)
 end
 
 
+tobekept(name::String, pattern::String) = (name == pattern)
+tobekept(name::String, pattern::Regex) = !isnothing(match(pattern, name))
+tobekept(name::String, patterns::Vector) = any([tobekept(name, p) for p in patterns])
+
 function tobekept(name::String, meta::Meta)
     keep = false
-
-    if length(meta.keep) > 0
-        for kk in meta.keep
-            if isa(kk, Regex)
-                if !isnothing(kk, name)
-                    keep = true
-                end
-            elseif kk == name
-                keep = true
-            end
-        end
+    if !isnothing(meta.keep)
+        keep = tobekept(name, meta.keep)
     else
         keep = true
     end
-
-    if length(meta.skip) > 0
-        for kk in meta.skip
-            if isa(kk, Regex)
-                if !isnothing(kk, name)
-                    keep = false
-                end
-            elseif kk == name
-                keep = false
-            end
-        end
+    if keep  &&  !isnothing(meta.skip)
+        keep = !tobekept(name, meta.skip)
     end
-
     return keep
 end
 
@@ -133,7 +118,11 @@ function apply_meta!(dict::AbstractDict, meta::Meta)
                     delete!(dict["buffers"], kk)
                 end
             end
-            dict["meta"] = meta
+            meta.keep = nothing
+            meta.skip = nothing
+            dict["meta"] = GModelFit._serialize_struct(meta)
+            haskey(dict["meta"], "keep")  &&  delete!(dict["meta"], "keep")
+            haskey(dict["meta"], "skip")  &&  delete!(dict["meta"], "skip")
         end
         if dict["_structtype"] == "Measures{1}"
             vv = rebin(dict["domain"]["axis"][1], meta.rebin)
