@@ -20,7 +20,10 @@ mutable struct Meta
     xlog::Bool
     ylog::Bool
     rebin::Int
+    keep::Vector{String}
+    skip::Vector{String}
 end
+
 
 function Meta(; kwargs...)
     template = (title=AbstractString,
@@ -34,21 +37,25 @@ function Meta(; kwargs...)
                 yunit=AbstractString,
                 xlog=Bool,
                 ylog=Bool,
-                rebin=Int)
+                rebin=Int,
+                keep=Vector{String},
+                skip=Vector{String})
     kw = canonicalize(template; kwargs...)
 
-    return Meta((ismissing(kw.title)   ?  ""      :  kw.title),
-                (ismissing(kw.xlabel)  ?  ""      :  kw.xlabel),
-                (ismissing(kw.ylabel)  ?  ""      :  kw.ylabel),
-                (ismissing(kw.xrange)  ?  nothing :  [kw.xrange...]),
-                (ismissing(kw.yrange)  ?  nothing :  [kw.yrange...]),
-                (ismissing(kw.xscale)  ?  1       :  kw.xscale),
-                (ismissing(kw.yscale)  ?  1       :  kw.yscale),
-                (ismissing(kw.xunit)   ?  ""      :  kw.xunit),
-                (ismissing(kw.yunit)   ?  ""      :  kw.yunit),
-                (ismissing(kw.xlog)    ?  false   :  kw.xlog),
-                (ismissing(kw.ylog)    ?  false   :  kw.ylog),
-                (ismissing(kw.rebin)   ?  1       :  kw.rebin))
+    return Meta((ismissing(kw.title)   ?  ""       :  kw.title),
+                (ismissing(kw.xlabel)  ?  ""       :  kw.xlabel),
+                (ismissing(kw.ylabel)  ?  ""       :  kw.ylabel),
+                (ismissing(kw.xrange)  ?  nothing  :  [kw.xrange...]),
+                (ismissing(kw.yrange)  ?  nothing  :  [kw.yrange...]),
+                (ismissing(kw.xscale)  ?  1        :  kw.xscale),
+                (ismissing(kw.yscale)  ?  1        :  kw.yscale),
+                (ismissing(kw.xunit)   ?  ""       :  kw.xunit),
+                (ismissing(kw.yunit)   ?  ""       :  kw.yunit),
+                (ismissing(kw.xlog)    ?  false    :  kw.xlog),
+                (ismissing(kw.ylog)    ?  false    :  kw.ylog),
+                (ismissing(kw.rebin)   ?  1        :  kw.rebin),
+                (ismissing(kw.keep)    ?  String[] :  kw.keep),
+                (ismissing(kw.skip)    ?  String[] :  kw.skip))
 end
 
 
@@ -77,23 +84,62 @@ function rebin(v, e, nn::Int)
     return (val, unc)
 end
 
-function rebin!(dict::AbstractDict, nn::Int)
-    (nn > 1)  ||  return
+
+function tobekept(name::String, meta::Meta)
+    keep = false
+
+    if length(meta.keep) > 0
+        for kk in meta.keep
+            if isa(kk, Regex)
+                if !isnothing(kk, name)
+                    keep = true
+                end
+            elseif kk == name
+                keep = true
+            end
+        end
+    else
+        keep = true
+    end
+
+    if length(meta.skip) > 0
+        for kk in meta.skip
+            if isa(kk, Regex)
+                if !isnothing(kk, name)
+                    keep = false
+                end
+            elseif kk == name
+                keep = false
+            end
+        end
+    end
+
+    return keep
+end
+
+
+
+function apply_meta!(dict::AbstractDict, meta::Meta)
     if haskey(dict, "_structtype")
         if dict["_structtype"] == "GModelFit.ModelSnapshot"
             @assert dict["domain"]["_structtype"] == "Domain{1}"
-            vv = rebin(dict["domain"]["axis"][1], nn)
+            vv = rebin(dict["domain"]["axis"][1], meta.rebin)
             empty!(dict["domain"]["axis"])
             push!( dict["domain"]["axis"], vv)
             for (kk, vv) in dict["buffers"]
-                dict["buffers"][kk] = rebin(vv, nn)
+                if tobekept(kk, meta)  ||  (("_TS_" * kk) == dict["maincomp"])
+                    dict["buffers"][kk] = rebin(vv, meta.rebin)
+                else
+                    delete!(dict["buffers"], kk)
+                end
             end
+            dict["meta"] = meta
         end
         if dict["_structtype"] == "Measures{1}"
-            vv = rebin(dict["domain"]["axis"][1], nn)
+            vv = rebin(dict["domain"]["axis"][1], meta.rebin)
             empty!(dict["domain"]["axis"])
             push!( dict["domain"]["axis"], vv)
-            vv, ee = rebin(dict["values"][1], dict["values"][2], nn)
+            vv, ee = rebin(dict["values"][1], dict["values"][2], meta.rebin)
             empty!(dict["values"])
             push!( dict["values"], vv)
             push!( dict["values"], ee)
@@ -108,25 +154,22 @@ allowed_serializable(model::Model; kws...) = allowed_serializable(GModelFit.Mode
 function allowed_serializable(model::GModelFit.ModelSnapshot; kws...)
     meta = Meta(; kws...)
     out = [GModelFit.allowed_serializable(model)] # Output is always a vector to simplify JavaScript code
-    rebin!(out[1], meta.rebin)
-    out[1]["meta"] = meta
+    apply_meta!(out[1], meta)
     return out
 end
 
 function allowed_serializable(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats; kws...)
     meta = Meta(; kws...)
     out = GModelFit.allowed_serializable(model, fitstats)
-    rebin!(out[1], meta.rebin)
-    out[1]["meta"] = meta
+    apply_meta!(out[1], meta)
     return out
 end
 
 function allowed_serializable(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats, data::GModelFit.AbstractMeasures; kws...)
     meta = Meta(; kws...)
     out = GModelFit.allowed_serializable(model, fitstats, data)
-    rebin!(out[1], meta.rebin)
-    rebin!(out[3], meta.rebin)
-    out[1]["meta"] = meta
+    apply_meta!(out[1], meta)
+    apply_meta!(out[3], meta)
     return out
 end
 
@@ -147,8 +190,7 @@ function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, meta::Vect
     @assert length(multi) == length(meta)
     out = [GModelFit.allowed_serializable(multi)] # Output is always a vector to simplify JavaScript code
     for i in 1:length(multi)
-        rebin!(out[1][i], meta[i].rebin)
-        out[1][i]["meta"] = meta[i]
+        apply_meta!(out[1][i], meta[i])
     end
     return out
 end
@@ -157,8 +199,7 @@ function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::
     @assert length(multi) == length(meta)
     out = GModelFit.allowed_serializable(multi, fitstats)
     for i in 1:length(multi)
-        rebin!(out[1][i], meta[i].rebin)
-        out[1][i]["meta"] = meta[i]
+        apply_meta!(out[1][i], meta[i])
     end
     return out
 end
@@ -167,12 +208,12 @@ function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::
     @assert length(multi) == length(meta) == length(data)
     out = GModelFit.allowed_serializable(multi, fitstats, data)
     for i in 1:length(multi)
-        rebin!(out[1][i], meta[i].rebin)
-        rebin!(out[3][i], meta[i].rebin)
-        out[1][i]["meta"] = meta[i]
+        apply_meta!(out[1][i], meta[i])
+        apply_meta!(out[3][i], meta[i])
     end
     return out
 end
+
 
 # Serialize to JSON
 serialize_json(args...; kws...) =
@@ -207,6 +248,7 @@ function serialize_html(filename::String, args...; offline=false, kws...)
     close(io)
     return filename
 end
+
 
 
 function viewer(args...; kws...)
