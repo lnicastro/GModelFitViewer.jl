@@ -1016,18 +1016,18 @@ hr.style-two {
 	serr = [],	// The Y errors shaded area series
 	resid = [],	// The residuals
 	aux = {},	// The metadata information read from the JSON file and more
-	i_mod = -1,     // chart_data index of the Models
-	i_mea = -1,     // chart_data index of the Measurements
-	i_fit = -1,     // chart_data index of the FitStats
+	i_mod = -1,	// chart_data index of the Models
+	i_mea = -1,	// chart_data index of the Measurements
+	i_fit = -1,	// chart_data index of the FitStats
 	vxAxis,		// X axis object
 	valueAxis,	// Y axis object
 	valueAxis2,	// The residuals right axis object
-	cur_container,  // The cursor Container
+	cur_container,	// The cursor Container
 	curXY,		// The text Label in the cursor Container
 	legend2,	// The second legend used for residuals
 	range, range2,	// Used to highlight +/- N sigma residuals
 
-	tab_extra,      // Additional GModelFit provided summary tables
+	tab_extra,	// Additional GModelFit provided summary tables
 
 	p_title = document.getElementById('p_title'),
 	xyin_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
@@ -1609,20 +1609,20 @@ var mydata2chart = function(isel) {
   for (var i = 0; i < x.length; i++) {
 	vals = {};
 	vals['comp_x'] = Math.round(x[i] * fscale) / fscale;
+	vals['model'] = compevals[i] / aux.modinfo[isel].y_scale;
 
 	if ( aux.n_d > 0 ) {
 	  vals['x'] = Math.round(m.domain.axis[0][i] * fscale) / fscale;
 	  //vals['model'] = chart_data[i_mod[isel]].model[i] / aux.modinfo[isel].y_scale;
-	  vals['model'] = compevals[i] / aux.modinfo[isel].y_scale;
 
 	  vals['y'] = m.values[0][i] / aux.modinfo[isel].y_scale;
-	  vals['error'] = m.values[1][i];
-	  vals['resid'] = (vals['y'] - vals['model']) / vals['error'];
+	  //vals['error'] = m.values[1][i];
+	  //vals['resid'] = (vals['y'] - vals['model']) / vals['error'];
+	  vals['resid'] = (m.values[0][i] - compevals[i]) / m.values[1][i];
 
 	  vals['err_lo'] = (m.values[0][i] - m.values[1][i]) / aux.modinfo[isel].y_scale;
 	  vals['err_up'] = (m.values[0][i] + m.values[1][i]) / aux.modinfo[isel].y_scale;
-	} else
-	  vals['model'] = compevals[i] / aux.modinfo[isel].y_scale;
+	}
 
 	for (var j = 0; j < aux.modinfo[isel].n_comps; j++)  // Components
 	  vals[cnames[j]] = p.buffers[cnames[j]][i] / aux.modinfo[isel].y_scale;
