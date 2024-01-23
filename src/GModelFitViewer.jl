@@ -107,7 +107,7 @@ end
 function apply_meta!(dict::AbstractDict, meta::Meta)
     if haskey(dict, "_structtype")
         if dict["_structtype"] == "GModelFit.ModelSnapshot"
-            @assert dict["domain"]["_structtype"] == "Domain{1}"
+            @assert dict["domain"]["_structtype"] in ["Domain{1}", "GModelFit.Domain{1}"]
             vv = rebin(dict["domain"]["axis"][1], meta.rebin)
             empty!(dict["domain"]["axis"])
             push!( dict["domain"]["axis"], vv)
@@ -139,63 +139,63 @@ end
 
 
 # Single model, using keywords for meta
-allowed_serializable(model::Model; kws...) = allowed_serializable(GModelFit.ModelSnapshot(model); kws...)
-function allowed_serializable(model::GModelFit.ModelSnapshot; kws...)
+serialize_with_meta(model::Model; kws...) = serialize_with_meta(GModelFit.ModelSnapshot(model); kws...)
+function serialize_with_meta(model::GModelFit.ModelSnapshot; kws...)
     meta = Meta(; kws...)
-    out = [GModelFit.allowed_serializable(model)] # Output is always a vector to simplify JavaScript code
+    out = [GModelFit._serialize(model)] # Output is always a vector to simplify JavaScript code
     apply_meta!(out[1], meta)
     return out
 end
 
-function allowed_serializable(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats; kws...)
+function serialize_with_meta(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats; kws...)
     meta = Meta(; kws...)
-    out = GModelFit.allowed_serializable(model, fitstats)
+    out = GModelFit._serialize(model, fitstats)
     apply_meta!(out[1], meta)
     return out
 end
 
-function allowed_serializable(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats, data::GModelFit.AbstractMeasures; kws...)
+function serialize_with_meta(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats, data::GModelFit.AbstractMeasures; kws...)
     meta = Meta(; kws...)
-    out = GModelFit.allowed_serializable(model, fitstats, data)
+    out = GModelFit._serialize(model, fitstats, data)
     apply_meta!(out[1], meta)
     apply_meta!(out[3], meta)
     return out
 end
 
 # Multi model, using keywords for meta (to replicate for all models)
-allowed_serializable(multi::Vector{Model}                                                                 ; kws...)                                        = allowed_serializable(GModelFit.ModelSnapshot.(multi)                , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}                                               ; kws...)                                        = allowed_serializable(multi                                          , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats                 ; kws...)                                        = allowed_serializable(multi                          , fitstats      , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}; kws...)  where T <: GModelFit.AbstractMeasures = allowed_serializable(multi                          , fitstats, data, fill(Meta(; kws...), length(multi)))
+serialize_with_meta(multi::Vector{Model}                                                                 ; kws...)                                        = serialize_with_meta(GModelFit.ModelSnapshot.(multi)                , fill(Meta(; kws...), length(multi)))
+serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}                                               ; kws...)                                        = serialize_with_meta(multi                                          , fill(Meta(; kws...), length(multi)))
+serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats                 ; kws...)                                        = serialize_with_meta(multi                          , fitstats      , fill(Meta(; kws...), length(multi)))
+serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}; kws...)  where T <: GModelFit.AbstractMeasures = serialize_with_meta(multi                          , fitstats, data, fill(Meta(; kws...), length(multi)))
 
 
 # Multi model, using last argument for meta
-function allowed_serializable(multi::Vector{Model},
+function serialize_with_meta(multi::Vector{Model},
                               meta::Vector{Meta})
-    allowed_serializable(GModelFit.ModelSnapshot.(multi), meta)
+    serialize_with_meta(GModelFit.ModelSnapshot.(multi), meta)
 end
 
-function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, meta::Vector{Meta})
+function serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, meta::Vector{Meta})
     @assert length(multi) == length(meta)
-    out = [GModelFit.allowed_serializable(multi)] # Output is always a vector to simplify JavaScript code
+    out = [GModelFit._serialize(multi)] # Output is always a vector to simplify JavaScript code
     for i in 1:length(multi)
         apply_meta!(out[1][i], meta[i])
     end
     return out
 end
 
-function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, meta::Vector{Meta})
+function serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, meta::Vector{Meta})
     @assert length(multi) == length(meta)
-    out = GModelFit.allowed_serializable(multi, fitstats)
+    out = GModelFit._serialize(multi, fitstats)
     for i in 1:length(multi)
         apply_meta!(out[1][i], meta[i])
     end
     return out
 end
 
-function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}, meta::Vector{Meta}) where T <: GModelFit.AbstractMeasures
+function serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}, meta::Vector{Meta}) where T <: GModelFit.AbstractMeasures
     @assert length(multi) == length(meta) == length(data)
-    out = GModelFit.allowed_serializable(multi, fitstats, data)
+    out = GModelFit._serialize(multi, fitstats, data)
     for i in 1:length(multi)
         apply_meta!(out[1][i], meta[i])
         apply_meta!(out[3][i], meta[i])
@@ -209,7 +209,7 @@ serialize_json(args...; kws...) =
     serialize_json(joinpath(tempdir(), "gmodelfitviewer.json"), args...; kws...)
 
 function serialize_json(filename::String, args...; kws...)
-    data = allowed_serializable(args...; kws...)
+    data = serialize_with_meta(args...; kws...)
     io = open(filename, "w")
     JSON.print(io, data)
     close(io)
@@ -221,12 +221,12 @@ serialize_html(args...; kws...) =
     serialize_html(joinpath(tempdir(), "gmodelfitviewer.html"), args...; kws...)
 
 function serialize_html(filename::String, args...; offline=false, kws...)
-    data = allowed_serializable(args...; kws...)
+    data = serialize_with_meta(args...; kws...)
     io = open(filename, "w")
     if offline
-        template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
+        template = joinpath(artifact"GModelFitViewer_artifact", "vieweroffline.html")
     else
-        template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
+        template = joinpath(artifact"GModelFitViewer_artifact", "vieweronline.html")
     end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
