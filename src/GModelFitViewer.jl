@@ -103,7 +103,6 @@ function tobekept(name::String, meta::Meta)
 end
 
 
-
 function apply_meta!(dict::AbstractDict, meta::Meta)
     if haskey(dict, "_structtype")
         if dict["_structtype"] == "GModelFit.ModelSnapshot"
@@ -137,68 +136,34 @@ function apply_meta!(dict::AbstractDict, meta::Meta)
 end
 
 
-
-# Single model, using keywords for meta
-serialize_with_meta(model::Model; kws...) = serialize_with_meta(GModelFit.ModelSnapshot(model); kws...)
-function serialize_with_meta(model::GModelFit.ModelSnapshot; kws...)
-    meta = Meta(; kws...)
-    out = [GModelFit._serialize(model)] # Output is always a vector to simplify JavaScript code
-    apply_meta!(out[1], meta)
-    return out
-end
-
-function serialize_with_meta(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats; kws...)
-    meta = Meta(; kws...)
-    out = GModelFit._serialize(model, fitstats)
-    apply_meta!(out[1], meta)
-    return out
-end
-
-function serialize_with_meta(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats, data::GModelFit.AbstractMeasures; kws...)
-    meta = Meta(; kws...)
-    out = GModelFit._serialize(model, fitstats, data)
-    apply_meta!(out[1], meta)
-    apply_meta!(out[3], meta)
-    return out
-end
-
-# Multi model, using keywords for meta (to replicate for all models)
-serialize_with_meta(multi::Vector{Model}                                                                 ; kws...)                                        = serialize_with_meta(GModelFit.ModelSnapshot.(multi)                , fill(Meta(; kws...), length(multi)))
-serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}                                               ; kws...)                                        = serialize_with_meta(multi                                          , fill(Meta(; kws...), length(multi)))
-serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats                 ; kws...)                                        = serialize_with_meta(multi                          , fitstats      , fill(Meta(; kws...), length(multi)))
-serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}; kws...)  where T <: GModelFit.AbstractMeasures = serialize_with_meta(multi                          , fitstats, data, fill(Meta(; kws...), length(multi)))
-
-
-# Multi model, using last argument for meta
-function serialize_with_meta(multi::Vector{Model},
-                              meta::Vector{Meta})
-    serialize_with_meta(GModelFit.ModelSnapshot.(multi), meta)
-end
-
-function serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, meta::Vector{Meta})
-    @assert length(multi) == length(meta)
-    out = [GModelFit._serialize(multi)] # Output is always a vector to simplify JavaScript code
-    for i in 1:length(multi)
-        apply_meta!(out[1][i], meta[i])
+function serialize_with_meta(args...; meta=nothing, kws...)
+    if isnothing(meta)
+        meta = Meta(; kws...)
     end
-    return out
-end
 
-function serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, meta::Vector{Meta})
-    @assert length(multi) == length(meta)
-    out = GModelFit._serialize(multi, fitstats)
-    for i in 1:length(multi)
-        apply_meta!(out[1][i], meta[i])
+    out = GModelFit._serialize(args...)
+    if !isa(out, Vector)
+        out = [out] # Output is always a vector to simplify JavaScript code
+    elseif length(args) == 1
+        # We have a vector with only one input args: it means we are
+        # in a multi-model case, hence we need to add a further vector
+        # level
+        out = [out]
     end
-    return out
-end
-
-function serialize_with_meta(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}, meta::Vector{Meta}) where T <: GModelFit.AbstractMeasures
-    @assert length(multi) == length(meta) == length(data)
-    out = GModelFit._serialize(multi, fitstats, data)
-    for i in 1:length(multi)
-        apply_meta!(out[1][i], meta[i])
-        apply_meta!(out[3][i], meta[i])
+    for i in 1:length(out)
+        if isa(out[i], Vector)
+            for j in 1:length(out[i])
+                if isa(meta, Vector)
+                    apply_meta!(out[i][j], meta[j])
+                else
+                    apply_meta!(out[i][j], meta)
+                end
+            end
+        else
+            if !isa(meta, Vector)
+                apply_meta!(out[i], meta)
+            end
+        end
     end
     return out
 end
@@ -215,6 +180,7 @@ function serialize_json(filename::String, args...; kws...)
     close(io)
     return filename
 end
+
 
 # Serialize to HTML
 serialize_html(args...; kws...) =
@@ -238,8 +204,7 @@ function serialize_html(filename::String, args...; offline=false, kws...)
     return filename
 end
 
-
-
+# Viewer
 function viewer(args...; kws...)
     filename = serialize_html(args...; kws...)
     DefaultApplication.open(filename)

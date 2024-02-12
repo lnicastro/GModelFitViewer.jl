@@ -23,7 +23,11 @@ GModelFitViewer.serialize_json("gmodelfitviewer_test02.json", best, fitstats)
 GModelFitViewer.serialize_json("gmodelfitviewer_test03.json", rebin=2, best)
 GModelFitViewer.serialize_json("gmodelfitviewer_test04.json", rebin=2, best, fitstats, data,
                           title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
-                          xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
+                               xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
+GModelFitViewer.serialize_json("gmodelfitviewer_test05.json", best, keep="l1")
+GModelFitViewer.serialize_json("gmodelfitviewer_test06.json", best, skip="l1")
+GModelFitViewer.serialize_json("gmodelfitviewer_test07.json", best, keep=r"l.*")
+GModelFitViewer.serialize_json("gmodelfitviewer_test08.json", best, skip=r"l.*")
 
 
 
@@ -45,5 +49,5 @@ best, fitstats = fit(multi, data)
 meta1 = GModelFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 meta2 = GModelFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 GModelFitViewer.serialize_json("gmodelfitviewer_test05.json", multi, xlab="Abscissa", ylab="Ordinate", xr=[-4, 4])
-GModelFitViewer.serialize_json("gmodelfitviewer_test06.json", best, fitstats, [meta1, meta2])
-GModelFitViewer.serialize_json("gmodelfitviewer_test07.json", best, fitstats, data, [meta1, meta2])
+GModelFitViewer.serialize_json("gmodelfitviewer_test06.json", best, fitstats, meta=[meta1, meta2])
+GModelFitViewer.serialize_json("gmodelfitviewer_test07.json", best, fitstats, data, meta=[meta1, meta2])
