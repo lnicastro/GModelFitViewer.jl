@@ -58,7 +58,6 @@ function Meta(; kwargs...)
 end
 
 
-
 rebin(vv, nn) = rebin(vv, ones(eltype(vv), length(vv)), nn)[1]
 function rebin(v, e, nn::Int)
     @assert length(v) == length(e)
@@ -177,7 +176,6 @@ struct DictsWithMeta
 end
 
 
-
 # Serialize to JSON
 default_filename_json() = joinpath(tempdir(), "gmodelfitviewer.json")
 serialize_json(args...;
@@ -222,6 +220,7 @@ function serialize_html(data::DictsWithMeta;
     close(io)
     return filename
 end
+
 
 # Viewer
 function viewer(args...; kws...)
