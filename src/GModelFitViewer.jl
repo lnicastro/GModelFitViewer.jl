@@ -163,10 +163,10 @@ function allowed_serializable(model::GModelFit.ModelSnapshot, fitstats::GModelFi
 end
 
 # Multi model, using keywords for meta (to replicate for all models)
-allowed_serializable(multi::Vector{Model}                                                                 ; kws...)                                        = allowed_serializable(GModelFit.ModelSnapshot.(multi)               , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}                                               ; kws...)                                        = allowed_serializable(multi                                         , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats                 ; kws...)                                        = allowed_serializable(multi                          , fistats      , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}; kws...)  where T <: GModelFit.AbstractMeasures = allowed_serializable(multi                          , fistats, data, fill(Meta(; kws...), length(multi)))
+allowed_serializable(multi::Vector{Model}                                                                 ; kws...)                                        = allowed_serializable(GModelFit.ModelSnapshot.(multi)                , fill(Meta(; kws...), length(multi)))
+allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}                                               ; kws...)                                        = allowed_serializable(multi                                          , fill(Meta(; kws...), length(multi)))
+allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats                 ; kws...)                                        = allowed_serializable(multi                          , fitstats      , fill(Meta(; kws...), length(multi)))
+allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}; kws...)  where T <: GModelFit.AbstractMeasures = allowed_serializable(multi                          , fitstats, data, fill(Meta(; kws...), length(multi)))
 
 
 # Multi model, using last argument for meta
