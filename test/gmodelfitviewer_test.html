@@ -997,7 +997,7 @@ hr.style-two {
     var chart_data;
   </script>
 
-<script src="test_data.js"></script>
+<script src="test3_data_extra.js"></script>
 
 <script type="text/javascript">
 
@@ -1027,7 +1027,7 @@ hr.style-two {
 	legend2,	// The second legend used for residuals
 	range, range2,	// Used to highlight +/- N sigma residuals
 
-	tab_extra,	// Additional GModelFit provided summary tables
+	tab_extra = [],	// Additional GModelFit provided summary tables
 
 	p_title = document.getElementById('p_title'),
 	xyin_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
@@ -1342,11 +1342,6 @@ function toggleFullScreen(id_div) {
 
 var getauxinfo = function() {  // TODO
 
-  if ( chart_data.extra !== undefined )
-	tab_extra = chart_data.extra;
-  else
-	tab_extra = {};
-
 
   document.getElementById('app_info').innerHTML = '';
 
@@ -1405,6 +1400,12 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 	alert('No Model found in your data.')
 	return;
   }
+
+  if ( chart_data[i_mod].extra !== undefined )
+	tab_extra.push(chart_data[i_mod].extra[0]);
+  else
+	tab_extra.push({});
+
 
 
   aux.modinfo = [];
@@ -2679,14 +2680,16 @@ function saveJsonObj(filename, obj) {
 //	      For extra tables this is just an integer ith table id.
 
 var tableFromJson = function(obj, type, tab_id) {
-  if ( obj == undefined || obj.show == undefined )
+  if ( type !== 2 && (obj == undefined || obj.show == undefined) )
 	return;
-  var col = [], tlab = document.createElement('div'),
-	contentdiv, comp, cname, nc, title;
+
+  var tlab = document.createElement('div'),
+	contentdiv, comp, cname, title;
 
 // Define component/evaluations reference object and header from type
 
-  comp = stripansi(obj.show);
+  if ( type !== 2 )
+	comp = stripansi(obj.show);
 
 //console.log(comp);
 
@@ -2753,16 +2756,48 @@ var tableFromJson = function(obj, type, tab_id) {
 	break;
 
     case 2:  // Extra tables 
-	comp = obj.show;
+	//comp = obj.show;
+	comp = obj;
 	tab_id = 'extra_table'+ tab_id;  // Must be unique
 
 	title = '<div id="'+ tab_id +'_angle_down" class="div-show-inline"><svg class="icon-angle" width="12" height="18"><use href="#angle-down"></use></svg></div>'+
 '<div id="'+ tab_id +'_angle_up" class="div-hide"><svg class="icon-angle" width="12" height="18"><use href="#angle-up"></use></svg></div>'+
 '<span class="ud-angle-l">'+ comp.label +'</span>';
+
 	tlab.setAttribute('id', tab_id +'_sect');
 	tlab.setAttribute('class', 'toggle_table-hdr');
 	tlab.setAttribute('onclick', "gfit_table_toggle('"+ tab_id +"')");
 
+	tlab.innerHTML = title;
+
+	contentdiv = document.createElement('div');
+
+	tab = document.createElement('table');
+	contentdiv.appendChild(tab);
+
+// Create table header row using the field names
+	hdr = tab.createTHead();
+	tr = hdr.insertRow(0);
+	var col = Object.keys(comp.fields);
+
+	for (var i = 0; i < col.length; i++) {
+	  var th = document.createElement('th');
+	  th.innerHTML = col[i];
+	  tr.appendChild(th);
+	}
+
+// Table body 
+	tb = tab.appendChild(document.createElement('tbody'));
+	var nc = comp.fields[col[0]].data.length;  // Number of rows
+
+	for (var i = 0; i < nc; i++) {
+	  tr = tb.insertRow(-1);
+
+	  for (var j = 0; j < col.length; j++) {
+		tabCell = tr.insertCell(-1);
+		tabCell.innerHTML = comp.fields[col[j]].data[i];
+	  }
+	}
 	break;
 
     default:
