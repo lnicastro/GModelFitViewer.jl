@@ -1,6 +1,13 @@
 [GModelFitViewer_artifact]
+<<<<<<< HEAD
 git-tree-sha1 = "ff3b67cd1c8ed825150a509796dba5c894ab3b04"
 
     [[GModelFitViewer_artifact.download]]
     sha256 = "165d98f0a392534522a4f3d485898ae8980a72220188b6f1921683824df85ec6"
+=======
+git-tree-sha1 = "67ccf625f47cefae5566a610e8e6b008bdf5bb9b"
+
+    [[GModelFitViewer_artifact.download]]
+    sha256 = "556d5d416c702769c8f383551d591c36944922e4f6bcc30b6ac23515fc2f3edf"
+>>>>>>> b8298e3b1f89f64ea45e1a9699ac525b36bed9f8
     url = "https://qsfit.inaf.it/GModelFitViewer/GModelFitViewer_artifact.tar.gz"

@@ -61,5 +61,5 @@ viewer(best, fitstats, data,
 
 To save the HTML page in `myfile.html` (without opening it in the web browser):
 ```julia
-GModelFitViewer.serialize_html("myfile.html", best, fitstats, data)
+GModelFitViewer.serialize_html(best, fitstats, data, filename="myfile.html")
 ```

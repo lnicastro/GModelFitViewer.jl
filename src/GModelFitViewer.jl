@@ -6,7 +6,6 @@ using DefaultApplication, StructC14N, GModelFit
 
 export viewer
 
-
 mutable struct Meta
     title::String
     xlabel::String
@@ -59,7 +58,6 @@ function Meta(; kwargs...)
 end
 
 
-
 rebin(vv, nn) = rebin(vv, ones(eltype(vv), length(vv)), nn)[1]
 function rebin(v, e, nn::Int)
     @assert length(v) == length(e)
@@ -103,11 +101,10 @@ function tobekept(name::String, meta::Meta)
 end
 
 
-
 function apply_meta!(dict::AbstractDict, meta::Meta)
     if haskey(dict, "_structtype")
         if dict["_structtype"] == "GModelFit.ModelSnapshot"
-            @assert dict["domain"]["_structtype"] == "Domain{1}"
+            @assert dict["domain"]["_structtype"] in ["Domain{1}", "GModelFit.Domain{1}"]
             vv = rebin(dict["domain"]["axis"][1], meta.rebin)
             empty!(dict["domain"]["axis"])
             push!( dict["domain"]["axis"], vv)
@@ -137,100 +134,86 @@ function apply_meta!(dict::AbstractDict, meta::Meta)
 end
 
 
+# The following structure contains vector(s) of dicts as a result of
+# serializarion with GModelFit._serialize().  Its constructor allows
+# to apply meta information provided via keywords to each dict.
+struct DictsWithMeta
+    data::Vector
 
-# Single model, using keywords for meta
-allowed_serializable(model::Model; kws...) = allowed_serializable(GModelFit.ModelSnapshot(model); kws...)
-function allowed_serializable(model::GModelFit.ModelSnapshot; kws...)
-    meta = Meta(; kws...)
-    out = [GModelFit.allowed_serializable(model)] # Output is always a vector to simplify JavaScript code
-    apply_meta!(out[1], meta)
-    return out
-end
+    function DictsWithMeta(args...; meta=nothing, kws...)
+        if isnothing(meta)
+            meta = Meta(; kws...)
+        end
 
-function allowed_serializable(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats; kws...)
-    meta = Meta(; kws...)
-    out = GModelFit.allowed_serializable(model, fitstats)
-    apply_meta!(out[1], meta)
-    return out
-end
+        out = GModelFit._serialize(args...)
+        if !isa(out, Vector)
+            out = [out] # Output is always a vector to simplify JavaScript code
+        elseif length(args) == 1
+            # We have a vector with only one input arg: it means we are
+            # in a multi-model case, hence we need to add a further vector
+            # level
+            out = [out]
+        end
 
-function allowed_serializable(model::GModelFit.ModelSnapshot, fitstats::GModelFit.FitStats, data::GModelFit.AbstractMeasures; kws...)
-    meta = Meta(; kws...)
-    out = GModelFit.allowed_serializable(model, fitstats, data)
-    apply_meta!(out[1], meta)
-    apply_meta!(out[3], meta)
-    return out
-end
-
-# Multi model, using keywords for meta (to replicate for all models)
-allowed_serializable(multi::Vector{Model}                                                                 ; kws...)                                        = allowed_serializable(GModelFit.ModelSnapshot.(multi)                , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}                                               ; kws...)                                        = allowed_serializable(multi                                          , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats                 ; kws...)                                        = allowed_serializable(multi                          , fitstats      , fill(Meta(; kws...), length(multi)))
-allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}; kws...)  where T <: GModelFit.AbstractMeasures = allowed_serializable(multi                          , fitstats, data, fill(Meta(; kws...), length(multi)))
-
-
-# Multi model, using last argument for meta
-function allowed_serializable(multi::Vector{Model},
-                              meta::Vector{Meta})
-    allowed_serializable(GModelFit.ModelSnapshot.(multi), meta)
-end
-
-function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, meta::Vector{Meta})
-    @assert length(multi) == length(meta)
-    out = [GModelFit.allowed_serializable(multi)] # Output is always a vector to simplify JavaScript code
-    for i in 1:length(multi)
-        apply_meta!(out[1][i], meta[i])
+        # Apply meta to dicts
+        for i in 1:length(out)
+            if isa(out[i], Vector)
+                for j in 1:length(out[i])
+                    if isa(meta, Vector)
+                        apply_meta!(out[i][j], meta[j])
+                    else
+                        apply_meta!(out[i][j], meta)
+                    end
+                end
+            else
+                if !isa(meta, Vector)
+                    apply_meta!(out[i], meta)
+                end
+            end
+        end
+        return new(out)
     end
-    return out
-end
-
-function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, meta::Vector{Meta})
-    @assert length(multi) == length(meta)
-    out = GModelFit.allowed_serializable(multi, fitstats)
-    for i in 1:length(multi)
-        apply_meta!(out[1][i], meta[i])
-    end
-    return out
-end
-
-function allowed_serializable(multi::Vector{GModelFit.ModelSnapshot}, fitstats::GModelFit.FitStats, data::Vector{T}, meta::Vector{Meta}) where T <: GModelFit.AbstractMeasures
-    @assert length(multi) == length(meta) == length(data)
-    out = GModelFit.allowed_serializable(multi, fitstats, data)
-    for i in 1:length(multi)
-        apply_meta!(out[1][i], meta[i])
-        apply_meta!(out[3][i], meta[i])
-    end
-    return out
 end
 
 
 # Serialize to JSON
-serialize_json(args...; kws...) =
-    serialize_json(joinpath(tempdir(), "gmodelfitviewer.json"), args...; kws...)
+default_filename_json() = joinpath(tempdir(), "gmodelfitviewer.json")
+serialize_json(args...;
+               filename=default_filename_json(),
+               kws...) =
+                   serialize_json(DictsWithMeta(args...; kws...),
+                                  filename=filename)
 
-function serialize_json(filename::String, args...; kws...)
-    data = allowed_serializable(args...; kws...)
+function serialize_json(data::DictsWithMeta;
+                        filename=default_filename_json())
     io = open(filename, "w")
-    JSON.print(io, data)
+    JSON.print(io, data.data)
     close(io)
     return filename
 end
 
-# Serialize to HTML
-serialize_html(args...; kws...) =
-    serialize_html(joinpath(tempdir(), "gmodelfitviewer.html"), args...; kws...)
 
-function serialize_html(filename::String, args...; offline=false, kws...)
-    data = allowed_serializable(args...; kws...)
+# Serialize to HTML
+default_filename_html() = joinpath(tempdir(), "gmodelfitviewer.html")
+serialize_html(args...;
+               filename=default_filename_html(),
+               offline=false,
+               kws...) =
+                   serialize_html(DictsWithMeta(args...; kws...),
+                                  filename=filename, offline=offline)
+
+function serialize_html(data::DictsWithMeta;
+                        filename=default_filename_html(),
+                        offline=false)
     io = open(filename, "w")
     if offline
-        template = joinpath(artifact"GFitViewer_artifact", "vieweroffline.html")
+        template = joinpath(artifact"GModelFitViewer_artifact", "vieweroffline.html")
     else
-        template = joinpath(artifact"GFitViewer_artifact", "vieweronline.html")
+        template = joinpath(artifact"GModelFitViewer_artifact", "vieweronline.html")
     end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, data)
+    JSON.print(io, data.data)
     while !eof(input)
         write(io, readavailable(input))
     end
@@ -239,21 +222,15 @@ function serialize_html(filename::String, args...; offline=false, kws...)
 end
 
 
-
+# Viewer
 function viewer(args...; kws...)
     filename = serialize_html(args...; kws...)
     DefaultApplication.open(filename)
 end
 
-function viewer(file_json::String; kws...)
-    vv = GModelFit.deserialize(file_json)
+function viewer(file_json_input::String; kws...)
+    vv = GModelFit.deserialize(file_json_input)
     filename = serialize_html(vv...; kws...)
-    DefaultApplication.open(filename)
-end
-
-function viewer(dest::String, file_json::String; kws...)
-    vv = GModelFit.deserialize(file_json)
-    filename = serialize_html(dest, vv...; kws...)
     DefaultApplication.open(filename)
 end
 
