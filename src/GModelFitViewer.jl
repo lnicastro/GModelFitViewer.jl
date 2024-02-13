@@ -6,7 +6,6 @@ using DefaultApplication, StructC14N, GModelFit
 
 export viewer
 
-
 mutable struct Meta
     title::String
     xlabel::String
@@ -136,58 +135,78 @@ function apply_meta!(dict::AbstractDict, meta::Meta)
 end
 
 
-function serialize_with_meta(args...; meta=nothing, kws...)
-    if isnothing(meta)
-        meta = Meta(; kws...)
-    end
+# The following structure contains vector(s) of dicts as a result of
+# serializarion with GModelFit._serialize().  Its constructor allows
+# to apply meta information provided via keywords to each dict.
+struct DictsWithMeta
+    data::Vector
 
-    out = GModelFit._serialize(args...)
-    if !isa(out, Vector)
-        out = [out] # Output is always a vector to simplify JavaScript code
-    elseif length(args) == 1
-        # We have a vector with only one input args: it means we are
-        # in a multi-model case, hence we need to add a further vector
-        # level
-        out = [out]
-    end
-    for i in 1:length(out)
-        if isa(out[i], Vector)
-            for j in 1:length(out[i])
-                if isa(meta, Vector)
-                    apply_meta!(out[i][j], meta[j])
-                else
-                    apply_meta!(out[i][j], meta)
+    function DictsWithMeta(args...; meta=nothing, kws...)
+        if isnothing(meta)
+            meta = Meta(; kws...)
+        end
+
+        out = GModelFit._serialize(args...)
+        if !isa(out, Vector)
+            out = [out] # Output is always a vector to simplify JavaScript code
+        elseif length(args) == 1
+            # We have a vector with only one input arg: it means we are
+            # in a multi-model case, hence we need to add a further vector
+            # level
+            out = [out]
+        end
+
+        # Apply meta to dicts
+        for i in 1:length(out)
+            if isa(out[i], Vector)
+                for j in 1:length(out[i])
+                    if isa(meta, Vector)
+                        apply_meta!(out[i][j], meta[j])
+                    else
+                        apply_meta!(out[i][j], meta)
+                    end
+                end
+            else
+                if !isa(meta, Vector)
+                    apply_meta!(out[i], meta)
                 end
             end
-        else
-            if !isa(meta, Vector)
-                apply_meta!(out[i], meta)
-            end
         end
+        return new(out)
     end
-    return out
 end
 
 
-# Serialize to JSON
-serialize_json(args...; kws...) =
-    serialize_json(joinpath(tempdir(), "gmodelfitviewer.json"), args...; kws...)
 
-function serialize_json(filename::String, args...; kws...)
-    data = serialize_with_meta(args...; kws...)
+# Serialize to JSON
+default_filename_json() = joinpath(tempdir(), "gmodelfitviewer.json")
+serialize_json(args...;
+               filename=default_filename_json(),
+               kws...) =
+                   serialize_json(DictsWithMeta(args...; kws...),
+                                  filename=filename)
+
+function serialize_json(data::DictsWithMeta;
+                        filename=default_filename_json())
     io = open(filename, "w")
-    JSON.print(io, data)
+    JSON.print(io, data.data)
     close(io)
     return filename
 end
 
 
 # Serialize to HTML
-serialize_html(args...; kws...) =
-    serialize_html(joinpath(tempdir(), "gmodelfitviewer.html"), args...; kws...)
+default_filename_html() = joinpath(tempdir(), "gmodelfitviewer.html")
+serialize_html(args...;
+               filename=default_filename_html(),
+               offline=false,
+               kws...) =
+                   serialize_html(DictsWithMeta(args...; kws...),
+                                  filename=filename, offline=offline)
 
-function serialize_html(filename::String, args...; offline=false, kws...)
-    data = serialize_with_meta(args...; kws...)
+function serialize_html(data::DictsWithMeta;
+                        filename=default_filename_html(),
+                        offline=false)
     io = open(filename, "w")
     if offline
         template = joinpath(artifact"GModelFitViewer_artifact", "vieweroffline.html")
@@ -196,7 +215,7 @@ function serialize_html(filename::String, args...; offline=false, kws...)
     end
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, data)
+    JSON.print(io, data.data)
     while !eof(input)
         write(io, readavailable(input))
     end
@@ -210,15 +229,9 @@ function viewer(args...; kws...)
     DefaultApplication.open(filename)
 end
 
-function viewer(file_json::String; kws...)
-    vv = GModelFit.deserialize(file_json)
+function viewer(file_json_input::String; kws...)
+    vv = GModelFit.deserialize(file_json_input)
     filename = serialize_html(vv...; kws...)
-    DefaultApplication.open(filename)
-end
-
-function viewer(dest::String, file_json::String; kws...)
-    vv = GModelFit.deserialize(file_json)
-    filename = serialize_html(dest, vv...; kws...)
     DefaultApplication.open(filename)
 end
 
