@@ -228,6 +228,11 @@ function viewer(args...; kws...)
     DefaultApplication.open(filename)
 end
 
+function viewer(d::DictsWithMeta)
+    filename = serialize_html(d)
+    DefaultApplication.open(filename)
+end
+
 function viewer(file_json_input::String; kws...)
     vv = GModelFit.deserialize(file_json_input)
     filename = serialize_html(vv...; kws...)
