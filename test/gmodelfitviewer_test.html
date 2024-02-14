@@ -12,7 +12,7 @@
   <meta name="publisher" content="INAF" />
   <meta name="language" content="en" />
   <meta name="version" content="0.2.0" />
-  <meta name="date" content="2024-02-13" />
+  <meta name="date" content="2024-02-14" />
 
   <link href="data:image/png;base64,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" sizes="16x16" rel="icon" type="image/x-icon" />
 
@@ -997,7 +997,7 @@ hr.style-two {
     var chart_data;
   </script>
 
-<script src="test3_data_extra.js"></script>
+<script src="test_data.js"></script>
 
 <script type="text/javascript">
 
@@ -2627,12 +2627,11 @@ function xy_rangein_reset() {
 function gfit_table_toggle(id) {
   var   divid = id +'-div',
 	e = document.getElementById(divid),
-	sdiv = document.getElementById('fitlog_selector'),  // Selectors divs
-	tdiv = document.getElementById('fitlog_tables'), // Tables divs
+	sdiv = document.getElementById('fitlog_selector'),  // Selector divs
+	tdiv = document.getElementById('fitlog_tables'),    // Table divs
 	i = 0;
 
   while (tdiv.childNodes[i]) {
-//console.log('id:', tdiv.childNodes[i].id )
     if ( tdiv.childNodes[i].id !== divid || ! isHidden(e) ) { 
 	tdiv.childNodes[i].className = 'div-hide';
 	sdiv.childNodes[i].className = 'toggle_table-hdr';
@@ -2640,6 +2639,7 @@ function gfit_table_toggle(id) {
 	sdiv.childNodes[i].childNodes[1].className = 'div-hide';
     } else {
 	tdiv.childNodes[i].className = 'out_table rep_div-show';
+	sdiv.scrollIntoView();
 	sdiv.childNodes[i].className = 'toggle_table-hdr div-selected';
 	sdiv.childNodes[i].childNodes[0].className = 'div-hide';
 	sdiv.childNodes[i].childNodes[1].className = 'div-show-inline';
@@ -2650,8 +2650,6 @@ function gfit_table_toggle(id) {
     }
     i++;
   }
-
-  //document.getElementById('fitlog_div').scrollIntoView();
 }
 
 
@@ -2770,10 +2768,9 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	tlab.innerHTML = title;
 
-	contentdiv = document.createElement('div');
-
+	var div = document.createElement('div');
 	tab = document.createElement('table');
-	contentdiv.appendChild(tab);
+	div.appendChild(tab);
 
 // Create table header row using the field names
 	hdr = tab.createTHead();
@@ -2798,6 +2795,8 @@ var tableFromJson = function(obj, type, tab_id) {
 		tabCell.innerHTML = comp.fields[col[j]].data[i];
 	  }
 	}
+	contentdiv.appendChild(div);
+
 	break;
 
     default:
