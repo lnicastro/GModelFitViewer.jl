@@ -841,12 +841,12 @@ hr.style-two {
 
   <div class="inline-div">
     <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GModelFitViewer.jl" target="_new">GModelFitViewer</a> &minus;
-      <span style="font-size: 1rem; font-style: italic; color: #ccc;">Version 0.3.0</span>
+      <div id="version-div" class="inline" style="font-size: 1rem; font-style: italic; color: #ccc;">Version x.y.z</div>
     </div>
 
     <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <a href="https://github.com/gcalderone/GModelFit.jl" style="color: #fff; font-weight: bold;" target="_new">GModelFit</a> 1D results
 &minus;
-      <div class="inline" style="font-size: .8rem;"><a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a> &amp; <a style="color: #ccc;"  href="mailto:giorgio.calderone@inaf.it">G. Calderone</a> 2020-23</div> 
+      <div class="inline" style="font-size: .8rem;"><a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a> &amp; <a style="color: #ccc;"  href="mailto:giorgio.calderone@inaf.it">G. Calderone</a></div> 
     </div>
   </div>
 
@@ -983,7 +983,7 @@ hr.style-two {
 <!-- The table viewing section -->
 <div id="fitlog_tables_container">
 
-  <div id="fitlog_tables" style="border-left: 3px solid #069;"></div>
+  <div id="fitlog_tables"></div>
 
 </div>
 
@@ -998,6 +998,9 @@ hr.style-two {
 
 
 <script type="text/javascript">
+  var _version = '0.3.0';
+  document.querySelector('meta[name="version"]').setAttribute("content", _version);
+  document.getElementById('version-div').innerHTML = 'Version '+ _version;
 
 // Initialize metadata and local variables
   var   n_sigma = 3,		// Highlight residuals region within this +/- sigma
@@ -1457,17 +1460,25 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 		y_lg = p.meta.ylog;
 	if ( p.meta.xlabel ) {
 		x_lab = p.meta.xlabel;
-		if ( x_lab !== '' && p.meta.xscale !== null && p.meta.xscale !== 1 ) {
+		if ( x_lab ) {
+		  if ( p.meta.xscale !== null && p.meta.xscale !== 1 ) {
 			var un = p.meta.xscale.toString().replace(/\+/,'');
-			x_lab += ' (x '+ un +' '+ p.meta.xunit +')'; 
+			x_lab += ' [x '+ un +']'; 
+		  }
+		  if ( p.meta.xunit )
+			x_lab += ' ('+ p.meta.xunit +')'; 
 		}
 	}
 
 	if ( p.meta.ylabel ) {
 		y_lab = p.meta.ylabel;
-		if ( y_lab !== '' && p.meta.yscale !== null && p.meta.yscale !== 1 ) {
+		if (  y_lab ) {
+		  if ( p.meta.yscale !== null && p.meta.yscale !== 1 ) {
 			var un = p.meta.yscale.toString().replace(/\+/,'');
-			y_lab += ' (x '+ un +' '+ p.meta.yunit +')'; 
+			y_lab += ' [x '+ un +']'; 
+		}
+		  if ( p.meta.yunit )
+			y_lab += ' ('+ p.meta.yunit +')';
 		}
 	}
 
