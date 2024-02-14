@@ -1,6 +1,5 @@
 module GModelFitViewer
 
-using Pkg, Pkg.Artifacts
 using JSON
 using DefaultApplication, StructC14N, GModelFit
 
@@ -141,13 +140,14 @@ struct DictsWithMeta
     data::Vector
 
     function DictsWithMeta(args...; meta=nothing, kws...)
+        @assert any(isa.(args, GModelFit.ModelSnapshot)  .|  isa.(args, Vector{GModelFit.ModelSnapshot}))
         if isnothing(meta)
             meta = Meta(; kws...)
         end
 
         out = GModelFit._serialize(args...)
         if !isa(out, Vector)
-            out = [out] # Output is always a vector to simplify JavaScript code
+            out = [out] # output must always be a vector to simplify JavaScript code
         elseif length(args) == 1
             # We have a vector with only one input arg: it means we are
             # in a multi-model case, hence we need to add a further vector
@@ -197,20 +197,14 @@ end
 default_filename_html() = joinpath(tempdir(), "gmodelfitviewer.html")
 serialize_html(args...;
                filename=default_filename_html(),
-               offline=false,
                kws...) =
                    serialize_html(DictsWithMeta(args...; kws...),
-                                  filename=filename, offline=offline)
+                                  filename=filename)
 
 function serialize_html(data::DictsWithMeta;
-                        filename=default_filename_html(),
-                        offline=false)
+                        filename=default_filename_html())
     io = open(filename, "w")
-    if offline
-        template = joinpath(artifact"GModelFitViewer_artifact", "vieweroffline.html")
-    else
-        template = joinpath(artifact"GModelFitViewer_artifact", "vieweronline.html")
-    end
+    template = joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html")
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
     JSON.print(io, data.data)
