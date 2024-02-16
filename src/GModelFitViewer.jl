@@ -136,10 +136,10 @@ end
 # The following structure contains vector(s) of dicts as a result of
 # serializarion with GModelFit._serialize().  Its constructor allows
 # to apply meta information provided via keywords to each dict.
-struct DictsWithMeta
+struct ViewerData
     data::Vector
 
-    function DictsWithMeta(args...; meta=nothing, kws...)
+    function ViewerData(args...; meta=nothing, kws...)
         @assert any(isa.(args, GModelFit.ModelSnapshot)  .|  isa.(args, Vector{GModelFit.ModelSnapshot}))
         if isnothing(meta)
             meta = Meta(; kws...)
@@ -181,10 +181,10 @@ default_filename_json() = joinpath(tempdir(), "gmodelfitviewer.json")
 serialize_json(args...;
                filename=default_filename_json(),
                kws...) =
-                   serialize_json(DictsWithMeta(args...; kws...),
+                   serialize_json(ViewerData(args...; kws...),
                                   filename=filename)
 
-function serialize_json(data::DictsWithMeta;
+function serialize_json(data::ViewerData;
                         filename=default_filename_json())
     io = open(filename, "w")
     JSON.print(io, data.data)
@@ -198,10 +198,10 @@ default_filename_html() = joinpath(tempdir(), "gmodelfitviewer.html")
 serialize_html(args...;
                filename=default_filename_html(),
                kws...) =
-                   serialize_html(DictsWithMeta(args...; kws...),
+                   serialize_html(ViewerData(args...; kws...),
                                   filename=filename)
 
-function serialize_html(data::DictsWithMeta;
+function serialize_html(data::ViewerData;
                         filename=default_filename_html())
     io = open(filename, "w")
     template = joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html")
@@ -222,7 +222,7 @@ function viewer(args...; kws...)
     DefaultApplication.open(filename)
 end
 
-function viewer(d::DictsWithMeta)
+function viewer(d::ViewerData)
     filename = serialize_html(d)
     DefaultApplication.open(filename)
 end
