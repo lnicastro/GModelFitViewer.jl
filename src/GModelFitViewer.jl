@@ -82,6 +82,7 @@ function rebin(v, e, nn::Int)
 end
 
 
+tobekept(name::String, bool::Bool) = bool
 tobekept(name::String, pattern::String) = (name == pattern)
 tobekept(name::String, pattern::Regex) = !isnothing(match(pattern, name))
 tobekept(name::String, patterns::Vector) = any([tobekept(name, p) for p in patterns])
