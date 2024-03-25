@@ -38,12 +38,12 @@ The usage of `rebin`, `keep` and `skip` allows to produce files which are signif
 Create a **GModelFit.jl** model, generate a mock dataset and fit:
 ```julia
 using GModelFit, GModelFitViewer
+model = Model(:bkg => GModelFit.OffsetSlope(1, 1, 0.1),
+              :l1 => GModelFit.Gaussian(1, 2, 0.2),
+              :l2 => GModelFit.Gaussian(1, 3, 0.4),
+              :main => SumReducer(:bkg, :l1, :l2))
 dom = Domain(0:0.01:5)
-model = Model(dom, :bkg => GModelFit.OffsetSlope(1, 1, 0.1),
-                   :l1 => GModelFit.Gaussian(1, 2, 0.2),
-                   :l2 => GModelFit.Gaussian(1, 3, 0.4),
-                   :main => SumReducer(:bkg, :l1, :l2))
-data = GModelFit.mock(Measures, model)
+data = GModelFit.mock(Measures, model, dom)
 best, fitstats = fit(model, data)
 ```
 
