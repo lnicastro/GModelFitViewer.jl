@@ -1000,11 +1000,7 @@ hr.style-two {
 <script src="test_data.js"></script>
 
 <script type="text/javascript">
-<<<<<<< HEAD
-  var _version = '0.3.0', _date = '2024-03-21';
-=======
-  var _version = '0.2.0';
->>>>>>> 073f5adbff7e2c4c9dfff0b1cffc2add5e471db3
+  var _version = '0.2.1', _date = '2024-03-21';
   document.querySelector('meta[name="version"]').setAttribute("content", _version);
   document.querySelector('meta[name="date"]').setAttribute("content", _date);
   document.getElementById('version-div').innerHTML = 'Version '+ _version;
@@ -1484,7 +1480,7 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 		if ( x_lab ) {
 		  if ( p.meta.xscale !== null && p.meta.xscale !== 1 ) {
 			var un = p.meta.xscale.toString().replace(/\+/,'');
-			x_lab += ' [x '+ un +']'; 
+			x_lab += ' (x '+ un +')'; 
 		  }
 		  if ( p.meta.xunit )
 			x_lab += ' ('+ p.meta.xunit +')'; 
@@ -1496,7 +1492,7 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 		if (  y_lab ) {
 		  if ( p.meta.yscale !== null && p.meta.yscale !== 1 ) {
 			var un = p.meta.yscale.toString().replace(/\+/,'');
-			y_lab += ' [x '+ un +']'; 
+			y_lab += ' (x '+ un +')'; 
 		}
 		  if ( p.meta.yunit )
 			y_lab += ' ('+ p.meta.yunit +')';
@@ -1946,7 +1942,7 @@ function createCompSeries(isel) {
   else
 	p = chart_data[i_mod];
 
-  var cname, compevals, hs, icol = 0;
+  var series, cname, compevals, hs, icol = 0;
 
   vxAxis.title.text = aux.modinfo[isel].x_label;
   valueAxis.title.text = aux.modinfo[isel].y_label;
@@ -1957,7 +1953,7 @@ function createCompSeries(isel) {
 	compevals = p.buffers[cname]; //  p.compevals[cname];
 console.log('Create component:', cname);
     
-	var series = chart.series.push(new am4charts.LineSeries());
+	series = chart.series.push(new am4charts.LineSeries());
 	series.dataFields.valueX = 'comp_x';
 	series.dataFields.valueY = cname;
 
