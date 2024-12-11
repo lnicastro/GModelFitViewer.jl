@@ -104,7 +104,7 @@ end
 function apply_meta!(dict::AbstractDict, meta::Meta)
     if haskey(dict, "_structtype")
         if dict["_structtype"] == "GModelFit.ModelSnapshot"
-            @assert dict["domain"]["_structtype"] in ["Domain{1}", "GModelFit.Domain{1}"]
+            @assert dict["domain"]["_structtype"] == "GModelFit.Domain"
             vv = rebin(dict["domain"]["axis"][1], meta.rebin)
             empty!(dict["domain"]["axis"])
             push!( dict["domain"]["axis"], vv)
