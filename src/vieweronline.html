@@ -1022,7 +1022,7 @@ hr.style-two {
 	i_chmodel = -1, // Index of the Model data in the chart.series
 	i_mod = -1,	// chart_data index of the Models
 	i_mea = -1,	// chart_data index of the Measurements
-	i_fit = -1,	// chart_data index of the FitStats
+	i_fit = -1,	// chart_data index of the FitSummary
 	vxAxis,		// X axis object
 	valueAxis,	// Y axis object
 	valueAxis2,	// The residuals right axis object
@@ -1406,7 +1406,7 @@ console.log('i_mod, maincomp:', i_mod, cdata.maincomp);
 console.log('Measures:');
 console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 
-	} else if ( i_fit < 0 && cdata._structtype.indexOf('FitStats') >= 0 ) {
+	} else if ( i_fit < 0 && cdata._structtype.indexOf('FitSummary') >= 0 ) {
 		i_fit = i;
 	}
   }

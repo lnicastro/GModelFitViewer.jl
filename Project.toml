@@ -1,7 +1,7 @@
 name = "GModelFitViewer"
 uuid = "5d93b50e-5cc7-4feb-a740-ec85257caa01"
 authors = ["Luciano Nicastro <luciano.nicastro@gmail.com>"]
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 DefaultApplication = "3f0dd361-4fe0-5fc6-8523-80b14ec94d85"
@@ -12,7 +12,7 @@ StructC14N = "d2514e9c-36c4-5b8e-97e2-51e7675c221c"
 
 [compat]
 DefaultApplication = "^1.1"
-GModelFit = "^0.4"
+GModelFit = "^0.5"
 JSON = "^0.21"
 StructC14N = "^0.3"
 julia = "1.8"
