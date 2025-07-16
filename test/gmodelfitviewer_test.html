@@ -1000,7 +1000,7 @@ hr.style-two {
 <script src="test_data.js"></script>
 
 <script type="text/javascript">
-  var _version = '0.2.1', _date = '2024-03-21';
+  var _version = '0.3.1', _date = '2025-07-16';
   document.querySelector('meta[name="version"]').setAttribute("content", _version);
   document.querySelector('meta[name="date"]').setAttribute("content", _date);
   document.getElementById('version-div').innerHTML = 'Version '+ _version;
@@ -1408,7 +1408,7 @@ console.log('i_mod, maincomp:', i_mod, cdata.maincomp);
 console.log('Measures:');
 console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 
-	} else if ( i_fit < 0 && cdata._structtype.indexOf('FitStats') >= 0 ) {
+	} else if ( i_fit < 0 && cdata._structtype.indexOf('FitSummary') >= 0 ) {
 		i_fit = i;
 	}
   }
@@ -1458,6 +1458,7 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 
     cnames = Object.keys(p.buffers);
     aux.maincomp.push(p.maincomp.substring(4));  // maincomp ~= _TS_main
+    //aux.maincomp.push('folded');
 
 // Labels in Measures 
     if ( i_mea >= 0 && m.labels !== undefined ) {
@@ -1480,7 +1481,7 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 		if ( x_lab ) {
 		  if ( p.meta.xscale !== null && p.meta.xscale !== 1 ) {
 			var un = p.meta.xscale.toString().replace(/\+/,'');
-			x_lab += ' (x '+ un +')'; 
+			x_lab += ' [x '+ un +']'; 
 		  }
 		  if ( p.meta.xunit )
 			x_lab += ' ('+ p.meta.xunit +')'; 
@@ -1492,8 +1493,8 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 		if (  y_lab ) {
 		  if ( p.meta.yscale !== null && p.meta.yscale !== 1 ) {
 			var un = p.meta.yscale.toString().replace(/\+/,'');
-			y_lab += ' (x '+ un +')'; 
-		}
+			y_lab += ' [x '+ un +']'; 
+		  }
 		  if ( p.meta.yunit )
 			y_lab += ' ('+ p.meta.yunit +')';
 		}
@@ -1626,39 +1627,39 @@ var mydata2chart = function(isel) {
 
   var x = p.domain.axis[0],
 	cnames = aux.modinfo[isel].components,
-	selred = aux.maincomp[isel],
-	compevals = p.buffers[selred],
 	fscale = Math.pow(10, aux.modinfo[isel].nf_sig),
 	mydata = [], vals = {};
 
 
 // X values rounded to the N sig. factional digits
-  var cumchi2 = 0;
+  var cumchi2 = 0, lenf = p.folded_domain.axis[0].length;
+
+  if ( aux.n_d > 0 ) {
+    for (var i = 0; i < lenf; i++) {  // "folded" model
+	vals = {};
+	vals['x'] = Math.round(m.domain.axis[0][i] * fscale) / fscale;
+	vals['model'] = p.folded[i] / aux.modinfo[isel].y_scale;
+
+	vals['y'] = m.values[0][i] / aux.modinfo[isel].y_scale;
+	vals['resid'] = (m.values[0][i] - p.folded[i]) / m.values[1][i];
+	cumchi2 += vals['resid']*vals['resid'];
+	vals['cums2'] = cumchi2;
+
+	vals['err_lo'] = (m.values[0][i] - m.values[1][i]) / aux.modinfo[isel].y_scale;
+	vals['err_up'] = (m.values[0][i] + m.values[1][i]) / aux.modinfo[isel].y_scale;
+
+// Normalised Chi2
+	vals['cums2'] /= (lenf - chart_data[i_fit].nfree);
+	mydata.push(vals);
+    }
+  }
+
   for (var i = 0; i < x.length; i++) {
 	vals = {};
 	vals['comp_x'] = Math.round(x[i] * fscale) / fscale;
-	vals['model'] = compevals[i] / aux.modinfo[isel].y_scale;
-
-	if ( aux.n_d > 0 ) {
-	  vals['x'] = Math.round(m.domain.axis[0][i] * fscale) / fscale;
-	  //vals['model'] = chart_data[i_mod[isel]].model[i] / aux.modinfo[isel].y_scale;
-
-	  vals['y'] = m.values[0][i] / aux.modinfo[isel].y_scale;
-	  //vals['error'] = m.values[1][i];
-	  //vals['resid'] = (vals['y'] - vals['model']) / vals['error'];
-	  vals['resid'] = (m.values[0][i] - compevals[i]) / m.values[1][i];
-	  cumchi2 += vals['resid']*vals['resid'];
-	  vals['cums2'] = cumchi2;
-
-	  vals['err_lo'] = (m.values[0][i] - m.values[1][i]) / aux.modinfo[isel].y_scale;
-	  vals['err_up'] = (m.values[0][i] + m.values[1][i]) / aux.modinfo[isel].y_scale;
-	}
 
 	for (var j = 0; j < aux.modinfo[isel].n_comps; j++)  // Components
 	  vals[cnames[j]] = p.buffers[cnames[j]][i] / aux.modinfo[isel].y_scale;
-
-// Normalised Chi2
-	vals['cums2'] /= (x.length - chart_data[i_fit].nfree);
 
 	mydata.push(vals);
   }
@@ -1681,16 +1682,11 @@ function createMainReducer(isel, xsc_series=false) {
   else
 	p = chart_data[i_mod];
 
-  var selred = aux.maincomp[isel],
-	compevals = p.buffers[selred];
-
-console.log('Create "first" model:', selred);
-
   var series = chart.series.push(new am4charts.LineSeries());
   i_chmodel = chart.series.length - 1;
 console.log('i_chmodel', i_chmodel);
-  //series.dataFields.valueX = 'x';
-  series.dataFields.valueX = 'comp_x';
+//series.dataFields.valueX = 'comp_x';
+  series.dataFields.valueX = 'x';
   series.dataFields.valueY = 'model';
 
   series.name = 'Model';
@@ -1942,7 +1938,7 @@ function createCompSeries(isel) {
   else
 	p = chart_data[i_mod];
 
-  var series, cname, compevals, hs, icol = 0;
+  var series, cname, hs, icol = 0;
 
   vxAxis.title.text = aux.modinfo[isel].x_label;
   valueAxis.title.text = aux.modinfo[isel].y_label;
@@ -1950,7 +1946,6 @@ function createCompSeries(isel) {
 // -- Components
   for (var i = 0; i < aux.modinfo[isel].n_comps; i++) {  // Components in a model
 	cname = aux.modinfo[isel].components[i];
-	compevals = p.buffers[cname]; //  p.compevals[cname];
 console.log('Create component:', cname);
     
 	series = chart.series.push(new am4charts.LineSeries());
@@ -1966,7 +1961,6 @@ console.log('Create component:', cname);
 console.log('  color:', mycolors[icol % n_myc].name, mycolors[icol % n_myc].hex);
 	icol++;
 
-	//if ( !compevals.meta.default_visible )  // Component to hide?
 	series.visible = false;
 
 // Highlight when cursor on legend item
@@ -2547,8 +2541,11 @@ console.log('Set y_range:', aux.modinfo[c_imod].y_range);
 
 // Then data, and then the +/- error, if exist
 	if ( aux.n_d > 0 ) {
-	  var err_lo = chart.data.map(({ err_lo }) => err_lo),
-		err_up = chart.data.map(({ err_up }) => err_up);
+	  var data_folded = chart.data.slice(0, chart_data[0].folded_domain.axis[0].length);
+//var err_lo = chart.data.map(({ err_lo }) => err_lo),
+//err_up = chart.data.map(({ err_up }) => err_up);
+	  var err_lo = data_folded.map(({ err_lo }) => err_lo),
+		err_up = data_folded.map(({ err_up }) => err_up);
 
 	  y_min = Math.min(y_min, Math.min(...(err_lo)));
 	  y_max = Math.max(y_max, Math.max(...(err_up)));
