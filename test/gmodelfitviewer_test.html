@@ -1000,7 +1000,7 @@ hr.style-two {
 <script src="test_data.js"></script>
 
 <script type="text/javascript">
-  var _version = '0.3.1', _date = '2025-07-16';
+  var _version = '0.3.1', _date = '2025-07-17';
   document.querySelector('meta[name="version"]').setAttribute("content", _version);
   document.querySelector('meta[name="date"]').setAttribute("content", _date);
   document.getElementById('version-div').innerHTML = 'Version '+ _version;
@@ -2285,7 +2285,7 @@ console.log("New vxAxis range: " + x_min + " -- " + x_max);
   chart.legend.labels.template.text = "[bold]{name}[/]";
   chart.legend.useDefaultMarker = true;
 
-  chart.legend.itemContainers.template.togglable = false;  // Disable default
+  chart.legend.itemContainers.template.togglable = true;  // Disable default? No.
 
   var marker = chart.legend.markers.template.children.getIndex(0);
 
@@ -2346,6 +2346,7 @@ function ttAdapter(tooltip, target) {
 
 
 // Manage the click on the legend labels, in particular "residuals"
+/* Unused
   chart.legend.itemContainers.template.events.on("hit", function(ev) {
     var field = ev.target.dataItem.dataContext,
 	name = ev.target.dataItem.name,
@@ -2377,6 +2378,7 @@ function ttAdapter(tooltip, target) {
     }
 
   });
+*/
 
 
 // Set up number format
