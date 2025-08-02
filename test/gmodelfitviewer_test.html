@@ -1419,10 +1419,17 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 	return;
   }
 
-  if ( chart_data[i_mod].extra !== undefined )
-	tab_extra.push(chart_data[i_mod].extra[0]);
-  else
+  if ( aux.is_multimodel ) {
+    if ( chart_data[i_mod][0].extra !== undefined )
+	tab_extra.push(chart_data[i_mod][0].extra[0]);
+     else
 	tab_extra.push({});
+  } else {
+    if ( chart_data[i_mod].extra !== undefined )
+	tab_extra.push(chart_data[i_mod].extra[0]);
+    else
+	tab_extra.push({});
+  }
 
 
 
@@ -2543,7 +2550,10 @@ console.log('Set y_range:', aux.modinfo[c_imod].y_range);
 
 // Then data, and then the +/- error, if exist
 	if ( aux.n_d > 0 ) {
-	  var data_folded = chart.data.slice(0, chart_data[0].folded_domain.axis[0].length);
+	  if (aux.is_multimodel)
+ 		var data_folded = chart.data.slice(0, chart_data[0][0].folded_domain.axis[0].length);
+          else
+		var data_folded = chart.data.slice(0, chart_data[0].folded_domain.axis[0].length);
 //var err_lo = chart.data.map(({ err_lo }) => err_lo),
 //err_up = chart.data.map(({ err_up }) => err_up);
 	  var err_lo = data_folded.map(({ err_lo }) => err_lo),
