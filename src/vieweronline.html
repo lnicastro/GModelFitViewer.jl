@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The GModelFit viewer</title>
+  <title>GModelFit viewer</title>
   <meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
   <meta http-equiv=Content-Script-Type content="text/javascript" />
   <meta http-equiv=Content-Style-Type content="text/css" />
@@ -14,28 +14,23 @@
   <meta name="version" content="x.y.z" />
   <meta name="date" content="xxxx-yy-dd" />
 
-  <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAACwVBMVEVLQTkAAAAQNQDv9vqWWUIYSADPv8T///8fAABWIgBpNQBXCwB4LwBsEAAxmQCaNACMJwCGFAA8sQCrOgBtAACWGABByADFRwCsGABJ4wDWVACrGQBU9gD2dADtYQAAPAAJDQAJDQALDQAMDQANDAANCwDKnZPKn5axf3GMYlZwVlEKAAACAAAJFAALEwAPEwAREgAREAAPDwDIl4uMbmaAZ2C0kIiVZ1kOAAAQAAAPAAAMJAAOHgAWGQAVGQAUFwASEgAAAACziH1yV06beG4XAAAWAAATAAANAAAQNQAQNQChdWerfnCjg3uNcGipg3kAAAAqAAAhAAAcAAAVAAAXSAAYSAClgnj7xbdiNyRYLBhAAAA4AAAsAAAiAAAaAAAdWQApZABDcgBWaQBhXwBiUQBjUABUGQBTGABfIQBEAABAAAA2AAArAAAdAAAkbQAybwBHcQBfbwBsZwBqWABpVABqHwBpHABqGABKAABCAAA3AAAcAAAqgwA0dgBNcQBndgBxcABtYABrVgB8JQB6HwB5GQBaAABOAABBAAAqAAAumQAxmQCPLQCOIwCTHABoAABbAABLAAAoAAA2sAA8sQClNACjJwCfHQB4AABoAABXAAA0AAA8xwBCxwDFSwC8PgC5HQCIAAB1AABiAAA/AABE4QBJ4wDWVgDSSADRHACWAACDAABrAABVAABM+QBU9wDvZQDqUgDqFgDyAACMAABxAABSAABQ/wBo/wCo/wDc/wD78QD8ywD6oAD2dQDzEgDyAADQAACWAAByAABTAABS/wB0/wCk/wDc/wD78QD8ygD5ogD3ewDwAADOAAChAAB2AABTAABS/wB0/wCk/wDc/wD78QD8ygD5owD3fAD0WAD0NwDzEQDwAADOAAChAAB3AABTAABNNSm8KgDPLwDnMwD0WAD0NwDzEQD////W1nz1AAAA43RSTlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHp7e3t9RhQoCwkBAgL77Onp7YMZtuOYLwyOc9s/KCoqKhVR+JMT1qwD1BocRovAPAEl2bMW1BoFARZULcr48NLbPygqKicIK5EEE2Tly1/87evr7NorR8APE9asA+Z7a2xsZBRh3x4T1qwD1Bp98DAT1qwD1Bqb/k4T1qwD1BoHum0T1q4D1Boa2JIPzcUQ1BpC9MQOkfi2iSEREhISGp70XRMpkcnQ0dLS0tHa+u/XycbO+fn5+fn5+Pb19fX2+Pn5+dfu6+cAAAABYktHRAcWYYjrAAAAB3RJTUUH5QQICR4OhkGH6QAAARtJREFUGNMBEAHv/gAgISEiIyQlACYnKCkqKywBAC0uLzAwMTIzNDU2Nzg5OisAOzw9Pj9AQUJD40QBRUZHSABJSgIBAwRLTE1OT1BRUlNUAFVWBQEGB1dYWVoIW1xdXl8AYGFiY2RlZglnaGlqa2xtbgBvcHFyc3R1CnZ3eAt5ent8AH1+f4CBgoMMhIWGDYeIiYoAi4wOAQEBDxCNjo8RkJGSkwCUlRIBAQETFJaXmBWZmpucAJ2eFgEBARefoOShGKKjpKUApqcZAQEBGqip5aobq6ytrgCvsBwBAR0esbLms7Qftba3ALi5uru8vb6/5+jAwcLDxMUAxsfIycrLzM3n6OnOz9DR0gDT1NXW19jZ2tvc3d7f4OHiz4ts2nSh7t4AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDQtMDhUMDk6MzA6MTQrMDI6MDANVBBwAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA0LTA4VDA5OjMwOjE0KzAyOjAwfAmozAAAAFd6VFh0UmF3IHByb2ZpbGUgdHlwZSBpcHRjAAB4nOPyDAhxVigoyk/LzEnlUgADIwsuYwsTIxNLkxQDEyBEgDTDZAMjs1Qgy9jUyMTMxBzEB8uASKBKLgDqFxF08kI1lQAAAABJRU5ErkJggg==" sizes="16x16" rel="icon" type="image/x-icon" />
-
-
 <!-- @Remote -->
-  <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-  <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-  <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<!--
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
+-->
 
-  <script src="https://cdn.amcharts.com/lib/4/plugins/annotation.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
+
 <!-- @EndRemote -->
 
 
 <style>
-body {
-  font: 0.98em adobe-clean-n3, adobe-clean, "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
-  color: #333;
-  margin: 5px;
-  text-rendering: optimizeLegibility !important;
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
-}
-
 :root {
 --blue: #1177d1;
 --indigo: #6610f2;
@@ -62,6 +57,15 @@ body {
 --baseBg: white;
 --accentFg: #69c;
 --accentBg: #bae1ff;
+}
+
+body {
+  font: 0.98em adobe-clean-n3, adobe-clean, "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+  color: var(--gray-dark);
+  margin: 5px;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
 a:link, a:visited, a:active {
@@ -138,7 +142,7 @@ img {
 }
 
 progress[value] {
-  width: 200px;
+  width: 50%;
   height: 5px;
 }
 
@@ -153,19 +157,26 @@ label {
 }
 
 
-#inaf-logo {
-  width: 173px;
-  margin: 1px 0;
-}
-
 .img-circle {
   border-radius: 50%;
   box-shadow: 0px 0px 3px 3px #ddd;
 }
 
+#json_info {
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
+
+.w-span {
+  margin-left: 0.5rem;
+  padding: 6px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
 .shadow {
+  box-shadow: 3px 3px 5px 6px #ccc;
   -webkit-box-shadow: 3px 3px 5px 6px #ccc;
-  box-shadow:         3px 3px 5px 6px #ccc;
 }
 
 .hdrdiv2 {
@@ -183,7 +194,7 @@ label {
 .logo-div {
   display: inline-block;
   vertical-align: middle;
-  padding: 8px;
+  padding: 4px 0 2px 4px;
   margin-top: 1px;
   background: #f7f7f7;
   border-top-right-radius: 36px;
@@ -198,10 +209,7 @@ label {
 
 .submit_grey {
   font-weight: normal;
-  background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
-  background-repeat: repeat-x;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15),0 1px 1px rgba(0,0,0,0.075);
-  color: #333;
+  color: var(--gray-dark);
   background-color: #fff;
   display: inline-block;
   padding: 6px;
@@ -215,8 +223,7 @@ label {
 
 .submit_grey:hover {
   cursor: pointer;
-  background-image: none;
-  background-color: #e0e0e0;
+  background-color: #f0f0f0;
   border: 1px solid #adadad;
 }
 
@@ -225,8 +232,9 @@ label {
   font-size: inherit;
   height: 2rem;
   margin: 0;
-  padding-right: 1.5rem;
-  color: #333;
+  padding-left: 0.5rem;
+  padding-right: 2rem;
+  color: var(--gray-dark);
   border: 1px solid #666;
   border-radius: 4px;
   webkit-appearance: none;
@@ -258,12 +266,21 @@ select::-ms-expand {
 .page_top_tbar {
   background-color: #f7f7f7;
   color: #666;
+/*
   border-bottom: 1px solid #bdbec2;
   border-left: 1px solid #186680;
   border-right: 1px solid #186680;
+*/
+  border: 1px solid #186680;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  width: 100%;
+}
+
+#download-json-div {
+  float: right;
+  margin: 0.2rem 0.5rem;
 }
 
 
@@ -276,10 +293,9 @@ select::-ms-expand {
 
 .simple_button:hover {
   background-color: #ddd;
-
   -webkit-transition: all 0.3s ease-in-out;
      -moz-transition: all 0.3s ease-in-out;
-          transition: all 0.3s ease-in-out;
+	  transition: all 0.3s ease-in-out;
 }
 
 .transp_button {
@@ -315,19 +331,26 @@ select::-ms-expand {
   height: 640px;
   overflow: hidden;
   text-align: left;
+  resize: vertical;
+}
+
+#plot-sect {
+  overflow-x: inherit;
+  padding-bottom: 1rem;
 }
 
 #res_legenddiv {
   display: inline-block;
-  height: 34px;
-  width: 148px;
   vertical-align: middle;
+  cursor: pointer;
+  padding: 6px;
 }
 
-.box-resid-in {
+#box-resid-in {
+  position: relative;
   float: right;
-  margin-right: 1em;
-  padding-right: 4px;
+  margin-right: 2%;
+  padding-right: 0.5rem;
   background: #efefef;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -349,7 +372,9 @@ select::-ms-expand {
 }
 
 #controls-div {
+  display: inline-block;
   margin-top: 0.5em;
+  width: 100%;
 }
 
 #f_status, #range-selector-div {
@@ -359,7 +384,7 @@ select::-ms-expand {
 
 
 section {
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 div.row {
@@ -373,7 +398,7 @@ div.section {
   border: 0px;
   padding: 24px 0px;
   font-size: 110%;
-  color: #444;
+  color: var(--gray-dark);
 }
 
 div.summ-div {
@@ -382,10 +407,12 @@ div.summ-div {
 }
 
 div.trailer {
-  height: 6px;
-  line-height: 6px;
-  background-color: #006699; /* #007ba6; */
-  color: #999;
+  font-size: 0.9rem;
+  text-align: center;
+  padding-left: 1rem;
+  line-height: 1.5rem;
+  background-color: var(--primary);
+  color: var(--secondary);
   border-left: 1px solid #186680;
   border-right: 1px solid #186680;
 }
@@ -427,9 +454,21 @@ td.highlight_blue {
   color: blue;
 }
 
+#gmf_info-div {
+  float: right;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 1rem;
+  color: #fff;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: var(--primary);
+  padding: 6px;
+}
 
 #mod_sel-div {
-  font-size: 1rem;
+  font-size: initial;
   font-weight: bold;
   margin: 0.2rem 0.5rem;
 }
@@ -449,7 +488,7 @@ td.highlight_blue {
   height: 100vh; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   max-height: 100vh;  /* screen.height * .80; */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgba(0,0,0,0.4); /* Black with opacity */
 }
 
 .modal.modal-slidein {
@@ -566,9 +605,9 @@ div .visible {
   display: block;
   opacity: 1;
   height: auto;
-    -webkit-transition: all 0.60s ease-out;
-       -moz-transition: all 0.60s ease-out;
-            transition: all 0.60s ease-out;
+  -webkit-transition: all 0.60s ease-out;
+     -moz-transition: all 0.60s ease-out;
+	  transition: all 0.60s ease-out;
 }
 
 div .hidden {
@@ -576,9 +615,9 @@ div .hidden {
   height: 0;
 visibility: hidden;
   overflow: hidden;
-    -webkit-transition: all 0.60s ease-in;
-       -moz-transition: all 0.60s ease-in;
-            transition: all 0.60s ease-in;
+  -webkit-transition: all 0.60s ease-in;
+     -moz-transition: all 0.60s ease-in;
+	  transition: all 0.60s ease-in;
 }
 
 
@@ -629,15 +668,11 @@ hr.style-two {
   text-decoration: none;
   -webkit-transition: all 0.30s ease-in;
      -moz-transition: all 0.30s ease-in;
-          transition: all 0.30s ease-in;
+	    transition: all 0.30s ease-in;
 }
 
-#fitlog_tables_container {
+#fitlog_tables-div {
  height: auto;
-/* height: 28rem;
- resize: vertical;
- overflow: auto;
-*/
  border-bottom: 2px solid black;
  margin-bottom: 1rem;
 }
@@ -673,7 +708,7 @@ hr.style-two {
   color: #069;
   -webkit-transition: all 0.30s ease-in;
      -moz-transition: all 0.30s ease-in;
-          transition: all 0.30s ease-in;
+	  transition: all 0.30s ease-in;
 }
 
 .inline {
@@ -713,12 +748,16 @@ hr.style-two {
 }
 
 .div-selected {
-  border-color: #069 !important;
-  border-bottom: 3px solid #2d6ca2;
-  background: #efefef;
+  border-bottom: 3px solid var(--primary);
+  background-color: #efefef;
 }
 
-#fitres_div {
+.n_sigma-div {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#fitres-div {
   padding-top: 0;
 }
 
@@ -785,8 +824,6 @@ hr.style-two {
 
 <body>
 
-<div id="hdrdiv" class="hdrdiv2">
-
 <!-- Icons -->
 
 <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -804,7 +841,7 @@ hr.style-two {
 	<path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/>
 	</symbol>
 	<symbol id="search" viewBox="0 0 512 512">
-<path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/>
+<path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c26.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/>
 	</symbol>
 	<symbol id="check-circle" viewBox="0 0 512 512">
 <path fill="currentColor" d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 48c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m140.204 130.267l-22.536-22.718c-4.667-4.705-12.265-4.736-16.97-.068L215.346 303.697l-59.792-60.277c-4.667-4.705-12.265-4.736-16.97-.069l-22.719 22.536c-4.705 4.667-4.736 12.265-.068 16.971l90.781 91.516c4.667 4.705 12.265 4.736 16.97.068l172.589-171.204c4.704-4.668 4.734-12.266.067-16.971z"/>
@@ -818,46 +855,16 @@ hr.style-two {
 	<symbol id="shrink" viewBox="0 0 512 512">
 <path fill="currentColor" d="M200 288H88c-21.4 0-32.1 25.8-17 41l32.9 31-99.2 99.3c-6.2 6.2-6.2 16.4 0 22.6l25.4 25.4c6.2 6.2 16.4 6.2 22.6 0L152 408l31.1 33c15.1 15.1 40.9 4.4 40.9-17V312c0-13.3-10.7-24-24-24zm112-64h112c21.4 0 32.1-25.9 17-41l-33-31 99.3-99.3c6.2-6.2 6.2-16.4 0-22.6L481.9 4.7c-6.2-6.2-16.4-6.2-22.6 0L360 104l-31.1-33C313.8 55.9 288 66.6 288 88v112c0 13.3 10.7 24 24 24zm96 136l33-31.1c15.1-15.1 4.4-40.9-17-40.9H312c-13.3 0-24 10.7-24 24v112c0 21.4 25.9 32.1 41 17l31-32.9 99.3 99.3c6.2 6.2 16.4 6.2 22.6 0l25.4-25.4c6.2-6.2 6.2-16.4 0-22.6L408 360zM183 71.1L152 104 52.7 4.7c-6.2-6.2-16.4-6.2-22.6 0L4.7 30.1c-6.2 6.2-6.2 16.4 0 22.6L104 152l-33 31.1C55.9 198.2 66.6 224 88 224h112c13.3 0 24-10.7 24-24V88c0-21.3-25.9-32-41-16.9z"></path>
 	</symbol>
-
-<!-- Logos -->
-	<symbol id="logo-inaf" viewBox="0 0 156.5 61.2">
-	<g transform="matrix(1.333,0,0,-1.333,-223.620,567.710)"><g transform="translate(-1692,-1584)">
-	<path d="m 1883.7977,1992.7143 c 5.1416,-4.167 5.9327,-11.7148 1.7666,-16.8593 -4.166,-5.1443 -11.7111,-5.9368 -16.853,-1.7698 -5.1416,4.1667 -5.9326,11.7148 -1.7666,16.8591 4.166,5.1446 11.7112,5.937 16.853,1.77 z" style="fill:#00adef;fill-opacity:1;fill-rule:nonzero;stroke:none"/>
-	<path d="m 1898.2428,2006.6033 -3.1782,-3.9246 -3.9224,3.179 3.1782,3.9245 z" style="fill:#1478c7;fill-opacity:1;fill-rule:nonzero;stroke:none"/>
-	<path d="m 1866.8156,1967.7952 -3.1783,-3.9246 -3.9226,3.1789 3.178,3.9246 z" style="fill:#1f4fa2;fill-opacity:1;fill-rule:nonzero;stroke:none"/>
-	<path d="m 1914.756,1978.2402 h 3.2151 v 11.0532 h -3.2151 z" style="fill:#63696e;fill-opacity:1;fill-rule:evenodd;stroke:none"/>
-	<path d="m 1922.778,1978.2402 h 2.8474 v 7.961 h 0.031 l 5.0064,-7.961 h 4.2561 v 11.0532 h -2.8477 v -7.9609 h -0.031 l -5.0369,7.9609 h -4.2253 z" style="fill:#63696e;fill-opacity:1;fill-rule:evenodd;stroke:none"/>
-	<path d="m 1948.5463,1982.4807 h -4.4551 l 2.2656,4.6694 z m -9.8286,-4.2405 h 3.3066 l 1.0718,2.1892 h 6.4299 l 1.041,-2.1892 h 3.5977 l -5.741,11.0532 h -3.8428 z" style="fill:#63696e;fill-opacity:1;fill-rule:evenodd;stroke:none"/>
-	<path d="m 1958.1,1978.2402 h 3.2151 v 4.1336 h 5.4196 v 2.2656 h -5.4196 v 2.2964 h 5.7409 v 2.3576 h -8.956 z" style="fill:#63696e;fill-opacity:1;fill-rule:evenodd;stroke:none"/>
-	</g></g>
-	</symbol>
   </defs>
 </svg>
 
 
-  <div class="logo-div">
-<svg class="logos" width="128" height="48"><use href="#logo-inaf"></use></svg>
-  </div>
-
-  <div class="inline-div">
-    <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GModelFitViewer.jl" target="_new">GModelFitViewer</a> &minus;
-      <div id="version-div" class="inline" style="font-size: 1rem; font-style: italic; color: #ccc;">Version x.y.z</div>
-    </div>
-
-    <div style="font-size: 1rem; margin-top: 0.5em;">A viewer for <a href="https://github.com/gcalderone/GModelFit.jl" style="color: #fff; font-weight: bold;" target="_new">GModelFit</a> 1D results
-&minus;
-      <div class="inline" style="font-size: .8rem;"><a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a> &amp; <a style="color: #ccc;"  href="mailto:giorgio.calderone@inaf.it">G. Calderone</a></div> 
-    </div>
-  </div>
-
-<!-- This is TODO -->
-  <div class="app-info-div">
-    <div id="app_info" style="padding: 6px;">e.g. App name</div>
-  </div> 
-
+<!-- Empty header (TODO) -->
+<div id="hdrdiv" class="hdrdiv2">
 </div>
 
 
+<!-- See the fileio "mode" -->
 <section class="page_top_tbar">
 
   <div id="file_io-div" class="div-hide">
@@ -865,14 +872,22 @@ hr.style-two {
     <i style="color: #69c;"><svg class="icon-file-import" width="20" height="20"><use href="#file-import"></use></svg></i>Load file
     </button>
 
-    <button id="viewbutton" class="simple_button" style="padding-right: 0.2em;" title="Retrieve full JSON data" onclick="saveJsonObj('gfit_data.json', chart_data)">
+    <span id="filein_name" style="font-weight: bold;"></span> &minus;
+    <span>Current spectrum: <span id="json_info">JSON spectra info...</span>
+    <span class="w-span">Loaded <span id="fsize_info" style="font-weight: bold;">Data size info...</span> elements array</span>
+
+  </div>
+
+  <div id="download-json-div" class="div-hide">
+    <button id="viewbutton" class="simple_button" style="padding: 6px;" title="Retrieve full JSON data" onclick="saveJsonObj('gmodelfit_data.json', chart_data)">
     <i style="color: #69c;"><svg class="icon-download" width="20" height="20"><use href="#download"></use></svg></i>JSON data
     </button>
-    <span id="json_info" style="margin-left: 0.5em; font-weight: bold;">Data file info...</span>
   </div>
 
 </section>
 
+
+<!-- Main div area with plot and tables -->
 
 <div class="interface">
 
@@ -905,52 +920,64 @@ hr.style-two {
     </div>
   </div>
 
-  <section style="margin-top: 0.5em;">
-	<div id="p_title" class="inline">GModelFitViewer info here...</div>
+  <section id="datainfo-sect" style="margin-top: 0.5em;">
+
+  <div id="p_title" class="inline">GModelFitViewer info here...</div>
 
   <div id="mod_sel-div" class="div-hide">
-	<select id="p_selector" onchange="p_select()" class="dd-select" title="Select model"></select>
+    <select id="p_selector" onchange="p_select()" class="dd-select" title="Select model"></select>
 
 <!-- Add Prev / Next buttons -->
     <button id="prev_model" class="submit_grey" type="submit" onclick="p_select('prev')"> &lt; Prev </button>
     <button id="next_model" class="submit_grey" type="submit" onclick="p_select('next')"> Next &gt; </button>
   </div>
-  </section>
+
+<!-- The tools info -->
+
+  <div id="gmf_info-div">
+    <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GModelFitViewer.jl" target="_new">GModelFitViewer</a>
+      <div id="version-div" class="inline" style="color: #fff;">Version x.y.z</div>
+    </div>
+
+<!-- This is TODO -->
+    <div class="app-info-div"> <div id="app_info">e.g. App name</div> </div> 
+  </div>
+
+  </section>  <!-- datainfo-sect -->
 
 
-<section id="plot-div" style="padding-bottom: 1rem;">
-  <div id="chartdiv" style="resize: vertical;"></div>
+  <section id="plot-sect">
 
+<!-- amCharts div -->
+  <div id="chartdiv"></div>
 
+<!-- Plot styel and range controls -->
   <div id="controls-div">
-
 <!--
 	<span class="box-cb" title="Toggle Y errors plot">
 	  <input type="checkbox" id="y_err-cb" onclick="y_err_toggle()" /><label for="y_err-cb">Y err</label>
 	</span>
 -->
-	<button class="box-cb" style="padding: 4px 4px 0 4px; color: #444; background: transparent;" title="Enter/exit Fullscreen Mode" onclick="toggleFullScreen('hdrdiv')">
+	<button class="box-cb" style="padding: 4px 4px 0 4px; color: var(--gray-dark); background: transparent;" title="Enter/exit Fullscreen Mode" onclick="toggleFullScreen('hdrdiv')">
 	  <svg class="icon-expand" width="16" height="16"><use id="fullscreen-i" href="#expand"></use></svg>
 	  </button>
-
-	<span class="box-cb" title="Track and display cursor position coordinates">
-	  <input type="checkbox" id="cursor-cb" onclick="cursor_toggle()" /><label for="cursor-cb">Track cursor</label>
-	</span>
 	<span class="box-cb" title="Toggle X lin/log scale">
-	  <input type="checkbox" id="x_log-cb" onclick="x_linlog_toggle()" /><label for="x_log-cb">X log</label>
+	  <input type="checkbox" id="x_log-cb" onclick="x_linlog_toggle()" /><label for="x_log-cb" id="x_log-lab">X log</label>
 	</span>
 
 	<span class="box-cb" title="Toggle Y lin/log scale">
-	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()" /><label for="y_log-cb">Y log</label>
+	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()" /><label for="y_log-cb" id="y_log-lab">Y log</label>
 	</span>
 
 	<div id="range-selector-div">
-	  <span class="label-range-in">X range</span><input name="xmin" type="text" title="X min" class="range-in" value="" onchange="xy_range_set()" />
-	  <input name="xmax" type="text" title="X max" class="range-in" value="" onchange="xy_range_set()" />
-	  <span class="label-range-in" style="margin-left: 1em;">Y range</span><input name="ymin" type="text" title="Y min" class="range-in" value="" onchange="xy_range_set()" />
-	  <input name="ymax" type="text" title="Y max" class="range-in" value="" onchange="xy_range_set()" />
+	  <span class="label-range-in">X range</span>
+		<input name="xmin" type="text" title="X min" class="range-in" value="" onchange="inx_range_set()" />
+		<input name="xmax" type="text" title="X max" class="range-in" value="" onchange="inx_range_set()" />
+	  <span class="label-range-in" style="margin-left: 1em;">Y range</span>
+		<input name="ymin" type="text" title="Y min" class="range-in" value="" onchange="iny_range_set()" />
+		<input name="ymax" type="text" title="Y max" class="range-in" value="" onchange="iny_range_set()" />
 
-	  <button class="transp_button" style="padding: 4px 0 0 0; color: var(--success);" title="Replot with these ranges" onclick="xy_range_set()">
+	  <button class="transp_button" style="padding: 4px 0 0 0; color: var(--success);" title="Replot with these ranges" onclick="inx_range_set();iny_range_set()">
 	  <svg class="icon-check-circle" width="18" height="18"><use href="#check-circle"></use></svg>
 	  </button>
 	  <button class="transp_button" style="padding: 4px 0 0 0; color: var(--danger);" title="Clear range input values" onclick="xy_range_reset()">
@@ -958,84 +985,90 @@ hr.style-two {
 	  </button>
 	</div>
 
-  <div class="box-resid-in" id="box-resid-in">
-    <div id="res_legenddiv"></div>
+<!-- Residuals plot toggle and sigma range selction -->
 
-	<div style="display: inline-block; vertical-align: middle;" title="Set the highlighted resid. range">&pm;
-	  <input type="number" style="width: 2.5rem;" min="1.0" max="30.0" step="0.1" name="n_sigma" id="n_sigma" value="3.0" onchange="n_sigma_update(this)" /> &sigma;
+	<div id="box-resid-in">
+	  <div id="res_legenddiv" title="Show/hide residuals">
+		<input type="checkbox" id="resid-cb" /><label for="resid-cb">Residuals</label>
+	  </div>
+
+	  <div class="n_sigma-div" title="Set the highlighted resid. range">&pm;
+		<input type="number" style="width: 2.5rem;" min="1.0" max="30.0" step="0.1" name="n_sigma" id="n_sigma" value="3.0" onchange="n_sigma_update(this)" /> &sigma;
+	  </div>
 	</div>
-  </div>
 
-  </div> <!-- controls-div -->
-</section>
-
-
-<hr class="style-one"></hr>
+  </div>  <!-- controls-div -->
+  </section>  <!-- plot-sect -->
 
 
-<section id="fitlog_div" style="overflow: scroll;">
+  <hr class="style-one"></hr>
 
-  <div id="fitres_div" class="out_table"></div>
 
-<!-- The table selector -->
+<!-- Fit data info and results section -->
+
+  <section>
+
+  <div id="fitres-div" class="out_table"></div>
+
+<!-- Table selector -->
   <div id="fitlog_selector"></div>
 
-<!-- The table viewing section -->
-<div id="fitlog_tables_container">
+<!-- Tables div -->
+    <div id="fitlog_tables-div">
+	<div id="fitlog_tables"></div>
+    </div>
 
-  <div id="fitlog_tables"></div>
+  </div>  <!-- fitres-div -->
 
-</div>
-
-</div>
-
-</section>
+  </section>  <!-- Fit info -->
 
 
+<!-- GModelFit passed JSON object -->
   <script>
     var chart_data = JSON_DATA;
   </script>
 
 
 <script type="text/javascript">
-  var _version = '0.3.0', _date = '2025-07-17';
+  var _version = '0.3.2', _date = '2025-09-11';
   document.querySelector('meta[name="version"]').setAttribute("content", _version);
   document.querySelector('meta[name="date"]').setAttribute("content", _date);
-  document.getElementById('version-div').innerHTML = 'Version '+ _version;
+  document.getElementById('version-div').innerHTML = 'v'+ _version;
 
 // Initialize metadata and local variables
   var   n_sigma = 3,		// Highlight residuals region within this +/- sigma
 	y_errplot = false,	// Y errors plot
 	y_err_shade = false,	// Y errors shaded area
-	x_logscale = false,	// X lin/log scale
-	y_logscale = false,	// Y lin/log scale
-	cur_track = false,	// Track cursor and display X, Y values
+	cur_track = true,	// Track cursor and display X, Y values. Always true.
+	resid_plot = false,	// True if plotting residuals
 	am_anim = false,	// Animation theme ?
-	x_range = {lin: {min: null, max: null}, log: {min: null, max: null}},  // lin/log X ranges
-	y_range = {lin: {min: null, max: null}, log: {min: null, max: null}},  // lin/log Y ranges
-	chart = {},	// The amchart object
-	sdata = [],	// The data series to plot (with errors)
-	serr = [],	// The Y errors shaded area series
-	resid = [],	// The residuals
-	cums2 = [],	// The cumulative Chi2
+	x_range = {min: null, max: null, logscale: false},  // X axis range
+	y_range = {min: null, max: null, logscale: false},  // Y axis range
+	my_chartdata,	// JSON reformatted data for amchart
+	root,		// The amchart drawing root
+	chart,		// The amchart object
+	sdata,		// The data series to plot (with errors)
+	resid,		// The residuals chart series
+	csr2,		// The sum of squared residuals chart series
 	aux = {},	// The metadata information read from the JSON file and more
 	i_chmodel = -1, // Index of the Model data in the chart.series
 	i_mod = -1,	// chart_data index of the Models
 	i_mea = -1,	// chart_data index of the Measurements
 	i_fit = -1,	// chart_data index of the FitStats
-	vxAxis,		// X axis object
-	valueAxis,	// Y axis object
-	valueAxis2,	// The residuals right axis object
-	valueAxis3,	// The cumulative Chi2 right axis object
-	cur_container,	// The cursor Container
-	curXY,		// The text Label in the cursor Container
-	legend2,	// The second legend used for residuals
-	range, range2,	// Used to highlight +/- N sigma residuals
-
+	vxAxis,		// The X axis object
+	valueAxis,	// The Y axis object
+	resyAxis,	// The residuals right axis object
+	csr2yAxis,	// The cumulative sum of squared residuals axis object
+	sbseries,	// The X axis scrollbar series
+	legend,		// The main legend
+	range0,		// Used to draw the residuals 0 level
+	resrange,	// Used to highlight +/- N sigma residuals
+	range0DataItem,
+	resrangeDataItem,
 	tab_extra = [],	// Additional GModelFit provided summary tables
 
 	p_title = document.getElementById('p_title'),
-	xyin_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
+	inxy_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
 
 
 // A set of 19 colors + white + black
@@ -1098,28 +1131,28 @@ hr.style-two {
 
   if ( interface_type == 'fileio' ) {
 	document.getElementById('file_io-div').setAttribute('class', 'div-show-inline');
+	document.getElementById('download-json-div').setAttribute('class', 'div-show-inline');
 	document.getElementById('myModal').className = 'modal';
  }
 
 
-// Detect exit fullscreen mode and show header
+// -- Detect exit fullscreen mode and show header
 
-if (document.addEventListener)
-{
-  document.addEventListener('fullscreenchange', exitFSHandler, false);
-  document.addEventListener('mozfullscreenchange', exitFSHandler, false);
-  document.addEventListener('MSFullscreenChange', exitFSHandler, false);
-  document.addEventListener('webkitfullscreenchange', exitFSHandler, false);
-}
+  if ( document.addEventListener ) {
+	document.addEventListener('fullscreenchange', exitFSHandler, false);
+	document.addEventListener('mozfullscreenchange', exitFSHandler, false);
+	document.addEventListener('MSFullscreenChange', exitFSHandler, false);
+	document.addEventListener('webkitfullscreenchange', exitFSHandler, false);
+  }
 
 function exitFSHandler() {
-  if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement)
-    document.getElementById('hdrdiv').classList.remove('div-hide');
-    document.getElementById('fullscreen-i').setAttribute('href', '#expand');
+  if ( !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement )
+	document.getElementById('hdrdiv').classList.remove('div-hide');
+  document.getElementById('fullscreen-i').setAttribute('href', '#expand');
 }
 
 
-// Perform a cumulative sum of an array
+// -- Perform a cumulative sum/sum^2 of an array
 
 const cumulativeSum = (a) => {
   return a.map((sum => value => sum += value)(0));
@@ -1130,27 +1163,28 @@ const cumulativeSum2 = (a) => {
 }
 
 
-// Format numbers > 1000 adding the "," separator
+// -- Format numbers > 1000 adding the "," separator
 
 const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 
-// Remove any ANSI code from string
+// -- Remove any ANSI code from string
 
 const stripansi = (s) => {
   return s.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,'');
 }
 
 
-// Compute the number of fractional "significant" digits in sequential values from the given (~constant) step
+// -- Compute the number of fractional "significant" digits in sequential values from the given (~constant) step
 
 const nfSignificant = (x) => {
   return Math.max((Math.abs(x) % 1).toPrecision(1).length - 2, 0);
 }
 
-// Format the parameters range at a given digits precision
+
+// -- Format the parameters range at a given digits precision
 
 const pRange = (low, high, np) => {
   if ( low === null && high === null )
@@ -1178,10 +1212,19 @@ const pRange = (low, high, np) => {
 }
 
 
-// Hidden object?
+// -- Hidden object?
 
 function isHidden(e) {
 	return (e.offsetParent === null)
+}
+
+
+// -- Show spectrum components info and number of data elements (note: div visibility is mode dependent)
+
+function show_spe_maininfo() {
+  document.getElementById('json_info').innerHTML = (aux.modinfo[0].n_comps) +' components fit.';
+
+  document.getElementById('fsize_info').innerHTML = numberWithCommas(my_chartdata.dat.length);
 }
 
 
@@ -1262,14 +1305,14 @@ document.getElementById('selfile').addEventListener('change', (e) => {
 });
 
 
-// A basic error handler for FileReader
+// -- A basic error handler for FileReader
 
 const f_errorHandler = (e) => {
 	f_changeStatus("Error: "+ e.target.error.name);
 }
 
 
-// Updates the value of the progress bar
+// -- Updates the value of the progress bar
 
 const f_setProgress = (e) => {
 // The target is the file reader
@@ -1283,7 +1326,7 @@ const f_changeStatus = (status) => {
 }
 
 
-// Manage local file upload
+// -- Manage local file upload
 
 const processFile = (file) => {
 	const fr = new FileReader();
@@ -1299,23 +1342,27 @@ const processFile = (file) => {
 }
 
 
-// Display file info in the interface, considering data origin (local or web)
+// -- Display file info in the interface, considering data origin (local or web)
 
 const fileInfo = (file) => {
 	document.getElementById('progress-bar').value = 100;
 	f_changeStatus('Loaded!');
-	var fname, size_info = 'Loaded <strong>';
+	var fname, size_info;
 	if ( typeof file === 'object' ) {
-		document.getElementById('json_info').innerHTML = file.name;
-		size_info += numberWithCommas(chart.data.length) +'</strong> elements';
+		fname = file.name;
+		document.getElementById('json_info').innerHTML = (aux.modinfo[0].n_comps) +' components fit.';
+		size_info = numberWithCommas(my_chartdata.dat.length);
 	} else if ( typeof file === 'string' ) {
-		document.getElementById('json_info').innerHTML = file.split('/').reverse()[0];
-		size_info += numberWithCommas(chart.dataSource.data.length) +'</strong> elements array';
+		fname = file.split('/').reverse()[0];
+		document.getElementById('json_info').innerHTML = '';
+		size_info = numberWithCommas(chart.dataSource.data.length);
 	}
+	document.getElementById('filein_name').innerHTML = fname;
+	document.getElementById('fsize_info').innerHTML = size_info;
 }
 
 
-// Loading completed successfully; pass the data to chart
+// -- Loading completed successfully; pass the data to chart
 
 const f_loadedOk = (e) => {
 	const fr = e.target;
@@ -1356,11 +1403,9 @@ function toggleFullScreen(id_div) {
 //
 // -- Extract and manage the metadata info
 
-var getauxinfo = function() {  // TODO
-
+function getauxinfo() {  // TODO
 
   document.getElementById('app_info').innerHTML = '';
-
 
 // Multiple models for the same "object" are allowed
 
@@ -1373,7 +1418,7 @@ var getauxinfo = function() {  // TODO
 // Clear indices arrays
   i_mod = -1, i_mea = -1, i_fit = -1;
 
-  var cnames = [], desc, cdata, m, p, x_lab, y_lab, n_x, x_step, y_min=1e32, y_max=-1e32;
+  var cnames = [], desc, cdata, mea, x_lab, y_lab, n_xmea, x_step;
 
 // Scan the input array of structures 
   for (var i = 0; i < chart_data.length; i++) {
@@ -1390,7 +1435,6 @@ var getauxinfo = function() {  // TODO
 			aux.n_p = chart_data[i].length; 
 		else
 			aux.n_p++;  // Possible multiple models?
-		n_x = cdata.domain.axis[0].length;
 
 		if ( cdata.meta !== undefined )
 			aux.meta = cdata.meta;
@@ -1417,10 +1461,15 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 	return;
   }
 
+  if ( i_fit >=0 ) {
+	aux.ndata_fit = chart_data[i_fit].ndata;
+	aux.nfree_fit = chart_data[i_fit].nfree; 
+  }
+
   if ( aux.is_multimodel ) {
     if ( chart_data[i_mod][0].extra !== undefined )
 	tab_extra.push(chart_data[i_mod][0].extra[0]);
-    else
+     else
 	tab_extra.push({});
   } else {
     if ( chart_data[i_mod].extra !== undefined )
@@ -1434,10 +1483,11 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
   aux.datinfo = [];
   aux.datinfo.length = 0;
 
-
 // Add loop also for the measures (TODO)
   for (var i = 0; i < aux.n_p; i++) {
     var n_reb = 1,
+	y_min = 1e32,
+	y_max = -1e32,
 	x_scale = 1,
 	y_scale = 1,
 	x_rng = null,
@@ -1446,66 +1496,68 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 	y_lg = false,
 	x_lab = 'X label',
 	y_lab = 'Y label',
+	title = 'GModelFitViewer',
 	desc = '<span style="color: #69c; font-weight: bold;">',
 	v_labs = ['values', 'uncerts'];
 
     if ( aux.is_multimodel ) {
-	p = chart_data[i_mod][i];
+	cdata = chart_data[i_mod][i];
 	if ( i_mea >= 0 )
-	  m = chart_data[i_mea][i];
+	  mea = chart_data[i_mea][i];
     } else {
-	p = chart_data[i_mod];
+	cdata = chart_data[i_mod];
 	if ( i_mea >= 0 )
-	  m = chart_data[i_mea];
+	  mea = chart_data[i_mea];
     }
 
-    cnames = Object.keys(p.buffers);
-    aux.maincomp.push(p.maincomp.substring(4));  // maincomp ~= _TS_main
+    cnames = Object.keys(cdata.buffers);
+    aux.maincomp.push(cdata.maincomp.substring(4));  // maincomp ~= _TS_main
     //aux.maincomp.push('folded');
 
 // Labels in Measures 
-    if ( i_mea >= 0 && m.labels !== undefined ) {
-	v_labs = m.labels;
+    if ( i_mea >= 0 && mea.labels !== undefined ) {
+	v_labs = mea.labels;
     }
 
-    if ( p.meta !== undefined ) {
-	if ( p.meta.rebin )
-		n_reb = p.meta.rebin;
-	if ( p.meta.xrange )
-		x_rng = p.meta.xrange;
-	if ( p.meta.yrange )
-		y_rng = p.meta.yrange;
-	if ( p.meta.xlog )
-		x_lg = p.meta.xlog;
-	if ( p.meta.ylog )
-		y_lg = p.meta.ylog;
-	if ( p.meta.xlabel ) {
-		x_lab = p.meta.xlabel;
+    if ( cdata.meta !== undefined ) {
+	if ( cdata.meta.rebin )
+		n_reb = cdata.meta.rebin;
+	if ( cdata.meta.xrange )
+		x_rng = cdata.meta.xrange;
+	if ( cdata.meta.yrange )
+		y_rng = cdata.meta.yrange;
+	if ( cdata.meta.xlog )
+		x_lg = cdata.meta.xlog;
+	if ( cdata.meta.ylog )
+		y_lg = cdata.meta.ylog;
+	if ( cdata.meta.xlabel ) {
+		x_lab = cdata.meta.xlabel;
 		if ( x_lab ) {
-		  if ( p.meta.xscale !== null && p.meta.xscale !== 1 ) {
-			var un = p.meta.xscale.toString().replace(/\+/,'');
-			x_lab += ' [x '+ un +']'; 
+		  if ( cdata.meta.xscale !== null && cdata.meta.xscale !== 1 ) {
+			var un = cdata.meta.xscale.toString().replace(/\+/,'');
+			x_lab += ' [[x '+ un +']]'; 
 		  }
-		  if ( p.meta.xunit )
-			x_lab += ' ('+ p.meta.xunit +')'; 
+		  if ( cdata.meta.xunit )
+			x_lab += ' ('+ cdata.meta.xunit +')'; 
 		}
 	}
 
-	if ( p.meta.ylabel ) {
-		y_lab = p.meta.ylabel;
+	if ( cdata.meta.ylabel ) {
+		y_lab = cdata.meta.ylabel;
 		if (  y_lab ) {
-		  if ( p.meta.yscale !== null && p.meta.yscale !== 1 ) {
-			var un = p.meta.yscale.toString().replace(/\+/,'');
-			y_lab += ' [x '+ un +']'; 
+		  if ( cdata.meta.yscale !== null && cdata.meta.yscale !== 1 ) {
+			var un = cdata.meta.yscale.toString().replace(/\+/,'');
+			y_lab += ' [[x '+ un +']]'; 
 		  }
-		  if ( p.meta.yunit )
-			y_lab += ' ('+ p.meta.yunit +')';
+		  if ( cdata.meta.yunit )
+			y_lab += ' ('+ cdata.meta.yunit +')';
 		}
 	}
 
-	if ( p.meta.title )
-		desc += p.meta.title;
-	else
+	if ( cdata.meta !== undefined && cdata.meta.title ) {
+		title = cdata.meta.title;
+		desc += cdata.meta.title;
+	} else
 		desc += 'Model '+ i;
 
     }
@@ -1513,16 +1565,22 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
     desc += '</span> &minus; rebin factor: '+ n_reb;
 
 
-// Range check only on model components? TODO
+// Range check on data and model components?
     if ( y_rng ) {
 	y_min = y_rng[0];
 	y_max = y_rng[1];
-    } else {
+    } else {  // Y range is model dependent ...
+	y_min = Math.min(y_min, Math.min(...mea.values[0]));
+	y_max = Math.max(y_max, Math.max(...mea.values[0]));
 	for (var j = 0; j < cnames.length; j++) {
-	  y_min = Math.min(y_min, Math.min(...(p.buffers[cnames[j]])));
-	  y_max = Math.max(y_max, Math.max(...(p.buffers[cnames[j]])));
+	  y_min = Math.min(y_min, Math.min(...(cdata.buffers[cnames[j]])));
+	  y_max = Math.max(y_max, Math.max(...(cdata.buffers[cnames[j]])));
 console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
 	}
+	var e_max = 3*Math.min(...mea.values[1]);  // TODO
+console.log('Error max:', e_max);
+	y_min -= e_max;
+	y_max += e_max;
     }
 
 // Scale Y axis for values < 0.01 or > 100
@@ -1535,15 +1593,22 @@ console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
 
 //console.log('log10scale2, y_scale', log10scale2, y_scale);
 
-    x_step = Math.abs(p.domain.axis[0][1] - p.domain.axis[0][0]);
+    n_xmea = mea.domain.axis[0].length;
+    var n_xcomp = cdata.domain.axis[0].length;
+console.log('i_mea, n_xmea, n_xcomp', i_mea, n_xmea, n_xcomp);
 
+    x_step = Math.abs(cdata.domain.axis[0][1] - cdata.domain.axis[0][0]);
+console.log('n_xmea, x_min, x_max:', n_xmea, mea.domain.axis[0][0], mea.domain.axis[0][n_xmea - 1]);
     aux.modinfo.push({
-	title: desc,
+	title: title,
+	p_title: desc,
 	x_label: x_lab,
 	y_label: y_lab,
 	v_labels: v_labs,
-	x_min: p.domain.axis[0][0],
-	x_max: p.domain.axis[0][n_x - 1],
+	nx_mea: n_xmea,
+	nx_comp: n_xcomp,
+	x_min: +(mea.domain.axis[0][0]).toPrecision(4),
+	x_max: +(mea.domain.axis[0][n_xmea - 1]).toPrecision(4),
 	x_step: x_step,
 	x_scale: x_scale,
 	y_scale: y_scale,
@@ -1553,14 +1618,14 @@ console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
 	y_log: y_lg, 
 	//y_min: (y_min - y_rng*0.05) / y_scale,
 	//y_max: (y_max + y_rng*0.05) / y_scale,
-	y_min: y_min / y_scale,
-	y_max: y_max / y_scale,
+	y_min: +(y_min / y_scale).toPrecision(4),
+	y_max: +(y_max / y_scale).toPrecision(4),
 	nf_sig: nfSignificant(x_step),
 	components: cnames,
 	n_comps: cnames.length
     });
 // Equidistance check (TODO)
-    aux.modinfo[i].x_equi = Math.abs((aux.modinfo[i].x_max - aux.modinfo[i].x_min)/(n_x-1) - x_step) < 0.001;
+    aux.modinfo[i].x_equi = Math.abs((aux.modinfo[i].x_max - aux.modinfo[i].x_min)/(n_xmea-1) - x_step) < 0.001;
   }  // end for i
 
 
@@ -1581,11 +1646,11 @@ console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
 	option.value = i;
 
 	if ( aux.is_multimodel )
-		p = chart_data[i_mod][i];
+		cdata = chart_data[i_mod][i];
 	else
-		p = chart_data[i_mod];
-	if ( p.meta !== undefined && p.meta.title !== undefined )
-		lab = p.meta.title;
+		cdata = chart_data[i_mod];
+	if ( cdata.meta !== undefined && cdata.meta.title !== undefined )
+		lab = cdata.meta.title;
 	else
 		lab = "Model "+ i;
 	option.text = (i+1).toString() +': '+ lab;
@@ -1601,12 +1666,11 @@ console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
   for (var i = 0; i < aux.n_d; i++) {
 	aux.datinfo.push({
 	  resid_visible: false,
-	  resid_color: rcolor.hex}
-	);
+	  resid_color: rcolor.hex
+	});
   }
 
-  p_title.innerHTML = aux.modinfo[c_imod].title;
-}
+}  // end getauxinfo
 
 
 //
@@ -1614,318 +1678,345 @@ console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
 
 var mydata2chart = function(isel) {
   if ( isel === undefined )
-    isel = c_imod;
+	isel = c_imod;
 
 //console.log('mydata2chart isel:', isel);
-  var p, m;
+  var cdata, mea;
   if ( aux.is_multimodel ) {
-	p = chart_data[i_mod][isel];
+	cdata = chart_data[i_mod][isel];
 	if ( i_mea >= 0 )
-	  m = chart_data[i_mea][isel];
+	  mea = chart_data[i_mea][isel];
   } else {
-	p = chart_data[i_mod];
+	cdata = chart_data[i_mod];
 	if ( i_mea >= 0 )
-	  m = chart_data[i_mea];
+	  mea = chart_data[i_mea];
   }
 
-  var x = p.domain.axis[0],
+// Change web page and plot labels
+  document.title = cdata.meta.title;
+  p_title.innerHTML = aux.modinfo[isel].p_title;
+
+  var x = cdata.domain.axis[0],
 	cnames = aux.modinfo[isel].components,
 	fscale = Math.pow(10, aux.modinfo[isel].nf_sig),
-	mydata = [], vals = {};
+	mydata = {dat: [], res: [], comp: []}, data, res, comps;
 
 
 // X values rounded to the N sig. factional digits
-  var cumchi2 = 0, lenf = p.folded_domain.axis[0].length;
-
+  //var cs2 = 0, lenf = cdata.folded_domain.axis[0].length;
+  var cs2 = 0;
   if ( aux.n_d > 0 ) {
-    for (var i = 0; i < lenf; i++) {  // "folded" model
-	vals = {};
-	vals['x'] = Math.round(m.domain.axis[0][i] * fscale) / fscale;
-	vals['model'] = p.folded[i] / aux.modinfo[isel].y_scale;
+// Extend domain.axis for bin width computation
+    var binw = mea.domain.axis[0][aux.modinfo[isel].nx_mea - 1] - mea.domain.axis[0][aux.modinfo[isel].nx_mea - 2] 
+    mea.domain.axis[0].push(mea.domain.axis[0][aux.modinfo[isel].nx_mea - 1] + binw);
+    for (var i = 0; i < aux.modinfo[isel].nx_mea; i++) {  // folded domain
+	data = {};
+	binw = mea.domain.axis[0][i+1] - mea.domain.axis[0][i];
+	data['xc'] = Math.round(mea.domain.axis[0][i] * fscale) / fscale;
+	data['x'] = Math.round((mea.domain.axis[0][i] - binw/2) * fscale) / fscale;
+	data['y'] = mea.values[0][i] / aux.modinfo[isel].y_scale;
+	data['error'] = mea.values[1][i] / aux.modinfo[isel].y_scale;
+	data['model'] = cdata.folded[i] / aux.modinfo[isel].y_scale;
+	mydata.dat.push(data);
 
-	vals['y'] = m.values[0][i] / aux.modinfo[isel].y_scale;
-	vals['resid'] = (m.values[0][i] - p.folded[i]) / m.values[1][i];
-	cumchi2 += vals['resid']*vals['resid'];
-	vals['cums2'] = cumchi2;
+	res = {};
+	res['x'] = data['xc'];
+	res['resid'] = (mea.values[0][i] - cdata.folded[i]) / mea.values[1][i];
+// Normalised cumulative sum of squared residuals
+	cs2 += res['resid']*res['resid'];
+	res['csr2'] = cs2 / (aux.ndata_fit  - aux.nfree_fit);
+	mydata.res.push(res);
 
-	vals['err_lo'] = (m.values[0][i] - m.values[1][i]) / aux.modinfo[isel].y_scale;
-	vals['err_up'] = (m.values[0][i] + m.values[1][i]) / aux.modinfo[isel].y_scale;
-
-// Normalised Chi2
-	vals['cums2'] /= (lenf - chart_data[i_fit].nfree);
-	mydata.push(vals);
+//vals['err_lo'] = (mea.values[0][i] - mea.values[1][i]) / aux.modinfo[isel].y_scale;
+//vals['err_up'] = (mea.values[0][i] + mea.values[1][i]) / aux.modinfo[isel].y_scale;
     }
   }
 
   for (var i = 0; i < x.length; i++) {
-	vals = {};
-	vals['comp_x'] = Math.round(x[i] * fscale) / fscale;
+	comps = {};
+	comps['comp_x'] = Math.round(x[i] * fscale) / fscale;
 
 	for (var j = 0; j < aux.modinfo[isel].n_comps; j++)  // Components
-	  vals[cnames[j]] = p.buffers[cnames[j]][i] / aux.modinfo[isel].y_scale;
+	  comps[cnames[j]] = cdata.buffers[cnames[j]][i] / aux.modinfo[isel].y_scale;
 
-	mydata.push(vals);
+	mydata.comp.push(comps);
   }
 
   return mydata;
-}
+
+}  // end mydata2chart
 
 
 //
 // -- Create series for the the main reducer of a model.
-//    If xsc_series=true then use it also for the X window scrolling. 
 
-function createMainReducer(isel, xsc_series=false) {
+function createMainReducer(isel) {
   if ( isel === undefined )
-    isel = c_imod;
+	isel = c_imod;
 
-  var hs, p;
+  var p;
   if ( aux.is_multimodel )
 	p = chart_data[i_mod][isel];
   else
 	p = chart_data[i_mod];
 
-  var series = chart.series.push(new am4charts.LineSeries());
+  var series = chart.series.push(
+    am5xy.LineSeries.new(root, {
+	name: 'Model',
+	xAxis: vxAxis,
+	yAxis: valueAxis,
+	valueXField: "x",
+	valueYField: "model",
+	stroke: mcolor.hex,
+	fill: mcolor.hex
+    })
+  );
+  series.strokes.template.setAll({
+	strokeWidth: 2
+  });
+
   i_chmodel = chart.series.length - 1;
 console.log('i_chmodel', i_chmodel);
-//series.dataFields.valueX = 'comp_x';
-  series.dataFields.valueX = 'x';
-  series.dataFields.valueY = 'model';
 
-  series.name = 'Model';
-  series.legendSettings.labelText = 'Model [#fff]______[/]';
-  series.strokeWidth = 2;
-  series.showOnInit = false;
+  series.legendLabelText = 'Model [#fff]______[/]';
+  series.data.setAll(my_chartdata.dat);
 
-  series.stroke = mcolor.hex;
-  series.fill = mcolor.hex;
-
-
-// Highlight when cursor on legend item
-  hs = series.segments.template.states.create("hover");
-  hs.properties.strokeWidth = 5;
-
-  if ( xsc_series !== undefined && xsc_series == true )
-    chart.scrollbarX.series.push(series);
+// No data, just the model: use series also for the X axis scrolling
+  if ( aux.n_d == 0 ) {
+	document.getElementById('box-resid-in').style.visibility = 'hidden';
+	chart.scrollbarX.series.push(series);
+  }
 }
 
 
 //
-// -- The data series
+// -- Create axis range for the residuals
 
-function createDataSeries(isel) {
+// The +/- N sigma shaded region with the (dashed) 0 level
+
+function createResidRange(resid) {
+
+// 0 level dashed line
+  range0DataItem = resyAxis.makeDataItem({
+	value: 0,
+	endValue: undefined
+  });
+  range0 = resyAxis.createAxisRange(range0DataItem);
+  range0.get("grid").setAll({
+	stroke: am5.color("#396478"),
+	strokeOpacity: 0.5,
+	strokeWidth: 2
+  });
+
+
+// +/- N sigma shaded area with invisible strokes
+  resrangeDataItem = resyAxis.makeDataItem({
+	value: -n_sigma,
+	endValue: n_sigma
+  });
+/* Could also highlight the residuals data line within the range
+  resrange = resid.createAxisRange(resrangeDataItem);
+  resrange.strokes.template.setAll({
+	stroke: am5.color("#ff6478"),
+	strokeWidth: 3
+  });
+  resrangeDataItem.get("axisFill").setAll({
+*/
+  resrange = resyAxis.createAxisRange(resrangeDataItem);
+  resrange.get("axisFill").setAll({
+	fill: am5.color("#666"),
+	fillOpacity: 0.1,
+	visible: true
+  });
+
+}  // end createResidRange
+
+
+//
+// -- Create the residuals series
+
+function createResiduals(isel) {
   if ( isel === undefined )
     isel = c_imod;
 
-// No data, just the model. Create and return.
+  if ( resid ) resid.dispose();
+
+  resid = chart.series.push(
+    am5xy.LineSeries.new(root, {
+	valueXField: 'x',
+	valueYField: 'resid',
+	name: 'Residuals',  // chart_data.data.meta.resid_label;
+	legendLabelText: 'Resid.',
+	xAxis: vxAxis,
+	yAxis: resyAxis,
+	fill: aux.datinfo[isel].resid_color,
+	stroke: aux.datinfo[isel].resid_color,
+	hiddenInLegend : true  // Not in the main legend
+    })
+  );
+  resid.data.setAll(my_chartdata.res);
+
+// -- Ceate the sum of squared residuals series
+
+  if ( csr2 ) csr2.dispose();
+
+  csr2 = chart.series.push(
+    am5xy.LineSeries.new(root, {
+	valueXField: 'x',
+	valueYField: 'csr2',
+	name: 'CumulativeChi2',
+	xAxis : vxAxis,
+	yAxis: csr2yAxis,
+	hiddenInLegend: true,  // Not in the main legend
+	stroke: am5.color("#990000")
+    })
+  );
+  csr2.strokes.template.setAll({
+	strokeWidth: 2
+  });
+  csr2.data.setAll(my_chartdata.res);
+
+}  // end createResiduals
+
+
+//
+// -- Update residuals Nsigma shaded range and axis zoom
+
+function n_sigma_update(e) {
+  if ( ! resyAxis.isVisible() )
+	return;
+
+  n_sigma = +e.value;
+  resrangeDataItem.set('value', -n_sigma);
+  resrangeDataItem.set('endValue', n_sigma);
+  resyAxis.minDefined = -n_sigma - 1;
+  resyAxis.maxDefined = n_sigma + 1;
+
+// Also zoom the axis range
+  setTimeout(function() {
+	resyAxis.zoomToValues(-n_sigma - 1, n_sigma + 1);
+  }, 100);
+
+}  // end n_sigma_update
+
+
+//
+// -- Create the data series
+
+function createDataSeries(isel) {
+  if ( isel === undefined )
+	isel = c_imod;
+
+// No data, just the model
   if ( aux.n_d == 0 ) {
-    createMainReducer(isel, true);
-    document.getElementById('box-resid-in').style.visibility = 'hidden';
-    return;
+	resplot_dispose();
+	createMainReducer(isel);
+	return;
   }
 
-  var hs;
-  sdata = [];
-  sdata = chart.series.push(new am4charts.LineSeries());
-  sdata.dataFields.valueX = 'x';
-  sdata.dataFields.valueY = 'y';
-  sdata.name = 'data';  // chart_data.meta.data.label;
-  sdata.legendSettings.labelText = 'Data';
-  sdata.strokeWidth = 2;
-  sdata.showOnInit = false;
+  if ( sdata ) sdata.dispose();
 
-// Auto selected color
-  sdata.stroke = dcolor.hex;
-  sdata.fill = dcolor.hex;
- 
-// The shaded errors range
-  serr = chart.series.push(new am4charts.LineSeries());
-  serr.dataFields.valueX = 'x';
-  serr.dataFields.openValueY = 'err_lo';
-  serr.dataFields.valueY = 'err_up';
-  serr.name = 'uncert';
-  serr.legendSettings.labelText = 'Uncert.';
-  serr.fillOpacity = 0.3;
-  serr.fill = sdata.fill;
-  serr.stroke = am4core.color("#ffffff00");  // White (transparent) top line
-  serr.visible = false;  // Hidden by default
-  serr.showOnInit = false;
+  sdata = chart.series.push(
+    am5xy.StepLineSeries.new(root, {
+	name: 'data',
+	legendLabelText: 'Data',
+	xAxis: vxAxis,
+	yAxis: valueAxis,
+	valueXField: "x",
+	valueYField: "y",
+	stroke: dcolor.hex,
+	fill: dcolor.hex,
+//tooltip: am5.Tooltip.new(root, {  // Data value tooltip?
+  //labelText: "{valueY}"
+//})
+   })
+  );
+  sdata.strokes.template.setAll({
+	strokeWidth: 2
+  });
 
-// Highlight when cursor on legend item
-  hs = sdata.segments.template.states.create("hover");
-  hs.properties.strokeWidth = 5;
+/*
+  sdata.bullets.push(function() {
+    return am5.Bullet.new(root, {
+	sprite: am5.Circle.new(root, {
+	  radius: 3,
+	  //fill: sdata.get("fill"),
+	  fill: null,
+	  stroke: dcolor.hex,
+	  strokeWidth: 1,
+	  opacity: 1
+	})
+    });
+  });
+*/
+  sdata.data.setAll(my_chartdata.dat);
 
 
-  chart.scrollbarX.series.push(sdata);
+// -- The uncertainties error bars
+
+  var series = chart.series.push(
+    am5xy.LineSeries.new(root, {
+	valueXField: 'xc',
+	valueYField: 'y',
+	name: 'uncert',
+	legendLabelText: 'Uncert.',
+	xAxis: vxAxis,
+        yAxis: valueAxis,
+	stroke: null,
+	fill: dcolor.hex,
+	visible: false  // Hidden by default
+    })
+  );
+
+  series.data.setAll(my_chartdata.dat);
 
 
-// -- Main Reducer always first (and before residuals and components)
+// Add error bars as bullet with custom graphics
+  series.bullets.push(function() {
+    var graphics = am5.Graphics.new(root, {
+	stroke: dcolor.hex,
+	strokeWidth: 1,
+	fill: null,
+	draw: function(display, target) {
+	  var dataItem = target.dataItem;
 
+	  var  err = dataItem.dataContext.error,
+		y0 = valueAxis.valueToPosition(0),
+		y1 = valueAxis.valueToPosition(err);
+	  var height =
+		valueAxis.get("renderer").positionToCoordinate(y1) - valueAxis.get("renderer").positionToCoordinate(y0);
+	  display.moveTo(0, -height);
+	  display.lineTo(0, height);
+	}
+    });
+
+    return am5.Bullet.new(root, {
+	dynamic: true,
+	sprite: graphics
+    });
+  });
+
+
+// Fill the scrollbar values
+  sbseries.data.setAll(my_chartdata.dat);
+
+
+// Main Reducer always first (and before residuals and components)
   createMainReducer(isel);
 
 
-// -- Residuals
-
+// Residuals
   document.getElementById('box-resid-in').style.visibility = 'visible';
+  createResiduals(isel);
 
-  resid = chart.series.push(new am4charts.LineSeries());
-  resid.dataFields.valueX = 'x';
-  resid.dataFields.valueY = 'resid';
-  resid.name = 'Residuals';  // chart_data.data.meta.resid_label;
-  resid.yAxis = valueAxis2;
-  resid.strokeWidth = 1;
-  //var circleBullet = resid.bullets.push(new am4charts.CircleBullet());
-  //circleBullet.circle.radius = 2;
-  //resid.minBulletDistance = 5;
-  //var bullet = resid.bullets.push(new am4charts.Bullet());
-  //var square = bullet.createChild(am4core.Rectangle);
-  //square.width = 2;
-  //square.height = 2;
-  //square.horizontalCenter = "middle";
-  //square.verticalCenter = "middle";
-  resid.hiddenInLegend = true;  // Not in the default legend
-  resid.showOnInit = false;
+// Residuals visible?
+  resid_plot = aux.datinfo[isel].resid_visible;
 
-// - Cumulative Chi2
+// Reset plot for residuals?
+  if ( resid_plot )
+	plot_reset();
 
-  cums2 = chart.series.push(new am4charts.LineSeries());
-  cums2.dataFields.valueX = 'x';
-  cums2.dataFields.valueY = 'cums2';
-  cums2.name = 'CumulativeChi2';
-  cums2.yAxis = valueAxis3;
-  cums2.strokeWidth = 2;
-  cums2.hiddenInLegend = true;  // Not in the default legend
-  cums2.showOnInit = false;
-  cums2.stroke = am4core.color("#990000");
-
-// Visible?
-  sdata.resid_visible = aux.datinfo[isel].resid_visible;
-
-  if ( sdata.resid_visible ) {
-	range.grid.strokeOpacity = 0.5;
-	range2.axisFill.fillOpacity = 0.1;
-	//valueAxis.renderer.grid.template.strokeOpacity = 0;
-	valueAxis2.renderer.ticks.template.strokeOpacity = 1;
-	valueAxis3.renderer.ticks.template.strokeOpacity = 1;
-  } else {
-	valueAxis2.setVisibility(false);
-	valueAxis2.cursorTooltipEnabled = false;
-	valueAxis3.setVisibility(false);
-	resid.setVisibility(false);
-	cums2.setVisibility(false);
-
-	range.grid.strokeOpacity = 0;
-	range2.axisFill.fillOpacity = 0; 
-  }
-
-  
-// User selected color?
-  if ( aux.datinfo[isel].resid_color !== 'auto' ) {
-	resid.stroke = aux.datinfo[isel].resid_color;
-	resid.fill = aux.datinfo[isel].resid_color;
-  } else {
-	resid.stroke = rcolor.hex;
-	resid.fill = rcolor.hex;
-  }
-
-  if ( legend2.data.length == 0 )
-	legend2.data.push({name: resid.name + ' (\u03C3)', fill: resid.fill, visible: sdata.resid_visible});
-
-  legend2.tooltipText = 'Show/hide residuals';
-  legend2.tooltip.background.opacity = 0.7;
-  legend2.tooltip.pointerOrientation = 'right';
-  legend2.tooltip.dx = -56;
-
-  var marker = legend2.markers.template.children.getIndex(0);
-  legend2.useDefaultMarker = true;
-  marker.width = 16;
-  marker.height = 16;
-  marker.strokeWidth = 2;
-  marker.strokeOpacity = 1;
-  marker.stroke = am4core.color("#ccc");
-
-
-// Highlight when cursor on legend item
-  legend2.itemContainers.template.events.on("over", function(ev) {
-	resid.strokeWidth = 3;
-  });
-
-  legend2.itemContainers.template.events.on("out", function(ev) {
-	resid.strokeWidth = 2;
-  });
-
-
-// Toggle residuals visibility in legend2.
-// Note that hide() and show() causes a full range replot!
-  legend2.itemContainers.template.events.on("hit", function(ev) {
-//var field = ev.target.dataItem.dataContext, name = field.name;
-    if ( resid.visible ) {
-	range.grid.strokeOpacity = 0;
-	range2.axisFill.fillOpacity = 0;
-	//valueAxis2.renderer.ticks.template.strokeOpacity = 0;
-	valueAxis2.setVisibility(false);
-//valueAxis2.cursorTooltipEnabled = false;
-
-	//valueAxis3.renderer.ticks.template.strokeOpacity = 0;
-	valueAxis3.setVisibility(false);
-
-	resid.hide();
-	cums2.hide();
-
-// Show data and model series
-	valueAxis.setVisibility(true);
-	sdata.show();
-	chart.series.values[i_chmodel].show();
-
-    } else {
-	n_sigma = +document.getElementById('n_sigma').value;
-	range2.value = -n_sigma;
-	range2.endValue = n_sigma;
-	range.grid.strokeOpacity = 0.5;
-	range2.axisFill.fillOpacity = 0.1;
-	//valueAxis2.renderer.ticks.template.strokeOpacity = 1;
-	valueAxis2.setVisibility(true);
-
-	//valueAxis3.renderer.ticks.template.strokeOpacity = 1;
-	valueAxis3.setVisibility(true);
-
-	valueAxis2.minDefined = -n_sigma - 1;
-	valueAxis2.maxDefined = n_sigma + 1;
-	setTimeout(function() {
-		valueAxis2.zoomToValues(-n_sigma - 1, n_sigma + 1);
-//valueAxis2.cursorTooltipEnabled = true;
-	}, 200);
-
-// Hide all series but resid and cum2s
-	valueAxis.setVisibility(false);
-	for (var i = 0; i < chart.series.length; i++ ) {
-		if ( chart.series.values[i].name !== resid.name && chart.series.values[i].name !== cums2.name &&
-		     chart.series.values[i].visible )
-			chart.series.values[i].hide();
-	}
-
-	resid.show();
-	cums2.show();
-    }
-    sdata.resid_visible = ! sdata.resid_visible;
-
-console.log('zoom to:', x_range.lin.min, x_range.lin.max);
-    setTimeout(function() {
-	if ( x_logscale ) {
-	  if ( vxAxis.min !== x_range.log.min || vxAxis.max !== x_range.log.max )
-		vxAxis.zoomToValues(x_range.log.min, x_range.log.max);
-	} else {
-	  if ( vxAxis.min !== x_range.lin.min || vxAxis.max !== x_range.lin.max )
-		vxAxis.zoomToValues(x_range.lin.min, x_range.lin.max);
-	}
-    }, 100);
-  });  // legend2
-
-
-// Highlight when cursor on legend item
-//hs = resid.segments.template.states.create("hover");
-//hs.properties.strokeWidth = 5;
-}
+}  // end createDataSeries
 
 
 //
@@ -1933,7 +2024,7 @@ console.log('zoom to:', x_range.lin.min, x_range.lin.max);
 
 function createCompSeries(isel) {
   if ( isel === undefined )
-    isel = c_imod;
+	isel = c_imod;
 
   var p;
   if ( aux.is_multimodel )
@@ -1943,101 +2034,239 @@ function createCompSeries(isel) {
 
   var series, cname, hs, icol = 0;
 
-  vxAxis.title.text = aux.modinfo[isel].x_label;
-  valueAxis.title.text = aux.modinfo[isel].y_label;
-
 // -- Components
   for (var i = 0; i < aux.modinfo[isel].n_comps; i++) {  // Components in a model
-	cname = aux.modinfo[isel].components[i];
+    cname = aux.modinfo[isel].components[i];
 console.log('Create component:', cname);
     
-	series = chart.series.push(new am4charts.LineSeries());
-	series.dataFields.valueX = 'comp_x';
-	series.dataFields.valueY = cname;
-
-	series.name = cname;
-	series.strokeWidth = 2;
-	series.showOnInit = false;
-
-	series.stroke = mycolors[icol % n_myc].hex;
-	series.fill = mycolors[icol % n_myc].hex;
+    series = chart.series.push(
+      am5xy.LineSeries.new(root, {
+	valueXField: 'comp_x',
+	valueYField: cname,
+	xAxis : vxAxis,
+	yAxis: valueAxis,
+	name: cname,
+	strokeWidth: 2,
+	showOnInit: false,
+	stroke: mycolors[icol % n_myc].hex,
+	fill: mycolors[icol % n_myc].hex,
+	visible: false
+      })
+    );
+    series.strokes.template.setAll({
+	strokeWidth: 2,
+	stroke: mycolors[icol % n_myc].hex,
+	visible: true
+    }); 
+    series.data.setAll(my_chartdata.comp);
 console.log('  color:', mycolors[icol % n_myc].name, mycolors[icol % n_myc].hex);
-	icol++;
-
-	series.visible = false;
-
-// Highlight when cursor on legend item
-	hs = series.segments.template.states.create("hover");
-	hs.properties.strokeWidth = 5;
+    icol++;
   }  // end for i
-}
+
+}  // end createCompSeries
+
 
 
 //
-// -- Cursor creation and management
+// -- Cursor creation and events management
 
 function createCursor() {
-  chart.cursor = new am4charts.XYCursor();
-  chart.cursor.xAxis = vxAxis;
-  chart.cursor.yAxis = valueAxis;
-  chart.cursor.behavior = 'zoomXY';
+  var cursor = chart.set("cursor",
+    am5xy.XYCursor.new(root, {
+	behavior: "zoomXY",
+	xAxis: vxAxis,
+	yAxis: valueAxis
+    })
+  );
+  cursor.lineX.set("forceHidden", false);
+  cursor.lineY.set("forceHidden", false);
 
-// Monitor cursor position
+//vxAxis.set("tooltip", am5.Tooltip.new(root, {}));
+//valueAxis.set("tooltip", am5.Tooltip.new(root, {}));
+
+
+// Container to hold cursor X, Y values
+  var curXY_container = am5.Container.new(root, {
+	visible: true,
+	layout: root.horizontalLayout,
+	minWidth: 200,
+	height: 36,
+	x: am5.p50,
+	y: 0,
+	centerX: 0,
+	centerY: 36,
+	background: am5.RoundedRectangle.new(root, {
+	  fill: am5.color('#aaa'),
+	  fillOpacity: 0.2
+	})
+  });
+
+  chart.plotContainer.children.push(curXY_container);
+
+// Text Label in the cursor Container
+  var curXY_text = curXY_container.children.push(am5.Label.new(root, {
+	id: 'cursor_pos',
+	text: '',
+	marginRight: 0,
+	fontWeight: 'bolder',
+	fill: dcolor.hex
+  }));
+
+// Monitor actual values of cursor position
   var cursorPosition = {
 	x: null,
 	y: null
   };
 
-  chart.cursor.events.on("cursorpositionchanged", function(ev) {
-	var xAxis = ev.target.chart.xAxes.getIndex(0);
-	var yAxis = ev.target.chart.yAxes.getIndex(0);
-	cursorPosition.x = xAxis.positionToValue(xAxis.toAxisPosition(ev.target.xPosition));
-	cursorPosition.y = yAxis.positionToValue(yAxis.toAxisPosition(ev.target.yPosition));
+  cursor.events.on("cursormoved", function(ev) {
+    if ( cur_track ) {
+	var x = ev.target.getPrivate("positionX");
+	var y = ev.target.getPrivate("positionY");
+	if ( curXY_container.isHidden() )
+	  curXY_container.show();
+	cursorPosition.x = vxAxis.positionToValue(vxAxis.toAxisPosition(x));
+	if ( resyAxis.isVisible() )
+	  cursorPosition.y = resyAxis.positionToValue(resyAxis.toAxisPosition(y));
+	else
+	  cursorPosition.y = valueAxis.positionToValue(valueAxis.toAxisPosition(y));
+	var cur_pos = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
+	curXY_container.setAll({x: am5.percent(x*100), y: am5.percent(y*100)});
+	curXY_text.setAll({text: cur_pos});
+    }
+	
+  });
+
+// Hide container when cursor out of the plot 
+  cursor.events.on("cursorhidden", function() {
+    curXY_container.hide();
+  });
+
+
+// -- Plot zoom management
+
+// See https://www.amcharts.com/docs/v5/tutorials/axis-zoom-end-event/
+  var xstartEndChangeTimeout, ystartEndChangeTimeout;
+
+  vxAxis.on("start", handleXStartEndChange);
+  vxAxis.on("end", handleXStartEndChange);
+  valueAxis.on("start", handleYStartEndChange);
+  valueAxis.on("end", handleYStartEndChange);
+
+  resyAxis.on("start", handleYStartEndChange);
+  resyAxis.on("end", handleYStartEndChange);
+
+// csr2 range kept static
+  csr2yAxis.on("start", function() {csr2yAxis.zoomToValues(0, csr2yAxis.getPrivate('max'))});
+  csr2yAxis.on("end", function() {csr2yAxis.zoomToValues(0, csr2yAxis.getPrivate('max'))});
+
+  function handleXStartEndChange() {
+    if (xstartEndChangeTimeout) {
+	clearTimeout(xstartEndChangeTimeout);
+    }
+    xstartEndChangeTimeout = setTimeout(function() {
+	zoomXEnded();
+    }, 50);
+  }
+
+  function handleYStartEndChange() {
+    if (ystartEndChangeTimeout) {
+	clearTimeout(ystartEndChangeTimeout);
+    }
+    ystartEndChangeTimeout = setTimeout(function() {
+	zoomYEnded();
+    }, 50);
+  }
+
+// -- X zoom management
+
+  function zoomXEnded() {
+console.log("Zoom X ended!");
+console.log('vxAxis ranges:', vxAxis.get('min'), vxAxis.get('max'), vxAxis.get('start'), vxAxis.get('end'));
+
+    var x_min = vxAxis.get('min') + vxAxis.get('start') * (vxAxis.get('max') - vxAxis.get('min')),
+	x_max = vxAxis.get('min') + vxAxis.get('end') * (vxAxis.get('max') - vxAxis.get('min'));
+
+    x_range.min = +x_min.toPrecision(4);
+    x_range.max = +x_max.toPrecision(4);
+
+console.log("zoomXEnded: X cursor selected from "+ x_min +" to "+ x_max);
+    inxy_ranges.xmin.value = x_min.toPrecision(4);
+    inxy_ranges.xmax.value = x_max.toPrecision(4);
+    log_label_ckeck('x');
+
+  }  // end zoomXEnded
+
+
+// -- Y zoom management
+
+  function zoomYEnded() {
+console.log("Zoom Y ended!");
+//console.log("Start, End:", valueAxis.getPrivate("selectionMin"), valueAxis.getPrivate("selectionMax"));
+
+    var y_min, y_max;
+
+    if ( resyAxis.isVisible() ) {
+console.log('zoomYEnded: resyAxis ranges:', resyAxis.get('min'), resyAxis.get('max'), resyAxis.get('start'), resyAxis.get('end'));
+	y_min = resyAxis.get('min') + resyAxis.get('start') * (resyAxis.get('max') - resyAxis.get('min')),
+	y_max = resyAxis.get('min') + resyAxis.get('end') * (resyAxis.get('max') - resyAxis.get('min'));
+    } else {
+console.log('zoomYEnded: valueAxis ranges:', valueAxis.get('min'), valueAxis.get('max'), valueAxis.get('start'), valueAxis.get('end'));
+	y_min = valueAxis.get('min') + valueAxis.get('start') * (valueAxis.get('max') - valueAxis.get('min')),
+	y_max = valueAxis.get('min') + valueAxis.get('end') * (valueAxis.get('max') - valueAxis.get('min'));
+    }
+console.log("zoomYEnded: Y cursor selected from "+ y_min +" to "+ y_max);
+
+    y_range.min = +y_min.toPrecision(4);
+    y_range.max = +y_max.toPrecision(4);
+
+    inxy_ranges.ymin.value = y_min.toPrecision(4);
+    inxy_ranges.ymax.value = y_max.toPrecision(4);
+    log_label_ckeck('y');
+
+  }  // end zoomYEnded
+
+}  // end createCursor
+
+
 //
-	if ( cur_track )
-	  curXY.text = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
-  });
+// -- Use aux data to set the main plot X and Y axis labels, X range and Y tick values format
 
-  chart.plotContainer.events.on("hit", function(ev) {
-console.log(cursorPosition);
-	curXY.text = '[black]X:[/] '+ cursorPosition.x.toPrecision(6) +'\xa0\xa0\ [black]Y:[/] '+ cursorPosition.y.toPrecision(6);
-  });
+function set_xy_from_aux() {
 
+// X axis label
+  chart.xAxes.getIndex(0).children.unshift(
+    am5xy.AxisLabel.new(root, {
+	text: aux.modinfo[c_imod].x_label,
+	fontSize: 18,
+        x: am5.p50,
+        centerX:am5.p50
+    })
+  );
 
-// Need to manage manually the Y zoom (animation issue?)
-  chart.cursor.events.on("zoomended", function(ev) {
-    var x_min = vxAxis.min + vxAxis.start * (vxAxis.max - vxAxis.min),
-	x_max = vxAxis.min + vxAxis.end * (vxAxis.max - vxAxis.min),
-	y_min = valueAxis.min + valueAxis.start * (valueAxis.max - valueAxis.min),
-	y_max = valueAxis.min + valueAxis.end * (valueAxis.max - valueAxis.min);
+// Y axis label
+  chart.yAxes.getIndex(0).children.unshift(
+    am5xy.AxisLabel.new(root, {
+	text: aux.modinfo[c_imod].y_label,
+	fontSize: 18,
+	y: am5.p50,
+	rotation: -90
+    })
+  );
+//To modify: chart.yAxes.getIndex(0).children.getIndex(0).set('text', 'New label')
 
-console.log("X cursor selected from "+ x_min +" to "+ x_max);
-console.log("Y cursor selected from "+ y_min +" to "+ y_max);
-	x_range.lin.min = x_min;
-	x_range.lin.max = x_max;
-	(x_min > 0) ? x_range.log.min = x_min : x_range.log.min = 1e-4;  // TODO
-	x_range.log.max = x_max;
+// X axis range
+  chart.xAxes.getIndex(0).set('min', aux.modinfo[c_imod].x_min);
+  chart.xAxes.getIndex(0).set('max', aux.modinfo[c_imod].x_max);
 
-	y_range.lin.min = y_min;
-	y_range.lin.max = y_max;
+// Use exponential notation for Y axis labels when small values are involved
+  valueAxis.numberFormatter = am5.NumberFormatter.new(root, {});
 
-	(y_min > 0) ? y_range.log.min = y_min : y_range.log.min = 1e-4;  // TODO
-	y_range.log.max = y_max;
+  if ( aux.modinfo[c_imod].y_max < 0.1 )
+	valueAxis.numberFormatter.set("numberFormat", '#.00e');
+  else
+	valueAxis.numberFormatter.set("numberFormat", "#,###.#####");
 
-	xyin_ranges.xmin.value = x_min.toPrecision(4);
-	xyin_ranges.xmax.value = x_max.toPrecision(4);
-	xyin_ranges.ymin.value = y_min.toPrecision(4);
-	xyin_ranges.ymax.value = y_max.toPrecision(4);
-
-	if ( am_anim ) {
-// If animation is on, a delay is necessary to have the Y zoom
-	  setTimeout(function() {
-		valueAxis.zoomToValues(y_min, y_max);
-	  }, 100);
-	}
-  });
-
-}
+}  // end set_xy_from_aux
 
 
 //
@@ -2047,7 +2276,7 @@ function p_select(isel, new_file) {
   var ip = document.getElementById('p_selector').value;
 
   if ( isel === undefined )
-	isel = ip;
+	isel = +ip;
   else {
 	if ( isel === 'prev' )
 	  isel = +ip - 1;
@@ -2071,50 +2300,449 @@ function p_select(isel, new_file) {
   if ( new_file === undefined )
 	new_file = false;
 
-// First clear all series
-  chart.series.each(function() {
-	chart.series.removeIndex( 0 );
-    //chart.series.removeIndex( chart.series.indexOf(s) );
-  });
-
   c_imod = isel;  // Set index of selected model
 
-  chart.data = mydata2chart(isel);
+// Create the chart
+  create_chart();
+
+
+// The residuals highlighted range
+  createResidRange(resid);
+
+// The cursor
+  createCursor();
+
+// The JSON reformatted data
+  my_chartdata = mydata2chart(isel);
+  show_spe_maininfo();
+
+// The series
   createDataSeries();
   createCompSeries();
 
-// Change plot labels
-  document.getElementById('p_title').innerHTML = aux.modinfo[c_imod].title;
+// Reset X / Y ranges
+  xy_range_reset();
+  set_xy_from_aux();  // Some X and Y settings from aux data
+
+// First reset plot area to data, set to linear scale and clear all series
+  plot_reset();
+
+// The main legend set legend data after all the events are set on template
+  createMainLegend();
+
+  createFitLogTabs();  // The fit log tables
+
+// Appearance settings
+  sdata.appear(1000,100);
+  chart.series.getIndex(2).appear(1500,100);  // The model
+}  // end p_select
+
+
+//
+// -- Legends
+
+// -- Main plot legend
+
+function createMainLegend() {
+  if ( legend ) legend.dispose();
+
+  legend = chart.children.push(
+    am5.Legend.new(root, {
+	centerX: am5.p50,
+	x: am5.p50,
+	marginTop: 20,
+	useDefaultMarker: true,
+	layout: am5.GridLayout.new(root, {
+	  //maxColumns: 5,
+	  fixedWidthGrid: true
+	}),
+//tooltip: am5.Tooltip.new(root, {labelText: ttAdapter})
+    })
+  );
+
+
+  //legend.labels.template.text = "[bold]{name}[/]";
+  legend.labels.template.set("fontWeight", 600);
+  legend.valueLabels.template.set("forceHidden", true);  // Hide the value part of the label
+
+  legend.markerRectangles.template.setAll({
+	cornerRadiusTL: 8,
+	cornerRadiusTR: 8,
+	cornerRadiusBL: 8,
+	cornerRadiusBR: 8,
+	width: 16,
+	height: 16,
+	strokeWidth: 2,
+	stroke: am5.color("#ccc")
+  });
+
+
+// When legend item container is hovered highlight the series
+  legend.itemContainers.template.events.on("pointerover", function(e) {
+	var series = e.target.dataItem.dataContext;
+	series.strokes.template.setAll({
+	  strokeWidth: 4
+	});
+  });
+
+// When legend item container is unhovered reset the series stroke width
+  legend.itemContainers.template.events.on("pointerout", function(e) {
+	var series = e.target.dataItem.dataContext;
+	series.strokes.template.setAll({
+	  strokeWidth: 2
+	});
+  });
+  legend.data.setAll(chart.series.values);
+
+// Highlight the data/uncertainties/model series in the legend
+  for ( var i = 0; i < 3; i++ ) {
+//console.log('legend item:', i, legend.itemContainers.getIndex(i));
+    if ( legend.itemContainers.getIndex(i) !== undefined )
+	legend.itemContainers.getIndex(i).set('background', am5.RoundedRectangle.new(root, { fill: am5.color(0x186680), fillOpacity: 0.2 }));
+  }
+
+//See https://github.com/amcharts/amcharts4/issues/939
+  if ( resid && !resid.isDisposed() )
+	resid.get("legendDataItem").get("itemContainer").hide();
+  if ( csr2 && !csr2.isDisposed() )
+	csr2.get("legendDataItem").get("itemContainer").hide();
+
+}  // end createMainLegend
+
+
+// -- Reset the plot (def. to show data)
+
+function plot_reset(lin_reset=false) {
+  if ( resid_plot ) {
+	if ( lin_reset )
+	  x_linlog_toggle(true);
+// Hide all series but resid and csr2
+	valueAxis.hide();
+	var sname;
+	for (var i = 0; i < chart.series.length; i++ ) {
+	  sname = chart.series.getIndex(i).get('name');
+	  if ( sname !== resid.get('name') && sname !== csr2.get('name') && chart.series.getIndex(i).get('visible') )
+		chart.series.getIndex(i).hide();
+	}
+
+	n_sigma = +document.getElementById('n_sigma').value;
+	resrangeDataItem.set('value', -n_sigma);
+	resrangeDataItem.set('endValue', n_sigma);
+	resrangeDataItem.get("axisFill").set('fillOpacity', 0.1);
+	valueAxis.gridContainer.set('opacity', 0);
+	resyAxis.gridContainer.set('opacity', 1);
+	resyAxis.show();
+	csr2yAxis.show();
+
+	y_linlog_toggle(true);
+
+	resyAxis.zoomToValues(-n_sigma - 1, n_sigma + 1);
+
+// Show residuals and sum of squared residuals series
+	if ( resid && !resid.isDisposed() )
+	  resid.show();
+	if ( csr2 && !csr2.isDisposed() )
+	  csr2.show();
+	document.getElementById('resid-cb').checked = true;
+  } else {
+	if ( lin_reset ) {
+console.log("Reset X/Y to linear");
+	  x_linlog_toggle(true);
+	  y_linlog_toggle(true);
+	}
+	resrangeDataItem.get("axisFill").set('fillOpacity', 0);
+	valueAxis.gridContainer.set('opacity', 1);
+	resyAxis.gridContainer.set('opacity', 0);
+	resyAxis.hide();
+	csr2yAxis.hide();
+
+	if ( resid && !resid.isDisposed() )
+	  resid.hide();
+	if ( csr2 && !csr2.isDisposed() )
+	  csr2.hide();
+
+// Show data and model series
+	valueAxis.show();
+	sdata.show();
+	chart.series.values[i_chmodel].show();
+	document.getElementById('resid-cb').checked = false;
+  }
+}  // end plot_reset
+
+
+// -- Dispose residuals plot series (e.g. when only Model available) - TODO
+
+function resplot_dispose() {
+  if ( resid && !resid.isDisposed() )
+	resid.dispose();
+  if ( csr2 && !csr2.isDisposed() )
+	csr2.dispose();
+
+}  // end resplot_dispose
+
+
+// -- Residuals legend
+
+function createResidLegend() {
+
+// Toggle residuals visibility
+// Note that in v5 hide() and show() do not causes a full range replot!
+
+  document.getElementById('resid-cb').addEventListener('click', function(ev) {
+    if ( resyAxis.isVisible() )
+	resid_plot = false;
+    else
+	resid_plot = true;
+ 
+    plot_reset();
+    set_init_y_range();
+  });
+
+}  // end createResidLegend
+
+
+// -- Clear range input fields
+
+function inxy_range_reset() {
+  inxy_ranges.xmin.value = '';
+  inxy_ranges.xmax.value = '';
+  inxy_ranges.ymin.value = '';
+  inxy_ranges.ymax.value = '';
+
+}  // end inxy_range_reset
+
+
+// -- Reset X and Y plot range to initial values
+
+function xy_range_reset() {
+  inxy_range_reset();  // Clear manual range input fields
+  set_init_x_range();
+  set_init_y_range();
+
+}  // end xy_range_reset
+
+
+
+
+//
+// -- amChart init code
+
+function create_chart() {
+
+// -- Create the amCharts root element
+
+  if ( root ) root.dispose();
+  if ( root && !root.isDisposed() ) console.log('root still exists...');
+
+  root = am5.Root.new("chartdiv");
+
+// Theme animated
+  if ( am_anim )
+    root.setThemes([
+	am5themes_Animated.new(root)
+  ]);
+
+
+// -- Create the chart container
+
+  if ( chart ) chart.dispose();
+
+  chart = root.container.children.push(
+    am5xy.XYChart.new(root, {
+	panX: false,  // Managed by cursor
+	panY: false,
+	wheelY: "zoomX",
+	pinchZoomX: true,
+	paddingLeft: 0,
+	layout: root.verticalLayout
+    })
+  );
+
+
+// Create the X axis
+
+  var vxRenderer = am5xy.AxisRendererX.new(root, {});
+  if ( vxAxis ) vxAxis.dispose();
+
+  vxAxis = chart.xAxes.push(
+    am5xy.ValueAxis.new(root, {
+	strictMinMax: true,
+	numberFormat: '#',
+	renderer: vxRenderer
+    })
+  );
+
+  vxAxis.valueXField = 'x';
+
+  vxRenderer.grid.template.setAll({
+	stroke: am5.color("#ddd"),
+	strokeOpacity: 1
+  });
+
+  //--vxAxis.set('min', aux.modinfo[c_imod].x_min);
+  //--vxAxis.set('max', aux.modinfo[c_imod].x_max);
+
+
+// -- Create the main Y-values axis
+
+  var vAR = am5xy.AxisRendererY.new(root, {});
+  if ( valueAxis ) valueAxis.dispose();
+
+  valueAxis = chart.yAxes.push(
+    am5xy.ValueAxis.new(root, {
+//maxDeviation: 1,
+	strictMinMax: true,
+ 	renderer: vAR
+    })
+  );
+
+  vAR.grid.template.setAll({
+	stroke: am5.color("#ddd"),
+	strokeOpacity: 1
+  });
+
+
+// -- Eventually the second Y-value axis (for residuals). Note that it is only checked here!
+
+// The cumulative square sum of residuals
+
+  var vAR3 = am5xy.AxisRendererY.new(root, {
+	opposite: true,
+	strokeOpacity: 1,
+	strokeWidth: 4,
+	stroke: am5.color("#900")
+  });
+  csr2yAxis = chart.yAxes.push(
+    am5xy.ValueAxis.new(root, {
+	renderer: vAR3
+    })
+  );
+
+  csr2yAxis.strictMinMax = true;
+  vAR3.grid.template.set("forceHidden", true);
+//csr2yAxis.gridContainer.set('opacity', 0);
+
+  csr2yAxis.children.unshift(
+    am5.Label.new(root, {
+	rotation: -90,
+	text: "Cumulative sum of squared residuals",
+	fontSize: 18,
+	fill: am5.color("#900"),
+	y: am5.p50,
+	centerX: am5.p50
+    })
+  );
+
+
+  var vAR2 = am5xy.AxisRendererY.new(root, {
+	strokeOpacity: 1,
+	strokeWidth: 4,
+	stroke: am5.color("#495C43")
+  });
+  resyAxis = chart.yAxes.push(
+    am5xy.ValueAxis.new(root, {
+	strictMinMax: true,
+ 	renderer: vAR2
+    })
+  );
+  resyAxis.gridContainer.set('opacity', 0);
+
+  resyAxis.children.unshift(
+    am5.Label.new(root, {
+	rotation: -90,
+	text: "Normalized residuals (\u03C3)",
+	fontSize: 18,
+	y: am5.p50,
+	centerX: am5.p50
+    })
+  );
+
+
+// -- Create the X axis scrollbar (not disabling labels and grid)
+
+  chart.scrollbarX = am5xy.XYChartScrollbar.new(root, {
+	orientation: "horizontal",
+	height: 50
+  });
+  chart.set("scrollbarX", chart.scrollbarX);
+
+  var sbxAxis = chart.scrollbarX.chart.xAxes.push(
+    am5xy.ValueAxis.new(root, {
+	strictMinMax: true,
+	renderer: am5xy.AxisRendererX.new(root, {
+	  opposite: false,
+	  strokeOpacity: 0
+	})
+    })
+  );
+
+  var sbyAxis = chart.scrollbarX.chart.yAxes.push(
+    am5xy.ValueAxis.new(root, {
+	renderer: am5xy.AxisRendererY.new(root, {})
+    })
+  );
+
+  if ( sbseries ) sbseries.dispose();
+
+  sbseries = chart.scrollbarX.chart.series.push(
+    am5xy.LineSeries.new(root, {
+	xAxis: sbxAxis,
+	yAxis: sbyAxis,
+	valueXField: "x",
+	valueYField: "y"
+    })
+  );
+
+  sbseries.fills.template.setAll({
+	visible: true,
+	fillOpacity: 0.3
+  });
+
+
+// -- Manage the click on the legend labels, in particular "residuals"
+
+// The export menu
+  var exporting = am5plugins_exporting.Exporting.new(root, {
+	menu: am5plugins_exporting.ExportingMenu.new(root, {})
+  });
+
+// The annotations tool
+  var annotator = am5plugins_exporting.Annotator.new(root, {});
+  var menuitems = exporting.get("menu").get("items");
+
+  menuitems.push({
+	type: "separator"
+  });
+
+  menuitems.push({
+	type: "custom",
+	label: "Annotate",
+	callback: function() {
+	  this.close();
+	  annotator.toggle();
+	}
+  });
+
+
+  chart.zoomOutButton.disabled = true;  // Disable zoom out button
 }
 
 
 //
-// -- amChart code
+// -- Proceed with the chart creation once the DOM is fully loaded
 
-am4core.ready(function() {
+am5.ready(function() {
 
-  if ( am_anim )
-	am4core.useTheme(am4themes_animated);
-
-  chart = am4core.create('chartdiv', am4charts.XYChart);
-
-// Disable logo ?
-//chart.logo.disabled = true;
-
-// Increase contrast by taking evey second color
-  //chart.colors.step = 2;
-
-// Theme animated
   if ( chart_data !== undefined ) {
     if (interface_type == 'fileio' )
 	document.getElementById('myModal').className = 'modal modal-hide';
 
 // Read metadata info
     getauxinfo();
-    chart.data = mydata2chart(c_imod); 
 
-    document.getElementById('json_info').innerHTML = aux.n_spe +' data. Current: '+
-	(aux.modinfo[0].n_comps) +' components fit.';
+// Let p_select do all the jobs
+    p_select();
+
 
 // Highlight button for current model
     if ( aux.n_p > 1 )
@@ -2122,7 +2750,7 @@ am4core.ready(function() {
 
   } else {
     for (var j = 0; j < 2 * Math.PI; j += 0.1)
-	chart.data.push({"lambda": parseInt(1000 + j*1500), "y": Math.sin(j)});
+	my_chartdata.push({"lambda": parseInt(1000 + j*1500), "y": Math.sin(j)});
 
 // Open the file load div (if I/O mode interface)
     if ( interface_type == 'fileio' )
@@ -2130,567 +2758,227 @@ am4core.ready(function() {
   }
 
 
-// Create X axis
+// The residuals legend is created only once
+  createResidLegend();
 
-// Additional X axis as ValueAxis
-  vxAxis = chart.xAxes.push(new am4charts.ValueAxis());
-  vxAxis.dataFields.valueX = 'x';
-  vxAxis.renderer.grid.template.stroke = am4core.color("#ddd");
-  vxAxis.renderer.grid.template.strokeOpacity = 1;
-  vxAxis.min = aux.modinfo[c_imod].x_min;
-  vxAxis.max = aux.modinfo[c_imod].x_max;
-  vxAxis.strictMinMax = true;  // This causes issue with the log plot
+// Appearance settings
+  chart.appear(1000,200);
 
-// No cursor Tooltip for ValueAxis
-//vxAxis.cursorTooltipEnabled = true;
-//vxAxis.precision = 4;
+});  // end am5.ready()
 
-//vxAxis.renderer.grid.template.dx=5;
-//vxAxis.renderer.labels.template.dx=5;
-//--
-
-
-// Create main Y-values axis
-  valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-  valueAxis.title.fontSize = 18;
-  valueAxis.renderer.grid.template.stroke = am4core.color("#ddd");
-  valueAxis.renderer.grid.template.strokeOpacity = 1;
-
-  //valueAxis.renderer.minWidth = 60;
-
-  valueAxis.strictMinMax = true;
-//valueAxis.precision = 4;
-
-// Eventually the second Y-value axis (for residuals). Note that it is only checked here!
-
-// The cumulative Chi2
-  valueAxis3 = chart.yAxes.push(new am4charts.ValueAxis());
-  valueAxis3.strictMinMax = true;
-  valueAxis3.title.text = 'Cumulative sum of squared residuals';
-  valueAxis3.renderer.opposite = true;  // Right side
-  valueAxis3.renderer.line.strokeOpacity = 1;
-  valueAxis3.renderer.line.strokeWidth = 2;
-  valueAxis3.renderer.labels.template.fill=am4core.color("#990000")
-
-  valueAxis3.title.fontSize = 18;
-  valueAxis3.renderer.grid.template.disabled = true;  // No grid
-
-  //valueAxis3.renderer.ticks.template.disabled = false;
-  //valueAxis3.renderer.ticks.template.strokeOpacity = 0;
-  //valueAxis3.renderer.ticks.template.stroke = am4core.color("#990000");
-  //valueAxis3.renderer.ticks.template.strokeWidth = 2;
-  //valueAxis3.renderer.ticks.template.length = 8;  // Outward
-
-  //valueAxis3.renderer.minWidth = 60;
-
-  valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
-  valueAxis2.strictMinMax = true;
-  valueAxis2.title.text = 'Normalized residuals (\u03C3)';
-
-  valueAxis2.renderer.line.strokeOpacity = 1;
-  valueAxis2.renderer.line.strokeWidth = 2;
-  valueAxis2.renderer.line.stroke = am4core.color("#495C43");
-  valueAxis2.title.fontSize = 18;
-  valueAxis2.renderer.grid.template.disabled = true;  // No grid
-
-  //valueAxis2.renderer.minWidth = 60;
- 
-// Configure ticks
-  //valueAxis2.renderer.ticks.template.disabled = false;
-  //valueAxis2.renderer.ticks.template.strokeOpacity = 0;
-  //valueAxis2.renderer.ticks.template.stroke = am4core.color("#495C43");
-  //valueAxis2.renderer.ticks.template.strokeWidth = 2;
-  //valueAxis2.renderer.ticks.template.length = -10;  // Inward
-
-
-// The +/- N sigma shaded region with the (dashed) 0 level. Visibility management is TODO.
-  // 0 level dashed line
-  range = valueAxis2.axisRanges.create();
-  range.value = 0;
-  range.grid.stroke = am4core.color("#396478");
-  range.grid.strokeWidth = 2;
-  range.grid.strokeDasharray = "4";
-
-  // +/- N sigma shaded area with invisible strokes
-  range2 = valueAxis2.axisRanges.create();
-  range2.grid.stroke = am4core.color("#ff6478");
-  range2.value = -n_sigma;
-  range2.endValue = n_sigma;
-  range2.grid.strokeOpacity = 0;
-
-
-// Scrollbar disabling labels and grid
-  chart.scrollbarX = new am4charts.XYChartScrollbar();
-
-// Create container to hold cursor X, Y values
-  cur_container = chart.plotContainer.createChild(am4core.Container);
-  //cur_container.width = am4core.percent(50);
-  cur_container.width = 240;
-  cur_container.height = 36;
-  cur_container.x = am4core.percent(50);
-  cur_container.align = 'center';
-  cur_container.y = 0;
-  cur_container.padding(10, 10, 10, 10);
-  cur_container.background.fill = am4core.color('#aaa');
-  cur_container.background.fillOpacity = 0;
-
-  curXY = cur_container.createChild(am4core.Label);
-  curXY.id = 'cursor';
-  curXY.text = '';
-  curXY.minWidth = 50;
-  curXY.align = 'center';
-  curXY.marginRight = 6;
-  curXY.fontWeight = 'bolder';
-  curXY.fill = am4core.color('#396478');
-
-// Monitor X axis zoom (TODO)
-//vxAxis.events.on("startendchanged", vxAxisChanged);
-//chart.scrollbarX.events.on("selectionextremeschanged", scrollAxisChanged);
-
-  chart.scrollbarX.events.on("rangechanged", scrollAxisChanged);
-
-
-// This does not work in log scale (TODO) !
-
-  function scrollAxisChanged(ev) {
-    var x_min = vxAxis.min + vxAxis.start * (vxAxis.max - vxAxis.min),
-	x_max = vxAxis.min + vxAxis.end * (vxAxis.max - vxAxis.min);
-        //var x_min = ev.target.minZoomed;
-        //var x_max = ev.target.maxZoomed;
-	//-var xaxis = chart.xAxes.getIndex(0);
-	//-var x_min = xaxis.positionToValue(ev.target.range.start);
-	//-var x_max = xaxis.positionToValue(ev.target.range.end);
-console.log("New vxAxis range: " + x_min + " -- " + x_max);
-	xyin_ranges.xmin.value = x_min.toPrecision(4);
-	xyin_ranges.xmax.value = x_max.toPrecision(4);
-	x_range.lin.min = x_min;
-	x_range.lin.max = x_max;
-	(x_min > 1e-4) ? x_range.log.min = x_min : x_range.log.min = 1e-4;  // TODO
-	x_range.log.max = x_max;
-  }
-
-
-
-// Legends
-
-  var legendContainer = am4core.create("res_legenddiv", am4core.Container);
-  legendContainer.width = am4core.percent(100);
-  //legendContainer.height = am4core.percent(100);
-
-  legend2 = new am4charts.Legend();
-  legend2.parent = legendContainer;
-  legend2.marginTop = 20;
-  legend2.marginLeft = 0;
-  legend2.labels.template.text = "[bold]{name}[/]";
-
-  chart.legend = new am4charts.Legend();
-  chart.legend.marginTop = 20;
-  chart.legend.labels.template.text = "[bold]{name}[/]";
-  chart.legend.useDefaultMarker = true;
-
-  chart.legend.itemContainers.template.togglable = true;  // Disable default? No.
-
-  var marker = chart.legend.markers.template.children.getIndex(0);
-
-  marker.cornerRadius(8, 8, 8, 8);
-  marker.adapter.add("cornerRadiusTopLeft", radiusAdapter);
-  marker.adapter.add("cornerRadiusTopRight", radiusAdapter);
-  marker.adapter.add("cornerRadiusBottomLeft", radiusAdapter);
-  marker.adapter.add("cornerRadiusBottomRight", radiusAdapter);
-
-  chart.legend.itemContainers.template.adapter.add("tooltipText",  ttAdapter);
-  chart.legend.tooltip.background.opacity = 0.7;
-  chart.legend.tooltip.dy = -20;
-
-  marker.width = 16;
-  marker.height = 16;
-  marker.strokeWidth = 2;
-  marker.strokeOpacity = 1;
-  marker.stroke = am4core.color("#ccc");
-
-function radiusAdapter(radius, target) {
-  if (!target.dataItem) {
-	return radius;
-  }
-
-  if ( target.dataItem.name == 'uncert' )
-	return 3;
-  else
-	return radius;
-}
-
-function ttAdapter(tooltip, target) {
-  if ( target.dataItem.name == 'uncert' )
-	return 'Show/hide data uncertainties shade area';
-  else
-	return '';
-}
-
-
-// Values background (unused)
-  var lt = chart.legend.valueLabels.template;
-  lt.background.fill = am4core.color("#efefef");
-  lt.background.fillOpacity = 1;
-  lt.minWidth = lt.width * 1.2;  // 20% increase. This fixes width change at run time
-
-  chart.legend.itemContainers.template.events.on("over", function(event) {
-    var segments = event.target.dataItem.dataContext.segments;
-    segments.each(function(segment) {
-      segment.isHover = true;
-    });
-  });
-
-  chart.legend.itemContainers.template.events.on("out", function(event) {
-    var segments = event.target.dataItem.dataContext.segments;
-    segments.each(function(segment) {
-      segment.isHover = false;
-    });
-  });
-
-
-// Manage the click on the legend labels, in particular "residuals"
-/* Unused
-  chart.legend.itemContainers.template.events.on("hit", function(ev) {
-    var field = ev.target.dataItem.dataContext,
-	name = ev.target.dataItem.name,
-	index = ev.target.dataItem.index;
-//console.log('Clicked:', name);
-//console.log('Index:', ev.target.dataItem.index);
-//console.log( 'visible', field.visible );
-
-    if ( ! field.visible ) {
-	if ( am_anim )
-	  field.show(300);
-	else
-	  field.visible = true;
-	field.strokeOpacity = 1;
-//chart.legend.markers.getIndex(index).fillOpacity = 1;
-//chart.legend.labels.getIndex(index).fill = am4core.color("#333");
-//ev.target.dataItem.marker.fillOpacity = 1;
-//ev.target.dataItem.label.fill = am4core.color("#333");
-    } else {
-	if ( am_anim )
-	  field.hide(300);
-	else
-	  field.visible = false;
-	//field.strokeOpacity = 0;
-//chart.legend.markers.getIndex(index).fillOpacity = 0.1;
-//chart.legend.labels.getIndex(index).fill = am4core.color("#999");
-//ev.target.dataItem.marker.fillOpacity = 0.1;
-//ev.target.dataItem.label.fill = am4core.color("#999");
-    }
-
-  });
-*/
-
-
-// Set up number format
-//chart.numberFormatter.numberFormat = "#,###.000";
-
-// The export menu
-  chart.exporting.menu = new am4core.ExportMenu();
-
-  chart.exporting.timeoutDelay = 5000;  // Wait 5 s before warning
-
-  chart.zoomOutButton.disabled = true;  // Disable zoom out button
-
-// The annotations tool
-  var annotation = chart.plugins.push(new am4plugins_annotation.Annotation());
-
-// The series
-  createDataSeries();
-  createCompSeries();
-
-
-// It seems this only works on first call (see set_x_range)
-  //vxAxis.zoomToValues(aux.modinfo[c_imod].x_min, aux.modinfo[c_imod].x_max + aux.modinfo[c_imod].x_step / 2);
-
-// -- On data validation reset X / Y range for lin/log scale and clear input fields.
-// -- Also disable scrollbar labels and grid. Need to be done after series push.
-
-  chart.events.on('datavalidated', function(e) {
-
-	var scrollAxis = chart.scrollbarX.scrollbarChart.xAxes.getIndex(0);
-	scrollAxis.renderer.labels.template.disabled = true;
-	scrollAxis.renderer.grid.template.disabled = true;
-
-// Use exponential notation for Y axis labels when small values are involved
-	valueAxis.numberFormatter = new am4core.NumberFormatter();
-	if ( aux.modinfo[c_imod].y_max < 0.1 )
-	  valueAxis.numberFormatter.numberFormat = '#.00e';
-	else
-	  valueAxis.numberFormatter.numberFormat = "#,###.#####";
-
-//document.getElementById('y_err-cb').checked = false;
-//document.getElementById('y_err_shade-cb').checked = false;
-	document.getElementById('cursor-cb').checked = false;
-	document.getElementById('x_log-cb').checked = false;
-	document.getElementById('y_log-cb').checked = false;
-	vxAxis.logarithmic = false;
-	valueAxis.logarithmic = false;
-
-	if ( legend2.data.length !== 0 ) {
-	  legend2.data[0].visible = sdata.resid_visible;
-	  valueAxis2.renderer.ticks.template.strokeOpacity = 0;
-	}
-
-//var marker = legend2.markers.template.children.getIndex(0);
-//marker.setState(marker.defaultState);
-
-//errorBullet.hide();
-//valueAxis.precision = 0;
-	set_x_range();
-	set_y_range();
-	xy_rangein_reset();  // Clear manual range input fields
-
-// Fit log tables are ri-created by createFitLogTabs for each model
-	createFitLogTabs();  // The fit log tables
-  });
-
-
-// Cursor created once the plot is finished to get the ranges correct
-  chart.events.on('ready', function() {
-	createCursor();
-
-  });
-
-});  // end am4core.ready()
-
-
-//
-// -- Update residuals Nsigma shaded range and axis zoom
-
-function n_sigma_update(e) {
-  if ( ! resid.visible )
-	return;
-
-  n_sigma = +e.value;
-  range2.value = -n_sigma;
-  range2.endValue = n_sigma;
-  valueAxis2.minDefined = -n_sigma - 1;
-  valueAxis2.maxDefined = n_sigma + 1;
-
-// Also zoom the axis range
-  setTimeout(function() {
-	valueAxis2.zoomToValues(-n_sigma - 1, n_sigma + 1);
-  }, 200);
-}
-
-
-//
-// -- The shaded error range area (unused)
-/*
-function y_err_shade_toggle() {
-  y_err_shade = document.getElementById('y_err_shade-cb').checked;
-
-  if ( y_err_shade )
-	serr.show();
-  else
-	serr.hide();
-}
-*/
 
 
 //
 // -- Set initial X range
 
-function set_x_range(from_rangein) {
-// This is not set immediately and causes problems to the zoom below!
+function set_init_x_range() {
   var x_min, x_max;
-  if ( from_rangein !== undefined && from_rangein == true ) {
-	x_min = parseFloat(xyin_ranges.xmin.value !== '' ? xyin_ranges.xmin.value : vxAxis.min);
-	x_max = parseFloat(xyin_ranges.xmax.value !== '' ? xyin_ranges.xmax.value : vxAxis.max);
 
-	vxAxis.zoomToValues(x_min, x_max);
-  } else if ( aux.modinfo[c_imod].x_range ) {  // User defined X range
-console.log('Set x_range:', aux.modinfo[c_imod].x_range);
+  if ( aux.modinfo[c_imod].x_range ) {  // User defined X range
+console.log('set_init_x_range: Set x_range:', aux.modinfo[c_imod].x_range);
 	x_min = aux.modinfo[c_imod].x_range[0];
 	x_max = aux.modinfo[c_imod].x_range[1];
-	vxAxis.min = x_min;
-	vxAxis.max = x_max;
   } else {
 	x_min = aux.modinfo[c_imod].x_min;
 	x_max = aux.modinfo[c_imod].x_max;
-	vxAxis.min = x_min;
-	vxAxis.max = x_max;
+console.log('set_init_x_range: X range set to:', x_min, x_max);
   }
 
-// For some reason here we need a value higher than xAxis.max to force alignement
-//  vxAxis.zoomToValues(aux.modinfo[c_imod].x_min, aux.modinfo[c_imod].x_max + aux.modinfo[c_imod].x_step / 2);
+  x_range.min = x_min;
+  x_range.max = x_max;
+  log_label_ckeck('x');
 
-  x_range.lin.min = x_min;
-  x_range.lin.max = x_max;
-  (x_min > 1e-4) ? x_range.log.min = x_min : x_range.log.min = 1e-4;  // TODO
-  x_range.log.max = x_max;
+  inxy_ranges.xmin.value = x_min;
+  inxy_ranges.xmax.value = x_max;
 
-  if ( aux.modinfo[c_imod].x_log ) {  // User defined X log scale
+  if ( aux.modinfo[c_imod].x_log ) {  // User requested X log scale
 console.log('Set x_log:', aux.modinfo[c_imod].x_log);
 	document.getElementById('x_log-cb').checked = true;
-  }
-}
+	x_linlog_toggle();
+  } else
+	x_linlog_toggle(true);
+
+  vxAxis.setAll({'start': 0, 'end': 1, 'min': x_min, 'max': x_max})
+
+}  // end set_init_x_range
 
 
 //
-// -- Set initial Y range
+// -- Set initial Y data range
 
-function set_y_range() {
+function set_init_y_range() {
   var y_min, y_max;
 
+// Main Y axis range
   if ( aux.modinfo[c_imod].y_range ) {  // User defined Y range
-console.log('Set y_range:', aux.modinfo[c_imod].y_range);
+console.log('set_init_y_range: set y_range from aux:', aux.modinfo[c_imod].y_range);
 	y_min = aux.modinfo[c_imod].y_range[0];
 	y_max = aux.modinfo[c_imod].y_range[1];
   } else {
 	y_min = aux.modinfo[c_imod].y_min;
 	y_max = aux.modinfo[c_imod].y_max;
-
-// Then data, and then the +/- error, if exist
-	if ( aux.n_d > 0 ) {
-	  if ( aux.is_multimodel )
-		var data_folded = chart.data.slice(0, chart_data[0][0].folded_domain.axis[0].length);
-	  else
-		var data_folded = chart.data.slice(0, chart_data[0].folded_domain.axis[0].length);
-
-//var err_lo = chart.data.map(({ err_lo }) => err_lo),
-//err_up = chart.data.map(({ err_up }) => err_up);
-
-	  var err_lo = data_folded.map(({ err_lo }) => err_lo),
-	      err_up = data_folded.map(({ err_up }) => err_up);
-
-	  y_min = Math.min(y_min, Math.min(...(err_lo)));
-	  y_max = Math.max(y_max, Math.max(...(err_up)));
-	}
+console.log('set_init_y_range: Y range set to:', y_min, y_max);
   }
+  y_range.min = y_min;
+  y_range.max = y_max;
+  log_label_ckeck('y');
 
-console.log('Y range set to:', y_min, y_max);
-  y_range.lin.min = y_min;
-  y_range.lin.max = y_max;
-  (y_min > 1e-4) ? y_range.log.min = y_min : y_range.log.min = 1e-4;  // TODO
-  y_range.log.max = y_max;
-
-  if ( aux.modinfo[c_imod].y_log ) {  // User defined Y log scale
+  if ( aux.modinfo[c_imod].y_log ) {  // User requested Y log scale
 console.log('Set y_log:', aux.modinfo[c_imod].y_log);
 	document.getElementById('y_log-cb').checked = true;
+	y_linlog_toggle();
+  } else
+	y_linlog_toggle(true);
+
+  valueAxis.setAll({'start': 0, 'end': 1, 'min': y_min, 'max': y_max});
+
+// Residuals axis range
+  resyAxis.setAll({'start': 0, 'end': 1, 'min': -n_sigma - 1, 'max': n_sigma + 1});
+
+  if ( resid_plot ) {
+	inxy_ranges.ymin.value = (-n_sigma - 1).toPrecision(4);
+	inxy_ranges.ymax.value = (n_sigma + 1).toPrecision(4);
+  } else {
+	inxy_ranges.ymin.value = y_min.toPrecision(4);
+	inxy_ranges.ymax.value = y_max.toPrecision(4);
   }
 
-// Needed at start
-  valueAxis.min = y_range.lin.min;
-  valueAxis.max = y_range.lin.max;
-  setTimeout(function() {
-	y_linlog_toggle();
-  }, 300);
-}
+}  // end set_init_y_range
 
 
 //
-// -- Toggle Y data error plot (unused)
-/*
-function y_err_toggle() {
-  y_errplot = document.getElementById('y_err-cb').checked;
+// -- Toggle logarithmic X / Y label color
 
-  if ( y_errplot )
-	errorBullet.show();
-  else
-	errorBullet.hide();
+function log_label_ckeck(axis='x') {
+  var xl = document.getElementById('x_log-lab'),
+	yl = document.getElementById('y_log-lab');
 
-}
-*/
+  if ( axis.indexOf('x') >= 0 ) {
+	if ( x_range.min <= 0 )
+	  xl.style.color = 'var(--secondary)'; 
+	else
+	  xl.style.color = '';
+  } else if ( axis.indexOf('y') >= 0 ) {
+	if ( y_range.min <= 0 )
+	  yl.style.color = 'var(--secondary)'; 
+	else
+	  yl.style.color = '';
+  }
 
-
-// -- Track and display cursor X, Y position 
-
-function cursor_toggle() {
-  cur_track = document.getElementById('cursor-cb').checked;
-  curXY.text = '';
-
-  if ( cur_track )
-	cur_container.background.fillOpacity = 0.1;
-  else
-	cur_container.background.fillOpacity = 0;
-
-}
+}  // end log_label_ckeck
 
 
 //
 // -- Toggle linear / logarithmic X / Y scale
 
-function x_linlog_toggle() {
-  x_logscale = document.getElementById('x_log-cb').checked;
+function x_linlog_toggle(lin_reset=false) {
+  x_range.logscale = document.getElementById('x_log-cb').checked;
 
-  if ( x_logscale ) {   // From lin to log
-	vxAxis.logarithmic = true;
-	if ( vxAxis.min <= 0 )
-	  vxAxis.min = x_range.log.min;
-//vxAxis.max = x_range.log.max;
-	if ( x_range.log.max == x_range.lin.max )
-	  x_range.log.max *= 1.001;
-	setTimeout(function() {
-	  vxAxis.zoomToValues(x_range.log.min, x_range.log.max);
-	}, 200);
-
-  } else {  // From log to lin
-//vxAxis.min = x_range.lin.min;
-//vxAxis.max = x_range.lin.max;
-	vxAxis.logarithmic = false;
-	if ( x_range.log.max == x_range.lin.max )
-	  x_range.lin.max *= 1.001;
-	vxAxis.zoomToValues(x_range.lin.min, x_range.lin.max);
+  if ( x_range.logscale  && lin_reset ) {
+	document.getElementById('x_log-cb').checked = false;
+	vxAxis.set('logarithmic', false);
+	x_range.logscale = false;
+	return;
   }
 
-}
-
-
-function y_linlog_toggle() {
-  y_logscale = document.getElementById('y_log-cb').checked;
-  var c_ymax;
-
-  if ( y_logscale ) {  // From lin to log
-	valueAxis.min = y_range.log.min;
-	valueAxis.logarithmic = true;
-	//valueAxis.strictMinMax = true;
-	c_ymax = y_range.log.max;
-	if ( c_ymax == valueAxis.maxZoomed )
-	  c_ymax *= 1.001;
-	valueAxis.max = c_ymax;
-console.log('Y range reset to:', y_range.log.min, c_ymax);
-	setTimeout(function() {
-	  valueAxis.zoomToValues(y_range.log.min, c_ymax);
-	}, 200);
+// From lin to log
+  if ( x_range.logscale ) {
+	if ( x_range.min <= 0 ) {  // TODO
+	  x_linlog_toggle(true);
+	  return;
+        }
+	vxAxis.set('logarithmic', true);
   } else {  // From log to lin
-	valueAxis.min = y_range.lin.min;
-	valueAxis.logarithmic = false;
-	c_ymax = y_range.lin.max;
-	if ( c_ymax == valueAxis.maxZoomed )
-	  c_ymax *= 1.001;
-	valueAxis.max = c_ymax;
-	valueAxis.zoomToValues(y_range.lin.min, c_ymax);
+	vxAxis.set('logarithmic', false);
   }
-}
+
+  vxAxis.setAll({'min': x_range.min, 'max': x_range.max, 'start': 0, 'end': 1});
+console.log('x_linlog_toggle: X range reset to:', x_range.min, x_range.max);
+
+}  // end x_linlog_toggle
+
+
+// -- Toggle Y axis logarithmic scale; disabled for residuals plot
+
+function y_linlog_toggle(lin_reset=false) {
+  y_range.logscale = document.getElementById('y_log-cb').checked;
+
+  if ( y_range.logscale && (resyAxis.isVisible() || lin_reset) ) {
+	document.getElementById('y_log-cb').checked = false;
+	valueAxis.set('logarithmic', false);
+	y_range.logscale = false;
+	if ( lin_reset )
+	  return;
+  }
+  if ( resyAxis.isVisible() )
+	return;
+
+// From lin to log
+  if ( y_range.logscale ) {
+	if ( y_range.min <= 0 ) {  // TODO
+	  y_linlog_toggle(true);
+	  return;
+	}
+	valueAxis.set('logarithmic', true);
+  } else {  // From log to lin
+	valueAxis.set('logarithmic', false);
+  }
+
+  valueAxis.setAll({'min': y_range.min, 'max': y_range.max, 'start': 0, 'end': 1});
+console.log('y_linlog_toggle: Y range reset to:', y_range.min, y_range.max);
+
+}  // end y_linlog_toggle
 
 
 //
-// -- Set X and Y plot range to fixed ranges
+// -- Set X plot range to fixed range
 
-function xy_range_set() {
+function inx_range_set() {
 // Note: need to parse to Float. It also requires "0.nnn" and not ".nnn"
-  var x_size = vxAxis.max - vxAxis.min;
+  var x_size = vxAxis.get('max') - vxAxis.get('min');
   if ( x_size <= 0 )
 	x_size = aux.modinfo[c_imod].x_step;
 
-  var vx_min = parseFloat(xyin_ranges.xmin.value !== '' ? xyin_ranges.xmin.value : vxAxis.min);
-  var vx_max = parseFloat(xyin_ranges.xmax.value !== '' ? xyin_ranges.xmax.value : vxAxis.max);
+  var x_min = inxy_ranges.xmin.value !== '' ? parseFloat(inxy_ranges.xmin.value) : vxAxis.get('min');
+  var x_max = inxy_ranges.xmax.value !== '' ? parseFloat(inxy_ranges.xmax.value) : vxAxis.get('max');
 
-  var y_min = xyin_ranges.ymin.value !== '' ? parseFloat(xyin_ranges.ymin.value) : valueAxis.min;
-  var y_max = xyin_ranges.ymax.value !== '' ? parseFloat(xyin_ranges.ymax.value) : valueAxis.max;
+// Order check
+  if ( x_min > x_max ) {
+	var tmp = x_max;
+	x_max = x_min;
+	x_min = tmp;
+  } else if ( x_min == x_max )
+	x_max = x_min + aux.modinfo[c_imod].x_step; 
 
-// Some checks
-  if ( vx_min > vx_max ) {
-	var tmp = vx_max;
-	vx_max = vx_min;
-	vx_min = tmp;
-  } else if ( vx_min == vx_max )
-	vx_max = vx_min + aux.modinfo[c_imod].x_step; 
+  x_range.min = +x_min.toPrecision(4);
+  x_range.max = +x_max.toPrecision(4);
+  log_label_ckeck('x');
 
+  if ( x_range.logscale && x_range.min <= 0 )
+	return;
+ 
+  vxAxis.setAll({'min': x_min, 'max': x_max, 'start': 0, 'end': 1});
+console.log('inx_range_set: requested X range:', x_min, x_max);
+
+}  // end inx_range_set
+
+
+//
+// -- Set the Y plot range to fixed range
+
+function iny_range_set() {
+// Note: need to parse to Float. It also requires "0.nnn" and not ".nnn"
+
+  var y_min, y_max;
+  if ( resyAxis.isVisible() ) {
+	y_min = inxy_ranges.ymin.value !== '' ? parseFloat(inxy_ranges.ymin.value) : resyAxis.get('min');
+	y_max = inxy_ranges.ymax.value !== '' ? parseFloat(inxy_ranges.ymax.value) : resyAxis.get('max');
+  } else {
+	y_min = inxy_ranges.ymin.value !== '' ? parseFloat(inxy_ranges.ymin.value) : valueAxis.get('min');
+	y_max = inxy_ranges.ymax.value !== '' ? parseFloat(inxy_ranges.ymax.value) : valueAxis.get('max');
+  }
+
+// Order check
   if ( y_min > y_max ) {
         var tmp = y_max;
         y_max = y_min;
@@ -2698,51 +2986,21 @@ function xy_range_set() {
   } else if ( y_min == y_max )
         return false;
 
-/* Do not touch valueAxis min/max
-  if ( y_min !== valueAxis.min || y_max !== valueAxis.max ) {
-	valueAxis.strictMinMax = true;
-	if ( y_min !== valueAxis.min )
-	  valueAxis.min = y_min;
+  y_range.min = +y_min.toPrecision(4);
+  y_range.max = +y_max.toPrecision(4);
+  log_label_ckeck('y');
 
-	if ( y_max !== valueAxis.max )
-	  valueAxis.max = y_max;
+  if ( y_range.logscale && y_range.min <= 0 )
+	return;
+ 
+  if ( resyAxis.isVisible() ) {
+	resyAxis.setAll({'min': y_min, 'max': y_max, 'start': 0, 'end': 1});
+  } else {
+	valueAxis.setAll({'min': y_min, 'max': y_max, 'start': 0, 'end': 1});
   }
-*/
+console.log('iny_range_set: requested Y range:', y_min, y_max);
 
-  if ( vx_min != vxAxis.min || vx_max != vxAxis.max )
-	vxAxis.zoomToValues(vx_min, vx_max);
-
-// A delay is necessary to have the Y zoom
-  setTimeout(function() {
-console.log('Zoom to Y values:', y_min, y_max);
-	valueAxis.zoomToValues(y_min, y_max);
-  }, 300);
-
-}
-
-
-// -- Reset X and Y plot range to initial values
-
-function xy_range_reset() {
-  set_x_range();
-  set_y_range();
-  xy_rangein_reset();  // Clear manual range input fields
-console.log('reset X, Y range:', vxAxis.min, vxAxis.max, valueAxis.min, valueAxis.max);
-  vxAxis.zoomToValues(vxAxis.min, vxAxis.max);
-  valueAxis.zoomToValues(valueAxis.min, valueAxis.max);
-
-  curXY.text = '';
-}
-
-
-// -- Clear range input fields
-
-function xy_rangein_reset() {
-  xyin_ranges.xmin.value = '';
-  xyin_ranges.xmax.value = '';
-  xyin_ranges.ymin.value = '';
-  xyin_ranges.ymax.value = '';
-}
+}  // end iny_range_set
 
 
 //
@@ -2763,18 +3021,15 @@ function gfit_table_toggle(id) {
 	sdiv.childNodes[i].childNodes[1].className = 'div-hide';
     } else {
 	tdiv.childNodes[i].className = 'out_table rep_div-show';
-	sdiv.scrollIntoView();
+	//sdiv.scrollIntoView();
 	sdiv.childNodes[i].className = 'toggle_table-hdr div-selected';
 	sdiv.childNodes[i].childNodes[0].className = 'div-hide';
 	sdiv.childNodes[i].childNodes[1].className = 'div-show-inline';
-	//e.className = 'out_table rep_div-show';
-	//document.getElementById(id +'_sect').className = 'toggle_table-hdr div-selected';
-	//document.getElementById(id +'_angle_down').className = 'div-hide';
-	//document.getElementById(id +'_angle_up').className = 'div-show-inline';
     }
     i++;
   }
-}
+
+}  // end gfit_table_toggle
 
 
 //
@@ -2790,7 +3045,8 @@ function saveJsonObj(filename, obj) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-}
+
+}  // end saveJsonObj
 
 
 //
@@ -2928,7 +3184,6 @@ var tableFromJson = function(obj, type, tab_id) {
   }
 
 
-
   if ( tab_id !== undefined )
 	contentdiv.setAttribute('id', tab_id +'-div');
 
@@ -2937,19 +3192,19 @@ var tableFromJson = function(obj, type, tab_id) {
   else
 	contentdiv.setAttribute('class', 'out_table rep_div-show');
 
-
 // Selector label and table returned separately
   return {"selector": tlab, "table": contentdiv};
-}
+
+}  // end tableFromJson
 
 
 //
-// -- The fit log tables sections
+// -- The fit log tables section
 
 function createFitLogTabs() {
   var divSelectData = document.getElementById('fitlog_selector');
   var divShowData = document.getElementById('fitlog_tables');
-  var divFitRes = document.getElementById('fitres_div');
+  var divFitRes = document.getElementById('fitres-div');
   var tabdiv, p;
 
   divSelectData.innerHTML = '';
@@ -2975,9 +3230,6 @@ function createFitLogTabs() {
   if ( n_extratab !== 0 ) {
 console.log('There are '+ n_extratab +' extra tables.');
 
-//var divShowExtra = document.createElement('div');
-//divSelectExtra.style.borderLeft = '3px solid #069';
-
     var extratabs = Object.keys(tab_extra[c_imod]);
     for (var i = 0; i < n_extratab; i++) {
 	tabdiv = tableFromJson(tab_extra[c_imod][extratabs[i]], 2, i);
@@ -2997,12 +3249,17 @@ console.log('There are '+ n_extratab +' extra tables.');
 	divFitRes.appendChild(tabdiv.table);
   }
 
-}
+}  // end createFitLogTabs
 </script>
 
-</div>
+</div>  <!-- interface -->
 
-<div class="trailer"></div>
+
+<div class="trailer">
+  A viewer for <a href="https://github.com/gcalderone/GModelFit.jl" style="color: #fff; font-weight: bold;" target="_new">GModelFit</a> 1D results
+  &minus; <a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a>
+        &amp; <a style="color: #ccc;" href="mailto:giorgio.calderone@inaf.it">G. Calderone</a>, 2025
+</div>
 
 </body>
 </html>
