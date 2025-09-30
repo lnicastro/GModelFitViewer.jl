@@ -1701,8 +1701,8 @@ var mydata2chart = function(isel) {
     for (var i = 0; i < aux.modinfo[isel].nx_mea; i++) {  // folded domain
 	data = {};
 	binw = mea.domain.axis[0][i+1] - mea.domain.axis[0][i];
-	data['xc'] = Math.round(mea.domain.axis[0][i] * fscale) / fscale;
-	data['x'] = Math.round((mea.domain.axis[0][i] - binw/2) * fscale) / fscale;
+	data['xc'] = (mea.domain.axis[0][i] * fscale) / fscale;
+	data['x'] = ((mea.domain.axis[0][i] - binw/2) * fscale) / fscale;
 	data['y'] = mea.values[0][i] / aux.modinfo[isel].y_scale;
 	data['error'] = mea.values[1][i] / aux.modinfo[isel].y_scale;
 	data['model'] = cdata.folded[i] / aux.modinfo[isel].y_scale;
@@ -1767,7 +1767,8 @@ function createMainReducer(isel) {
   i_chmodel = chart.series.length - 1;
 console.log('i_chmodel', i_chmodel);
 
-  series.legendLabelText = 'Model [#fff]______[/]';
+  //series.legendLabelText = 'Model [#fff]______[/]';
+  series.legendLabelText = 'Model';
   series.data.setAll(my_chartdata.dat);
 
 // No data, just the model: use series also for the X axis scrolling
