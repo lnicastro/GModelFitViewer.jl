@@ -1032,7 +1032,7 @@ hr.style-two {
 <script src="test_data.js"></script>
 
 <script type="text/javascript">
-  var _version = '0.3.2', _date = '2025-09-11';
+  var _version = '0.3.2', _date = '2025-09-30';
   document.querySelector('meta[name="version"]').setAttribute("content", _version);
   document.querySelector('meta[name="date"]').setAttribute("content", _date);
   document.getElementById('version-div').innerHTML = 'v'+ _version;
@@ -1067,7 +1067,6 @@ hr.style-two {
 	resrange,	// Used to highlight +/- N sigma residuals
 	range0DataItem,
 	resrangeDataItem,
-	tab_extra = [],	// Additional GModelFit provided summary tables
 
 	p_title = document.getElementById('p_title'),
 	inxy_ranges = document.getElementById('range-selector-div').getElementsByTagName('input');
@@ -1466,18 +1465,6 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
   if ( i_fit >=0 ) {
 	aux.ndata_fit = chart_data[i_fit].ndata;
 	aux.nfree_fit = chart_data[i_fit].nfree; 
-  }
-
-  if ( aux.is_multimodel ) {
-    if ( chart_data[i_mod][0].extra !== undefined )
-	tab_extra.push(chart_data[i_mod][0].extra[0]);
-     else
-	tab_extra.push({});
-  } else {
-    if ( chart_data[i_mod].extra !== undefined )
-	tab_extra.push(chart_data[i_mod].extra[0]);
-    else
-	tab_extra.push({});
   }
 
   aux.modinfo = [];
@@ -3204,6 +3191,8 @@ var tableFromJson = function(obj, type, tab_id) {
 // -- The fit log tables section
 
 function createFitLogTabs() {
+  var tab_extra = [];	// Additional GModelFit provided summary tables
+  var n_extratab = 0;
   var divSelectData = document.getElementById('fitlog_selector');
   var divShowData = document.getElementById('fitlog_tables');
   var divFitRes = document.getElementById('fitres-div');
@@ -3213,10 +3202,20 @@ function createFitLogTabs() {
   divShowData.innerHTML = '';
   divFitRes.innerHTML = '';
 
-  if ( aux.is_multimodel )
+  if ( aux.is_multimodel ) {
 	p = chart_data[i_mod][c_imod];
-  else
+	if ( chart_data[0][c_imod].extra !== undefined )
+		tab_extra.push(chart_data[0][c_imod].extra[0]);
+	else
+		tab_extra.push({});
+  } else {
 	p = chart_data[i_mod];
+	if ( chart_data[c_imod].extra !== undefined )
+		tab_extra.push(chart_data[c_imod].extra[0]);
+	else
+		tab_extra.push({});
+  }
+
   tabdiv = tableFromJson(p, 0, 'comp_table');
 
   divSelectData.appendChild(tabdiv.selector);  // Add the components + evaluations table to the container
@@ -3225,16 +3224,13 @@ function createFitLogTabs() {
 
 // Extra tables in a separate div, if they exist for the current evaluations.
 
-  var n_extratab = 0;
-  if ( tab_extra[c_imod] !== undefined )
-	n_extratab = Object.keys(tab_extra[c_imod]).length;
-
-  if ( n_extratab !== 0 ) {
+  if ( tab_extra[0] !== undefined ) {
+	n_extratab = Object.keys(tab_extra[0]).length;
 console.log('There are '+ n_extratab +' extra tables.');
 
-    var extratabs = Object.keys(tab_extra[c_imod]);
+    var extratabs = Object.keys(tab_extra[0]);
     for (var i = 0; i < n_extratab; i++) {
-	tabdiv = tableFromJson(tab_extra[c_imod][extratabs[i]], 2, i);
+	tabdiv = tableFromJson(tab_extra[0][extratabs[i]], 2, i);
 	if ( i == 0 )
 	  tabdiv.selector.style.borderLeft = '3px solid #ccc';
 	divSelectData.appendChild(tabdiv.selector);  // Add the extra table to the container
