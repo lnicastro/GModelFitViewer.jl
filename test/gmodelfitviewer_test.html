@@ -1032,7 +1032,7 @@ hr.style-two {
 <script src="test_data.js"></script>
 
 <script type="text/javascript">
-  var _version = '0.3.2', _date = '2025-09-30';
+  var _version = '0.3.2', _date = '2025-10-01';
   document.querySelector('meta[name="version"]').setAttribute("content", _version);
   document.querySelector('meta[name="date"]').setAttribute("content", _date);
   document.getElementById('version-div').innerHTML = 'v'+ _version;
@@ -1701,7 +1701,7 @@ var mydata2chart = function(isel) {
     for (var i = 0; i < aux.modinfo[isel].nx_mea; i++) {  // folded domain
 	data = {};
 	binw = mea.domain.axis[0][i+1] - mea.domain.axis[0][i];
-	data['xc'] = (mea.domain.axis[0][i] * fscale) / fscale;
+	data['xc'] = mea.domain.axis[0][i];
 	data['x'] = ((mea.domain.axis[0][i] - binw/2) * fscale) / fscale;
 	data['y'] = mea.values[0][i] / aux.modinfo[isel].y_scale;
 	data['error'] = mea.values[1][i] / aux.modinfo[isel].y_scale;
@@ -1723,7 +1723,7 @@ var mydata2chart = function(isel) {
 
   for (var i = 0; i < x.length; i++) {
 	comps = {};
-	comps['comp_x'] = Math.round(x[i] * fscale) / fscale;
+	comps['comp_x'] = x[i];
 
 	for (var j = 0; j < aux.modinfo[isel].n_comps; j++)  // Components
 	  comps[cnames[j]] = cdata.buffers[cnames[j]][i] / aux.modinfo[isel].y_scale;
@@ -1754,7 +1754,7 @@ function createMainReducer(isel) {
 	name: 'Model',
 	xAxis: vxAxis,
 	yAxis: valueAxis,
-	valueXField: "x",
+	valueXField: "xc",
 	valueYField: "model",
 	stroke: mcolor.hex,
 	fill: mcolor.hex
