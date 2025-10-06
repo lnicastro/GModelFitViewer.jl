@@ -18,16 +18,9 @@ data = GModelFit.mock(Measures, model, dom)
 bestfit, stats = fit(model, data)
 
 
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test01.json", bestfit)
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test02.json", bestfit, stats)
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test03.json", rebin=2, bestfit)
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test04.json", rebin=2, bestfit, stats, data,
+GModelFitViewer.serialize_json(filename="gmodelfitviewer_test04.json", bestfit, stats, data,
                           title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
                                xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test05.json", bestfit, keep="l1")
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test06.json", bestfit, skip="l1")
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test07.json", bestfit, keep=r"l.*")
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test08.json", bestfit, skip=r"l.*")
 
 
 model1 = Model(GModelFit.Gaussian(1, 0., 1.))
@@ -44,8 +37,8 @@ data = GModelFit.mock(Measures, multi, [dom, dom])
 bestfit, stats = fit(multi, data)
 
 
-meta1 = GModelFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
-meta2 = GModelFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], rebin=2, xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
+meta1 = GModelFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
+meta2 = GModelFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 GModelFitViewer.serialize_json(filename="gmodelfitviewer_test05.json", bestfit, xlab="Abscissa", ylab="Ordinate", xr=[-4, 4])
 GModelFitViewer.serialize_json(filename="gmodelfitviewer_test06.json", bestfit, stats, meta=[meta1, meta2])
 GModelFitViewer.serialize_json(filename="gmodelfitviewer_test07.json", bestfit, stats, data, meta=[meta1, meta2])
