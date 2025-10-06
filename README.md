@@ -9,7 +9,7 @@ The most relevant functions are:
 
 Both functions share a syntax similar to the [`GModelFit.serialize()`](https://gcalderone.github.io/GModelFit.jl/api/#GModelFit.serialize) function.  The accepted arguments are:
 - a `ModelSnapshot` or a `Vector{ModelSnapshot}` object;
-- a `FitStats` object;
+- a `FitSummary` object;
 - a `Measures` or a `Vector{Measures}` object;
 - (optionally) a path and name for the output file via the `filename=` keyword. If the filename is not provided a standard one will be used and stored in the `tempdir()` directory.
 
@@ -23,13 +23,8 @@ Besides the above arguments, a number of optional keywords may be provided to cu
 - `yscale`: numerical global scale factor for the Y axis;
 - `xunit`: units for the X axis (as a string);
 - `yunit`: units for the Y axis (as a string);
-- `rebin`: an integer specifying the rebin factor along the X axis (X values are averaged, Y values are averaged using uncertainties as weights);
-- `keep`: a `String`, a `Regex`, or a `Vector{String}`, indicating which components should be kept in the final file;
-- `skip`: a `String`, a `Regex`, or a `Vector{String}`, indicating which components should be ignored when writing the final file;
 
-The usage of `rebin`, `keep` and `skip` allows to produce files which are significantly smaller in size.
-
-**IMPORTANT NOTE**: the keywords name may be abbreviated as long as the name in unambiguous. E.g., you may use `xr` in place of `xrange`, `re` in place of `rebin`, etc.
+**IMPORTANT NOTE**: the keywords name may be abbreviated as long as the name in unambiguous. E.g., you may use `xr` in place of `xrange`.
 
 
 
@@ -44,21 +39,21 @@ model = Model(:bkg => GModelFit.OffsetSlope(1, 1, 0.1),
               :main => SumReducer(:bkg, :l1, :l2))
 dom = Domain(0:0.01:5)
 data = GModelFit.mock(Measures, model, dom)
-best, fitstats = fit(model, data)
+best, fsumm = fit(model, data)
 ```
 
 Generate and display an HTML page vith:
 ```julia
-viewer(best, fitstats, data);
+viewer(best, fsumm, data);
 ```
 
 You may customize the plot using the above mentioned keywords, e.g.
 ```julia
-viewer(best, fitstats, data, 
-       title="My title", xr=[0.5, 4.5], rebin=2, keep=r"l.")
+viewer(best, fsumm, data,
+       title="My title", xr=[0.5, 4.5])
 ```
 
 To save the HTML page in `myfile.html` (without opening it in the web browser):
 ```julia
-GModelFitViewer.serialize_html(best, fitstats, data, filename="myfile.html")
+GModelFitViewer.serialize_html(best, fsumm, data, filename="myfile.html")
 ```

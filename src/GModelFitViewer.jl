@@ -17,9 +17,6 @@ mutable struct Meta
     yunit::String
     xlog::Bool
     ylog::Bool
-    rebin::Int
-    keep
-    skip
 end
 
 
@@ -34,10 +31,7 @@ function Meta(; kwargs...)
                 xunit=AbstractString,
                 yunit=AbstractString,
                 xlog=Bool,
-                ylog=Bool,
-                rebin=Int,
-                keep=Any,
-                skip=Any)
+                ylog=Bool)
     kw = canonicalize(template; kwargs...)
 
     return Meta((ismissing(kw.title)   ?  ""       :  kw.title),
@@ -50,54 +44,7 @@ function Meta(; kwargs...)
                 (ismissing(kw.xunit)   ?  ""       :  kw.xunit),
                 (ismissing(kw.yunit)   ?  ""       :  kw.yunit),
                 (ismissing(kw.xlog)    ?  false    :  kw.xlog),
-                (ismissing(kw.ylog)    ?  false    :  kw.ylog),
-                (ismissing(kw.rebin)   ?  1        :  kw.rebin),
-                (ismissing(kw.keep)    ?  nothing  :  kw.keep),
-                (ismissing(kw.skip)    ?  nothing  :  kw.skip))
-end
-
-
-rebin(vv, nn) = rebin(vv, ones(eltype(vv), length(vv)), nn)[1]
-function rebin(v, e, nn::Int)
-    @assert length(v) == length(e)
-    if length(v) == 1
-        return (v, e)
-    end
-    @assert 1 <= nn <= length(v)
-    (nn == 1)  &&  (return (v, e))
-    nin = length(v)
-    nout = div(nin, nn)
-    val = zeros(eltype(v), nout)
-    unc = zeros(eltype(e), nout)
-    w = 1 ./ (e.^2)
-    for i in 1:nout-1
-        r = (i-1)*nn+1:i*nn
-        val[i] = sum(w[r] .* v[r]) ./ sum(w[r])
-        unc[i] = sqrt(1 / sum(w[r]))
-    end
-    r = (nout-1)*nn+1:nin
-    val[nout] = sum(w[r] .* v[r]) ./ sum(w[r])
-    unc[nout] = sqrt(1 / sum(w[r]))
-    return (val, unc)
-end
-
-
-tobekept(name::String, bool::Bool) = bool
-tobekept(name::String, pattern::String) = (name == pattern)
-tobekept(name::String, pattern::Regex) = !isnothing(match(pattern, name))
-tobekept(name::String, patterns::Vector) = any([tobekept(name, p) for p in patterns])
-
-function tobekept(name::String, meta::Meta)
-    keep = false
-    if !isnothing(meta.keep)
-        keep = tobekept(name, meta.keep)
-    else
-        keep = true
-    end
-    if keep  &&  !isnothing(meta.skip)
-        keep = !tobekept(name, meta.skip)
-    end
-    return keep
+                (ismissing(kw.ylog)    ?  false    :  kw.ylog))
 end
 
 
@@ -105,30 +52,10 @@ function apply_meta!(dict::AbstractDict, meta::Meta)
     if haskey(dict, "_structtype")
         if dict["_structtype"] == "GModelFit.ModelSnapshot"
             @assert dict["domain"]["_structtype"] == "GModelFit.Domain"
-            vv = rebin(dict["domain"]["axis"][1], meta.rebin)
-            empty!(dict["domain"]["axis"])
-            push!( dict["domain"]["axis"], vv)
             for (kk, vv) in dict["buffers"]
-                if tobekept(kk, meta)  ||  (("_TS_" * kk) == dict["maincomp"])
-                    dict["buffers"][kk] = rebin(vv, meta.rebin)
-                else
-                    delete!(dict["buffers"], kk)
-                end
+                dict["buffers"][kk] = vv
             end
-            meta.keep = nothing
-            meta.skip = nothing
             dict["meta"] = GModelFit._serialize_struct(meta)
-            haskey(dict["meta"], "keep")  &&  delete!(dict["meta"], "keep")
-            haskey(dict["meta"], "skip")  &&  delete!(dict["meta"], "skip")
-        end
-        if dict["_structtype"] == "Measures{1}"
-            vv = rebin(dict["domain"]["axis"][1], meta.rebin)
-            empty!(dict["domain"]["axis"])
-            push!( dict["domain"]["axis"], vv)
-            vv, ee = rebin(dict["values"][1], dict["values"][2], meta.rebin)
-            empty!(dict["values"])
-            push!( dict["values"], vv)
-            push!( dict["values"], ee)
         end
     end
 end
@@ -139,6 +66,8 @@ end
 # to apply meta information provided via keywords to each dict.
 struct ViewerData
     data::Vector
+
+    ViewerData(data::Vector) = new(data)
 
     function ViewerData(args...; meta=nothing, kws...)
         @assert any(isa.(args, GModelFit.ModelSnapshot)  .|  isa.(args, Vector{GModelFit.ModelSnapshot}))
@@ -223,14 +152,9 @@ function viewer(args...; kws...)
     DefaultApplication.open(filename)
 end
 
-function viewer(d::ViewerData)
+function viewer(file_json_input::String)
+    d = ViewerData(JSON.parsefile(file_json_input))
     filename = serialize_html(d)
-    DefaultApplication.open(filename)
-end
-
-function viewer(file_json_input::String; kws...)
-    vv = GModelFit.deserialize(file_json_input)
-    filename = serialize_html(vv...; kws...)
     DefaultApplication.open(filename)
 end
 
