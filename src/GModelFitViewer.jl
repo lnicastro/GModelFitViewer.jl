@@ -106,23 +106,6 @@ struct ViewerData
 end
 
 
-# Serialize to JSON
-default_filename_json() = joinpath(tempdir(), "gmodelfitviewer.json")
-serialize_json(args...;
-               filename=default_filename_json(),
-               kws...) =
-                   serialize_json(ViewerData(args...; kws...),
-                                  filename=filename)
-
-function serialize_json(data::ViewerData;
-                        filename=default_filename_json())
-    io = open(filename, "w")
-    JSON.print(io, data.data)
-    close(io)
-    return filename
-end
-
-
 # Serialize to HTML
 default_filename_html() = joinpath(tempdir(), "gmodelfitviewer.html")
 serialize_html(args...;
@@ -137,7 +120,7 @@ function serialize_html(data::ViewerData;
     template = joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html")
     input = open(template)
     write(io, readuntil(input, "JSON_DATA"))
-    JSON.print(io, data.data)
+    write(io, JSON.json(data.data, allownan=true))
     while !eof(input)
         write(io, readavailable(input))
     end
@@ -149,12 +132,6 @@ end
 # Viewer
 function viewer(args...; kws...)
     filename = serialize_html(args...; kws...)
-    DefaultApplication.open(filename)
-end
-
-function viewer(file_json_input::String)
-    d = ViewerData(JSON.parsefile(file_json_input))
-    filename = serialize_html(d)
     DefaultApplication.open(filename)
 end
 
