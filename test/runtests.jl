@@ -18,8 +18,8 @@ data = GModelFit.mock(Measures, model, dom)
 bestfit, stats = fit(model, data)
 
 
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test04.json", bestfit, stats, data,
-                          title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
+GModelFitViewer.serialize_html(filename="gmodelfitviewer_test04.html", bestfit, stats, data,
+                               title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
                                xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 
 
@@ -39,6 +39,6 @@ bestfit, stats = fit(multi, data)
 
 meta1 = GModelFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 meta2 = GModelFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test05.json", bestfit, xlab="Abscissa", ylab="Ordinate", xr=[-4, 4])
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test06.json", bestfit, stats, meta=[meta1, meta2])
-GModelFitViewer.serialize_json(filename="gmodelfitviewer_test07.json", bestfit, stats, data, meta=[meta1, meta2])
+GModelFitViewer.serialize_html(filename="gmodelfitviewer_test05.html", bestfit, xlab="Abscissa", ylab="Ordinate", xr=[-4, 4])
+GModelFitViewer.serialize_html(filename="gmodelfitviewer_test06.html", bestfit, stats, meta=[meta1, meta2])
+GModelFitViewer.serialize_html(filename="gmodelfitviewer_test07.html", bestfit, stats, data, meta=[meta1, meta2])

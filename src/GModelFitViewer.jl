@@ -109,13 +109,13 @@ end
 # Serialize to HTML
 default_filename_html() = joinpath(tempdir(), "gmodelfitviewer.html")
 serialize_html(args...;
-               filename=default_filename_html(),
+               filename=default_filename_html(), json=false,
                kws...) =
                    serialize_html(ViewerData(args...; kws...),
-                                  filename=filename)
+                                  filename=filename, json=json)
 
 function serialize_html(data::ViewerData;
-                        filename=default_filename_html())
+                        filename=default_filename_html(), json=false)
     io = open(filename, "w")
     template = joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html")
     input = open(template)
@@ -125,6 +125,13 @@ function serialize_html(data::ViewerData;
         write(io, readavailable(input))
     end
     close(io)
+    close(input)
+
+    if json
+        io = open(joinpath(tempdir(), "gmodelfitviewer.json"), "w")
+        write(io, JSON.json(data.data, allownan=true))
+        close(io)
+    end
     return filename
 end
 
