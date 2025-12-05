@@ -3147,7 +3147,7 @@ var tableFromJson = function(obj, type, tab_id) {
 
 	for (var i = 0; i < col.length; i++) {
 	  var th = document.createElement('th');
-	  th.innerHTML = col[i];
+	  th.innerHTML = comp.fields[col[i]].meta.desc
 	  tr.appendChild(th);
 	}
 
