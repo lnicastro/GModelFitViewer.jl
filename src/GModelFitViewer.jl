@@ -48,19 +48,6 @@ function Meta(; kwargs...)
 end
 
 
-function apply_meta!(dict::AbstractDict, meta::Meta)
-    if haskey(dict, "_structtype")
-        if dict["_structtype"] == "GModelFit.ModelSnapshot"
-            @assert dict["domain"]["_structtype"] == "GModelFit.Domain"
-            for (kk, vv) in dict["buffers"]
-                dict["buffers"][kk] = vv
-            end
-            dict["meta"] = GModelFit._serialize_struct(meta)
-        end
-    end
-end
-
-
 # The following structure contains vector(s) of dicts as a result of
 # serializarion with GModelFit._serialize().  Its constructor allows
 # to apply meta information provided via keywords to each dict.
@@ -90,14 +77,14 @@ struct ViewerData
             if isa(out[i], Vector)
                 for j in 1:length(out[i])
                     if isa(meta, Vector)
-                        apply_meta!(out[i][j], meta[j])
+                        out[i][j]["meta"] = GModelFit._serialize_struct(meta[j])
                     else
-                        apply_meta!(out[i][j], meta)
+                        out[i][j]["meta"] = GModelFit._serialize_struct(meta)
                     end
                 end
             else
                 if !isa(meta, Vector)
-                    apply_meta!(out[i], meta)
+                    out[i]["meta"] = GModelFit._serialize_struct(meta)
                 end
             end
         end

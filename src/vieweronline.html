@@ -1497,7 +1497,7 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 	  mea = chart_data[i_mea];
     }
 
-    cnames = Object.keys(cdata.buffers);
+    cnames = Object.keys(cdata.comps);
     aux.maincomp.push(cdata.maincomp.substring(4));  // maincomp ~= _TS_main
     //aux.maincomp.push('folded');
 
@@ -1560,8 +1560,8 @@ console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
 	y_min = Math.min(y_min, Math.min(...mea.values[0]));
 	y_max = Math.max(y_max, Math.max(...mea.values[0]));
 	for (var j = 0; j < cnames.length; j++) {
-	  y_min = Math.min(y_min, Math.min(...(cdata.buffers[cnames[j]])));
-	  y_max = Math.max(y_max, Math.max(...(cdata.buffers[cnames[j]])));
+	  y_min = Math.min(y_min, Math.min(...(cdata.comps[cnames[j]].buffer)));
+	  y_max = Math.max(y_max, Math.max(...(cdata.comps[cnames[j]].buffer)));
 console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
 	}
 	var e_max = 3*Math.min(...mea.values[1]);  // TODO
@@ -1724,7 +1724,7 @@ var mydata2chart = function(isel) {
 	comps['comp_x'] = x[i];
 
 	for (var j = 0; j < aux.modinfo[isel].n_comps; j++)  // Components
-	  comps[cnames[j]] = cdata.buffers[cnames[j]][i] / aux.modinfo[isel].y_scale;
+	  comps[cnames[j]] = cdata.comps[cnames[j]].buffer[i] / aux.modinfo[isel].y_scale;
 
 	mydata.comp.push(comps);
   }
