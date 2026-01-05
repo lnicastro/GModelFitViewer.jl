@@ -1,7 +1,7 @@
 module GModelFitViewer
 
 using JSON
-using DefaultApplication, StructC14N, GModelFit
+using DefaultApplication, StructC14N, GModelFit, TypedJSON
 
 export viewer
 
@@ -95,34 +95,50 @@ end
 
 # Serialize to HTML
 default_filename_html() = joinpath(tempdir(), "gmodelfitviewer.html")
-serialize_html(args...;
-               filename=default_filename_html(), json=false,
-               kws...) =
-                   serialize_html(ViewerData(args...; kws...),
-                                  filename=filename, json=json)
 
-function serialize_html(data::ViewerData;
-                        filename=default_filename_html(), json=false)
-    io = open(filename, "w")
-    template = joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html")
-    input = open(template)
-    write(io, readuntil(input, "JSON_DATA"))
-    write(io, JSON.json(data.data, allownan=true))
-    while !eof(input)
-        write(io, readavailable(input))
-    end
-    close(io)
-    close(input)
+function serialize_html(bestfit::GModelFit.ModelSnapshot,
+                        fsumm::GModelFit.Solvers.FitSummary,
+                        data::GModelFit.Measures{1};
+                        filename=default_filename_html(),
+                        kws...)
+    ll = TypedJSON.lower([[bestfit], [fsumm], [data]])
+    
+    io = IOBuffer()
+    ctx = IOContext(io, :color => true)
+    show(ctx, bestfit)
+    ll.value[1].value[1].dict[:show] = TypedJSON.JSONString(String(take!(io)))
+    ll.value[1].value[1].dict[:meta] = TypedJSON.lower(Meta(; kws...))
 
-    if json
-        io = open(joinpath(tempdir(), "gmodelfitviewer.json"), "w")
-        write(io, JSON.json(data.data, allownan=true))
+    io = IOBuffer()
+    ctx = IOContext(io, :color => true)
+    show(ctx, fsumm)
+    ll.value[2].value[1].dict[:show] = TypedJSON.JSONString(String(take!(io)))
+
+    if true # TODO
+        io = open("/tmp/gmodelfitviewer.json", "w")
+        TypedJSON.serialize(io, ll)
         close(io)
     end
+
+    input_html = open(joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html"))
+    input_js   = open(joinpath(dirname(pathof(@__MODULE__)), "vieweronline.js"))
+    output     = open(filename, "w")
+    write(output, readuntil(input_html, "JSON_DATA"))
+    TypedJSON.serialize(output, ll)
+    write(output, readuntil(input_html, "JS_CODE"))
+    while !eof(input_js)
+        write(output, readavailable(input_js))
+    end
+    while !eof(input_html)
+        write(output, readavailable(input_html))
+    end
+    close(output)
+    close(input_html)
+    close(input_js)
+
     return filename
 end
-
-
+    
 # Viewer
 function viewer(args...; kws...)
     filename = serialize_html(args...; kws...)

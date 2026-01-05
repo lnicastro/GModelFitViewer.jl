@@ -39,21 +39,21 @@ model = Model(:bkg => GModelFit.OffsetSlope(1, 1, 0.1),
               :main => SumReducer(:bkg, :l1, :l2))
 dom = Domain(0:0.01:5)
 data = GModelFit.mock(Measures, model, dom)
-best, fsumm = fit(model, data)
+bestfit, fsumm = fit(model, data)
 ```
 
 Generate and display an HTML page vith:
 ```julia
-viewer(best, fsumm, data);
+viewer(bestfit, fsumm, data);
 ```
 
 You may customize the plot using the above mentioned keywords, e.g.
 ```julia
-viewer(best, fsumm, data,
+viewer(bestfit, fsumm, data,
        title="My title", xr=[0.5, 4.5])
 ```
 
 To save the HTML page in `myfile.html` (without opening it in the web browser):
 ```julia
-GModelFitViewer.serialize_html(best, fsumm, data, filename="myfile.html")
+GModelFitViewer.serialize_html(bestfit, fsumm, data, filename="myfile.html")
 ```
