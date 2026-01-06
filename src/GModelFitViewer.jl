@@ -101,7 +101,7 @@ function serialize_html(bestfit::GModelFit.ModelSnapshot,
                         data::GModelFit.Measures{1};
                         filename=default_filename_html(),
                         kws...)
-    ll = TypedJSON.lower([[bestfit], [fsumm], [data]])
+    ll = TypedJSON.lower([[bestfit], fsumm, [data]])
     
     io = IOBuffer()
     ctx = IOContext(io, :color => true)
@@ -112,7 +112,7 @@ function serialize_html(bestfit::GModelFit.ModelSnapshot,
     io = IOBuffer()
     ctx = IOContext(io, :color => true)
     show(ctx, fsumm)
-    ll.value[2].value[1].dict[:show] = TypedJSON.JSONString(String(take!(io)))
+    ll.value[2].dict[:show] = TypedJSON.JSONString(String(take!(io)))
 
     if true # TODO
         io = open("/tmp/gmodelfitviewer.json", "w")

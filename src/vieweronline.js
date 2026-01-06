@@ -368,23 +368,32 @@ function toggleFullScreen(id_div) {
 
 
 // Function to read from chart_data
-function getComps() {
-	out = chart_data[0][0]["+"].comps["+"];
+function getComps(chart_data, epoch) {
+	out = chart_data[0][epoch]["+"].comps["+"];
 	for (const [key, value] of Object.entries(out)) {
 		out[key] = value["+"].buffer;
 	}
 	console.log(out);
 }
 
-function getMainComp(chart_data) {
-	return chart_data[0][0]._dict.maincomp._value;
+function getMainComp(chart_data, epoch) {
+	return chart_data[0][epoch]["+"].maincomp[""];
 }
 
-function isMultiModel(chart_data) {
-	if (chart_data[0].length > 1) {
-		return true;
-	}
-	return false;
+function getNEpochs(chart_data) {
+	return chart_data[0].length
+}
+
+function getMeta(chart_data, epoch) {
+	return chart_data[0][epoch]["+"].meta["+"];
+}
+
+function getNData(chart_data) {
+	return chart_data[1]["+"].ndata;
+}
+
+function getNFree(chart_data) {
+	return chart_data[1]["+"].nfree;
 }
 
 
@@ -397,62 +406,19 @@ function getauxinfo() {  // TODO
 
 	// Multiple models for the same "object" are allowed
 
-	aux.n_p = 0;  // N models
-	aux.n_d = 0;  // N measures
-	aux.is_multimodel = false;
+	aux.NEpochs = getNEpochs(chart_data);
+	aux.is_multimodel = (aux.NEpochs > 1);
 	aux.maincomp = [];  // The name of the main component buffer
-
-
-	// Clear indices arrays
-	i_mod = -1, i_mea = -1, i_fit = -1;
 
 	var cnames = [], desc, cdata, mea, x_lab, y_lab, n_xmea, x_step;
 
-	// Scan the input array of structures
-	for (var i = 0; i < chart_data.length; i++) {
-		if ( chart_data[i]._structtype !== undefined )
-			cdata = chart_data[i];
-		else {
-			cdata = chart_data[i][0];
-			aux.is_multimodel = true;
-		}
-
-		if ( i_mod < 0 && cdata._structtype.indexOf('Model') >= 0 ) {
-			i_mod = i;
-			if ( aux.is_multimodel )
-				aux.n_p = chart_data[i].length;
-			else
-				aux.n_p++;  // Possible multiple models?
-
-			if ( cdata.meta !== undefined )
-				aux.meta = cdata.meta;
-
-			console.log('i_mod, maincomp:', i_mod, cdata.maincomp);
-
-		} else if ( i_mea < 0 && cdata._structtype.indexOf('Measures') >= 0 ) {
-			i_mea = i;
-			if ( aux.is_multimodel )
-				aux.n_d = chart_data[i].length;
-			else
-				aux.n_d++;
-			console.log('Measures:');
-			console.log('i_mea, aux.n_d:', i_mea, aux.n_d);
-
-		} else if ( i_fit < 0 && cdata._structtype.indexOf('FitSummary') >= 0 ) {
-			i_fit = i;
-		}
-	}
-
-	// TODO
-	if ( i_mod < 0 ) {
-		alert('No Model found in your data.')
+	if (chart_data.length == 0) {
+		alert('No data found.')
 		return;
 	}
-
-	if ( i_fit >=0 ) {
-		aux.ndata_fit = chart_data[i_fit].ndata;
-		aux.nfree_fit = chart_data[i_fit].nfree;
-	}
+	aux.meta = getMeta(chart_data, 0);  // TODO: why epoch 0?
+	aux.ndata_fit = getNData(chart_data);
+	aux.nfree_fit = getNFree(chart_data);
 
 	aux.modinfo = [];
 	aux.modinfo.length = 0;
@@ -460,7 +426,7 @@ function getauxinfo() {  // TODO
 	aux.datinfo.length = 0;
 
 	// Add loop also for the measures (TODO)
-	for (var i = 0; i < aux.n_p; i++) {
+	for (var i = 0; i < aux.NEpochs; i++) {
 		var n_reb = 1,
 			y_min = 1e32,
 			y_max = -1e32,
@@ -611,13 +577,13 @@ function getauxinfo() {  // TODO
 	ss.innerHTML = '';
 
 	// Create only if more than one model
-	if ( aux.n_p < 2 )
+	if ( aux.NEpochs < 2 )
 		d.setAttribute('class', 'div-hide');
 	else {
 		d.setAttribute('class', 'div-show-inline');
 
 		// Append model select list
-		for (var i = 0; i < aux.n_p; i++) {
+		for (var i = 0; i < aux.NEpochs; i++) {
 			var lab, option = document.createElement('option');
 			option.value = i;
 
@@ -635,11 +601,11 @@ function getauxinfo() {  // TODO
 
 		if ( c_imod == 0 )
 			document.getElementById('prev_model').classList.add('div-hide');
-		else if ( c_imod == aux.n_p - 1 )
+		else if ( c_imod == aux.NEpochs - 1 )
 			document.getElementById('next_model').classList.add('div-hide');
 	}
 
-	for (var i = 0; i < aux.n_d; i++) {
+	for (var i = 0; i < aux.NEpochs; i++) {
 		aux.datinfo.push({
 			resid_visible: false,
 			resid_color: rcolor.hex
@@ -681,7 +647,7 @@ var mydata2chart = function(isel) {
 	// X values rounded to the N sig. factional digits
 	//var cs2 = 0, lenf = cdata.folded_domain.axis[0].length;
 	var cs2 = 0;
-	if ( aux.n_d > 0 ) {
+	if ( aux.NEpochs > 0 ) {
 		// Extend domain.axis for bin width computation
 		var binw = mea.domain.axis[0][aux.modinfo[isel].nx_mea - 1] - mea.domain.axis[0][aux.modinfo[isel].nx_mea - 2]
 		mea.domain.axis[0].push(mea.domain.axis[0][aux.modinfo[isel].nx_mea - 1] + binw);
@@ -759,7 +725,7 @@ function createMainReducer(isel) {
 	series.data.setAll(my_chartdata.dat);
 
 	// No data, just the model: use series also for the X axis scrolling
-	if ( aux.n_d == 0 ) {
+	if ( aux.NEpochs == 0 ) {
 		document.getElementById('box-resid-in').style.visibility = 'hidden';
 		chart.scrollbarX.series.push(series);
 		  }
@@ -885,7 +851,7 @@ function createDataSeries(isel) {
 		isel = c_imod;
 
 	// No data, just the model
-	if ( aux.n_d == 0 ) {
+	if ( aux.NEpochs == 0 ) {
 		resplot_dispose();
 		createMainReducer(isel);
 		return;
@@ -1266,7 +1232,7 @@ function p_select(isel, new_file) {
 	if ( isel == 0 ) {
 		document.getElementById('prev_model').classList.add('div-hide');
 		document.getElementById('next_model').classList.remove('div-hide');
-	} else if ( isel == aux.n_p - 1 ) {
+	} else if ( isel == aux.NEpochs - 1 ) {
 		document.getElementById('prev_model').classList.remove('div-hide');
 		document.getElementById('next_model').classList.add('div-hide');
 	} else {
@@ -1722,7 +1688,7 @@ am5.ready(function() {
 
 
 		// Highlight button for current model
-		if ( aux.n_p > 1 )
+		if ( aux.NEpochs > 1 )
 			document.getElementById('p_selector').value = c_imod;
 
 	} else {
