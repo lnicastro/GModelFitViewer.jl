@@ -1,1037 +1,1004 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>GModelFit viewer</title>
-  <meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
-  <meta http-equiv=Content-Script-Type content="text/javascript" />
-  <meta http-equiv=Content-Style-Type content="text/css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="GModelFitViewer - web viewer for the GModelFit produced results" />
-  <meta name="generator" content="vi+LN" />
-  <meta name="author" content="Luciano Nicastro, INAF" />
-  <meta name="publisher" content="INAF" />
-  <meta name="language" content="en" />
-  <meta name="version" content="x.y.z" />
-  <meta name="date" content="xxxx-yy-dd" />
+  <head>
+	<title>GModelFit viewer</title>
+	<meta http-equiv=Content-Type content="text/html; charset=UTF-8" />
+	<meta http-equiv=Content-Script-Type content="text/javascript" />
+	<meta http-equiv=Content-Style-Type content="text/css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="GModelFitViewer - web viewer for the GModelFit produced results" />
+	<meta name="generator" content="vi+LN" />
+	<meta name="author" content="Luciano Nicastro, INAF" />
+	<meta name="publisher" content="INAF" />
+	<meta name="language" content="en" />
+	<meta name="version" content="x.y.z" />
+	<meta name="date" content="xxxx-yy-dd" />
 
-<!-- @Remote -->
-<!--
-  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-  <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
-  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-  <script src="https://cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
--->
+	<!-- @Remote -->
+	<!--
+		<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
+		-->
 
-<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
-<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-<script src="https://cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
 
-<!-- @EndRemote -->
-
-
-<style>
-:root {
---blue: #1177d1;
---indigo: #6610f2;
---purple: #613d7c;
---pink: #e83e8c;
---red: #d43f3a;
---orange: #f0ad4e;
---yellow: #ff7518;
---green: #398439;
---teal: #20c997;
---cyan: #5bc0de;
---gray: #6c757d;
---gray-dark: #343a40;
---primary: #1177d1;
---secondary: #ced4da;
---success: #398439;
---info: #5bc0de;
---warning: #f0ad4e;
---danger: #d43f3a;
---light: #f8f9fa;
---dark: #343a40;
-
---baseFg: dimgray;
---baseBg: white;
---accentFg: #69c;
---accentBg: #bae1ff;
-}
-
-body {
-  font: 0.98em adobe-clean-n3, adobe-clean, "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
-  color: var(--gray-dark);
-  margin: 5px;
-  text-rendering: optimizeLegibility !important;
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
-}
-
-a:link, a:visited, a:active {
-  text-decoration: none;
-  color: #204d74;
-}
-
-a:hover {
-  color: #2d6ca2;
-}
-
-button {
-  font-size: 1rem;
-  vertical-align: middle;
-}
-
-button:hover {
-  cursor: pointer;
-}
-
-button > i {
-  margin-left: 6px;
-  margin-right: 6px;
-  font-size: 110%;
-}
-
-input {
-  cursor: auto;
-  -moz-box-sizing:content-box;
-  -webkit-box-sizing: content-box;
-  box-sizing: content-box;
-  font-size: 0.9rem;
-}
-
-input[type="checkbox"] {
-        margin-right: 6px;
-}
-
-input[type="text"] {
-  background-color: #f7f7f7;
-  color: #666;
-  border: 0;
-  border-bottom: 2px solid #ccc;
-  padding: 5px;
-  vertical-align: middle;
-}
-
-input[type="text"]:hover {
-  background-color: #fff;
-}
-
-input[type="number"] {
-  border: 1px solid #ccc;
-  padding: 5px;
-}
+		<!-- @EndRemote -->
 
 
-input[type="button"], input[type="checkbox"] {
-  cursor: pointer;
-}
+		<style>
+		  :root {
+			  --blue: #1177d1;
+			  --indigo: #6610f2;
+			  --purple: #613d7c;
+			  --pink: #e83e8c;
+			  --red: #d43f3a;
+			  --orange: #f0ad4e;
+			  --yellow: #ff7518;
+			  --green: #398439;
+			  --teal: #20c997;
+			  --cyan: #5bc0de;
+			  --gray: #6c757d;
+			  --gray-dark: #343a40;
+			  --primary: #1177d1;
+			  --secondary: #ced4da;
+			  --success: #398439;
+			  --info: #5bc0de;
+			  --warning: #f0ad4e;
+			  --danger: #d43f3a;
+			  --light: #f8f9fa;
+			  --dark: #343a40;
 
-input[type="button"]:hover {
-  color: #069;
-}
+			  --baseFg: dimgray;
+			  --baseBg: white;
+			  --accentFg: #69c;
+			  --accentBg: #bae1ff;
+		  }
 
-input[type="file"] {
-    display: none;
-}
+		  body {
+			  font: 0.98em adobe-clean-n3, adobe-clean, "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+			  color: var(--gray-dark);
+			  margin: 5px;
+			  text-rendering: optimizeLegibility !important;
+			  -webkit-font-smoothing: antialiased !important;
+			  -moz-osx-font-smoothing: grayscale !important;
+		  }
 
+		  a:link, a:visited, a:active {
+			  text-decoration: none;
+			  color: #204d74;
+		  }
 
-img {
-  border: 0;
-  vertical-align: middle;
-}
+		  a:hover {
+			  color: #2d6ca2;
+		  }
 
-progress[value] {
-  width: 50%;
-  height: 5px;
-}
+		  button {
+			  font-size: 1rem;
+			  vertical-align: middle;
+		  }
 
-label {
-  padding-left: .3em;
-  font-weight: bold;
-}
+		  button:hover {
+			  cursor: pointer;
+		  }
 
-.container {
-  margin: 16px;
-  font-size: 110%;
-}
+		  button > i {
+			  margin-left: 6px;
+			  margin-right: 6px;
+			  font-size: 110%;
+		  }
 
+		  input {
+			  cursor: auto;
+			  -moz-box-sizing:content-box;
+			  -webkit-box-sizing: content-box;
+			  box-sizing: content-box;
+			  font-size: 0.9rem;
+		  }
 
-.img-circle {
-  border-radius: 50%;
-  box-shadow: 0px 0px 3px 3px #ddd;
-}
+		  input[type="checkbox"] {
+			  margin-right: 6px;
+		  }
 
-#json_info {
-  margin-left: 0.5rem;
-  font-weight: bold;
-}
+		  input[type="text"] {
+			  background-color: #f7f7f7;
+			  color: #666;
+			  border: 0;
+			  border-bottom: 2px solid #ccc;
+			  padding: 5px;
+			  vertical-align: middle;
+		  }
 
-.w-span {
-  margin-left: 0.5rem;
-  padding: 6px;
-  border-radius: 4px;
-  background-color: #fff;
-}
+		  input[type="text"]:hover {
+			  background-color: #fff;
+		  }
 
-.shadow {
-  box-shadow: 3px 3px 5px 6px #ccc;
-  -webkit-box-shadow: 3px 3px 5px 6px #ccc;
-}
+		  input[type="number"] {
+			  border: 1px solid #ccc;
+			  padding: 5px;
+		  }
 
-.hdrdiv2 {
-  width : 100%;
-  text-align: left;
-  padding: 0 1px;
-  color: #fff;
-  background-color: #186680;
-  font-size: 1.2rem;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
+		  input[type="button"], input[type="checkbox"] {
+			  cursor: pointer;
+		  }
 
-.logo-div {
-  display: inline-block;
-  vertical-align: middle;
-  padding: 4px 0 2px 4px;
-  margin-top: 1px;
-  background: #f7f7f7;
-  border-top-right-radius: 36px;
-}
+		  input[type="button"]:hover {
+			  color: #069;
+		  }
 
-.app-info-div {
-  float: right;
-  font-size: .9rem;
-  background: #186680;
-  border-radius: 5px;
-}
+		  input[type="file"] {
+			  display: none;
+		  }
 
-.submit_grey {
-  font-weight: normal;
-  color: var(--gray-dark);
-  background-color: #fff;
-  display: inline-block;
-  padding: 6px;
-  margin-bottom: 0;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+		  img {
+			  border: 0;
+			  vertical-align: middle;
+		  }
 
-.submit_grey:hover {
-  cursor: pointer;
-  background-color: #f0f0f0;
-  border: 1px solid #adadad;
-}
+		  progress[value] {
+			  width: 50%;
+			  height: 5px;
+		  }
 
+		  label {
+			  padding-left: .3em;
+			  font-weight: bold;
+		  }
 
-.dd-select {
-  font-size: inherit;
-  height: 2rem;
-  margin: 0;
-  padding-left: 0.5rem;
-  padding-right: 2rem;
-  color: var(--gray-dark);
-  border: 1px solid #666;
-  border-radius: 4px;
-  webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+		  .container {
+			  margin: 16px;
+			  font-size: 110%;
+		  }
 
-  background-color: var(--baseBg);
-  background-image: linear-gradient(var(--baseFg), var(--baseFg)),
-    linear-gradient(-135deg, transparent 50%, var(--light) 50%),
-    linear-gradient(-225deg, transparent 50%, var(--light) 50%),
-    linear-gradient(var(--light) 42%, var(--accentFg) 42%);
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-  background-size: 1px 100%, 20px 22px, 20px 22px, 20px 100%;
-  background-position: right 20px center, right bottom, right bottom, right bottom;
-}
+		  .img-circle {
+			  border-radius: 50%;
+			  box-shadow: 0px 0px 3px 3px #ddd;
+		  }
 
-.dd-select:hover {
-background-image: linear-gradient(var(--accentFg), var(--accentFg)),
-    linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
-    linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
-    linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
-}
+		  #json_info {
+			  margin-left: 0.5rem;
+			  font-weight: bold;
+		  }
 
-select::-ms-expand {
-    display: none; /* Remove default arrow in Internet Explorer 10 and 11 */
-}
+		  .w-span {
+			  margin-left: 0.5rem;
+			  padding: 6px;
+			  border-radius: 4px;
+			  background-color: #fff;
+		  }
 
+		  .shadow {
+			  box-shadow: 3px 3px 5px 6px #ccc;
+			  -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+		  }
 
-.page_top_tbar {
-  background-color: #f7f7f7;
-  color: #666;
-/*
+		  .hdrdiv2 {
+			  width : 100%;
+			  text-align: left;
+			  padding: 0 1px;
+			  color: #fff;
+			  background-color: #186680;
+			  font-size: 1.2rem;
+			  -webkit-box-sizing: border-box;
+			  -moz-box-sizing: border-box;
+			  box-sizing: border-box;
+		  }
+
+		  .logo-div {
+			  display: inline-block;
+			  vertical-align: middle;
+			  padding: 4px 0 2px 4px;
+			  margin-top: 1px;
+			  background: #f7f7f7;
+			  border-top-right-radius: 36px;
+		  }
+
+		  .app-info-div {
+			  float: right;
+			  font-size: .9rem;
+			  background: #186680;
+			  border-radius: 5px;
+		  }
+
+		  .submit_grey {
+			  font-weight: normal;
+			  color: var(--gray-dark);
+			  background-color: #fff;
+			  display: inline-block;
+			  padding: 6px;
+			  margin-bottom: 0;
+			  text-align: center;
+			  white-space: nowrap;
+			  vertical-align: middle;
+			  border: 1px solid #ccc;
+			  border-radius: 4px;
+		  }
+
+		  .submit_grey:hover {
+			  cursor: pointer;
+			  background-color: #f0f0f0;
+			  border: 1px solid #adadad;
+		  }
+
+		  .dd-select {
+			  font-size: inherit;
+			  height: 2rem;
+			  margin: 0;
+			  padding-left: 0.5rem;
+			  padding-right: 2rem;
+			  color: var(--gray-dark);
+			  border: 1px solid #666;
+			  border-radius: 4px;
+			  webkit-appearance: none;
+			  -moz-appearance: none;
+			  appearance: none;
+
+			  background-color: var(--baseBg);
+			  background-image: linear-gradient(var(--baseFg), var(--baseFg)),
+								linear-gradient(-135deg, transparent 50%, var(--light) 50%),
+								linear-gradient(-225deg, transparent 50%, var(--light) 50%),
+								linear-gradient(var(--light) 42%, var(--accentFg) 42%);
+			  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+			  background-size: 1px 100%, 20px 22px, 20px 22px, 20px 100%;
+			  background-position: right 20px center, right bottom, right bottom, right bottom;
+		  }
+
+		  .dd-select:hover {
+			  background-image: linear-gradient(var(--accentFg), var(--accentFg)),
+								linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
+								linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
+								linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
+		  }
+
+		  select::-ms-expand {
+			  display: none; /* Remove default arrow in Internet Explorer 10 and 11 */
+		  }
+
+		  .page_top_tbar {
+			  background-color: #f7f7f7;
+			  color: #666;
+			  /*
   border-bottom: 1px solid #bdbec2;
   border-left: 1px solid #186680;
   border-right: 1px solid #186680;
-*/
-  border: 1px solid #186680;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-#download-json-div {
-  float: right;
-  margin: 0.2rem 0.5rem;
-}
-
-
-.simple_button {
-  padding: 3px 0;
-  margin-left: 1rem;
-  border: 1px solid #adadad;
-  border-radius: 4px;
-}
-
-.simple_button:hover {
-  background-color: #ddd;
-  -webkit-transition: all 0.3s ease-in-out;
-     -moz-transition: all 0.3s ease-in-out;
-	  transition: all 0.3s ease-in-out;
-}
-
-.transp_button {
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  margin-left: 0.5rem;
-  border: 2px solid #e6e6e6;
-  border-radius: 50%;
-  background-color: transparent;
-  box-shadow: inset 0 0 0 1px #fff;
-  transition: box-shadow 0.25s linear;
-}
-
-.transp_button:hover {
-  box-shadow: inset 0 0 0 1.2em #eaeaea;
-}
-
-.label-range-in {
-  margin-left: 0.5em;
-  margin-right: 0.2em;
-  font-size: inherit;
-  font-weight: 600;
-}
-
-.range-in {
-  max-width: 4em;
-}
-
-
-#chartdiv {
-  width : 98%;
-  height: 640px;
-  overflow: hidden;
-  text-align: left;
-  resize: vertical;
-}
-
-#plot-sect {
-  overflow-x: inherit;
-  padding-bottom: 1rem;
-}
-
-#res_legenddiv {
-  display: inline-block;
-  vertical-align: middle;
-  cursor: pointer;
-  padding: 6px;
-}
-
-#box-resid-in {
-  position: relative;
-  float: right;
-  margin-right: 2%;
-  padding-right: 0.5rem;
-  background: #efefef;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.box-cb {
-  display: inline-block;
-  margin-left: .5em;
-  padding-right: .5em;
-  background: #efefef;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  vertical-align: middle;
-  cursor: pointer;
-}
-
-.box-cb:hover {
-  background-color: #ddd;
-}
-
-#controls-div {
-  display: inline-block;
-  margin-top: 0.5em;
-  width: 100%;
-}
-
-#f_status, #range-selector-div {
-  display: inline-block;
-  margin-left: 1em;
-}
-
-
-section {
-  overflow-x: auto;
-}
-
-div.row {
-  clear: both;
-  border: 0px;
-  padding: 0px;
-}
-
-div.section {
-  clear: both;
-  border: 0px;
-  padding: 24px 0px;
-  font-size: 110%;
-  color: var(--gray-dark);
-}
-
-div.summ-div {
-  border: 0;
-  padding: 0;
-}
-
-div.trailer {
-  font-size: 0.9rem;
-  text-align: center;
-  padding-left: 1rem;
-  line-height: 1.5rem;
-  background-color: var(--primary);
-  color: var(--secondary);
-  border-left: 1px solid #186680;
-  border-right: 1px solid #186680;
-}
-
-div.trailer a {
-  text-decoration: none;
-  color: #999;
-}
-
-div.trailer a:hover {
-  color: #535353;
-}
-
-
-caption {
-  display: table-caption;
-  text-align: center;
-  padding-bottom: 20px;
-  padding-top: 10px;
-}
-
-
-table, td, th {
-  border: solid 1px #ddd;
-  border-collapse: collapse;
-  padding: 4px 6px;
-  vertical-align: top;
-  white-space: nowrap;
-}
-
-th {
-  text-align: center;
-  font-weight: bold;
-  background-color: #eaeaea;
-}
-
-td.highlight_blue {
-  font-weight: bold;
-  color: blue;
-}
-
-#gmf_info-div {
-  float: right;
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 1rem;
-  color: #fff;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: var(--primary);
-  padding: 6px;
-}
-
-#mod_sel-div {
-  font-size: initial;
-  font-weight: bold;
-  margin: 0.2rem 0.5rem;
-}
-
-#file_io-div {
-  margin: 0.2rem 0.5rem;
-}
-
-
-/* The Modal (background) */
-.modal {
-  position: fixed; /* Stay in place */
-  z-index: 10; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100vh; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  max-height: 100vh;  /* screen.height * .80; */
-  background-color: rgba(0,0,0,0.4); /* Black with opacity */
-}
-
-.modal.modal-slidein {
-  animation-duration: 0.5s;
-  animation-name: slidein;
-  animation-timing-function: linear;
-}
-
-.modal.modal-slideout {
-  background-color: rgba(255, 255, 255, 0.0);
-  height: 0;
-  overflow: hidden;
-  transition-property: all;
-  transition-duration: 0.5s;
-  transition-timing-function: ease-in-out;
-  transition-delay: 0s;
-}
-
-.modal.modal-hide {
-  height: 0;
-  overflow: hidden;
-  transition-property: all;
-  transition-duration: 1s;
-  transition-timing-function: ease-in-out;
-  transition-delay: 0.2s;
-}
-
-
-/* Modal content */
-.modal-content {
-  position: relative;
-  background-color: #fefefe;
-  margin: 1rem auto;
-  padding: 0;
-  border: 1px solid #888;
-  width: 90%;
-  height: 80%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5),0 6px 20px 0 rgba(0,0,0,0.2);
-}
-
-.modal-content.modal-fadein {
-  animation-duration: 0.5s;
-  animation-name: fadeIn;
-}
-
-.modal-content.modal-fadeout {
-  animation-duration: 0.5s;
-  animation-name: fadeOut;
-}
-
-.modal-header {
-  padding: 0.01rem 1rem;
-  background-color: #6699cc;  /*#5cb85c;*/
-  color: #fff;
-  font-size: 1.3rem;
-}
-
-.modal-body {
-  /*height: 80vh; */
-  height: inherit;
-  padding: 2px 16px;
-  overflow: auto; /* Enable scroll if needed */
-}
-
-.modal-body th:hover {
-  background-color: #6699cc;
-}
-
-#dropzone {
-  display: table;
-  width: 90%;
-  height: 85%;
-  margin: auto;
-  border: 4px dashed grey;
-  background-color: #fff;
-  text-align: center;
-  line-height: 3rem;
-  font-size: 1.5rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-#dropzone > div {
-  display: table-cell;
-  vertical-align: middle;
-  padding: 1rem;
-}
-
-#dropzone > div > input {
-  cursor: pointer;
-}
-
-
-
-/* The modal div Close button */
-.close {
-  color: #fff;
-  float: right;
-  font-size: 40px;
-  font-weight: 300;
-  padding: 0px 4px 10px 4px;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-
-div .visible {
-  z-index: 2;
-  display: block;
-  opacity: 1;
-  height: auto;
-  -webkit-transition: all 0.60s ease-out;
-     -moz-transition: all 0.60s ease-out;
-	  transition: all 0.60s ease-out;
-}
-
-div .hidden {
-  opacity: 0;
-  height: 0;
-visibility: hidden;
-  overflow: hidden;
-  -webkit-transition: all 0.60s ease-in;
-     -moz-transition: all 0.60s ease-in;
-	  transition: all 0.60s ease-in;
-}
-
-
-#p_title {
-  color: #666;
-  font-size: 1.2rem;
-  vertical-align: middle;
-}
-
-#p_selector {
-  margin-right: 0.5em;
-  vertical-align: middle;
-}
-
-div.interface
-{
-  border-left: 1px solid #186680;
-  border-right: 1px solid #186680;
-  padding: 3px 8px;
-}
-
-
-/* Gradient color1 - color2 - color1 */
-hr.style-one {
-  border: 0; height: 1px; background: #fff;
-  background-image: linear-gradient(to right, #f00, #0f0, #00f);
-  margin-top: 0;
-}
-
-/* Gradient transparent - color - transparent */
-hr.style-two {
-  border: 0; height: 1px;
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
-}
-
-.custom-file-select {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  display: inline-block;
-  padding: 6px 12px;
-  cursor: pointer;
-  line-height: 2rem;
-}
-
-.custom-file-select:hover {
-  background: #ddd;
-  cursor: pointer;
-  text-decoration: none;
-  -webkit-transition: all 0.30s ease-in;
-     -moz-transition: all 0.30s ease-in;
-	    transition: all 0.30s ease-in;
-}
-
-#fitlog_tables-div {
- height: auto;
- border-bottom: 2px solid black;
- margin-bottom: 1rem;
-}
-
-#fitlog_sect {
-  font-size: 1.5em;
-  font-weight: 500;
-}
-
-#fitlog_selector {
-  width: auto;
-  white-space: nowrap;
-  margin-left: 1rem;
-  font-size: 1rem;
-}
-
-.out_table {
-  border: 0;
-  padding: 1em 0 1em 1em;
-}
-
-.toggle_table-hdr {
-  border-bottom: 3px solid #ddd;
-  padding: .5em 1em;
-  font-size: 1.1em;
-  font-weight: 600;
-  display: inline-block;
-}
-
-.toggle_table-hdr:hover {
-  background-color: #eaeaea;
-  cursor: pointer;
-  color: #069;
-  -webkit-transition: all 0.30s ease-in;
-     -moz-transition: all 0.30s ease-in;
-	  transition: all 0.30s ease-in;
-}
-
-.inline {
-  display: inline-block;
-}
-
-.inline-div {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 1rem;
-}
-
-.div-hide {
-  display: none;
-  visibility: hidden;
-  height: 0;
-}
-
-.div-show {
-  display: block;
-  visibility: visible;
-  height: auto;
-}
-
-.div-show-inline {
-  display: inline-block;
-  visibility: visible;
-  height: auto;
-}
-
-.rep_div-show {
-  display: block;
-  visibility: visible;
-  height: auto;
-  animation: 0.5s linear 0s fadeIn;
-  transition: height 0.5s 0.3s ease-in-out;
-}
-
-.div-selected {
-  border-bottom: 3px solid var(--primary);
-  background-color: #efefef;
-}
-
-.n_sigma-div {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-#fitres-div {
-  padding-top: 0;
-}
-
-#fitres_table-div {
-  padding-top: 0;
-}
-
-.al-right {
-  text-align: right;
-}
-
-.ud-angle-l {
-  margin-left: 2rem;
-}
-
-.pre_res {
-  font-size: 1rem;
-}
-
-.pre_res_bf {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-/* Icons */
-[class^="icon-"],
-[class*=" icon-"],
-[class^="logo-"] {
-	display: inline-block;
-	stroke-width: 0;
-	stroke: currentColor;
-	fill: currentColor;
-}
-
-.logos {
-/* TODO */
-}
-
-
-/* Add Animation */
-@keyframes slidein {
-  from {top: -300px; visibility: hidden;}
-  to {top: 0; visibility: visible;}
-}
-
-@keyframes slideout {
-  from { transform: translateY(0); visibility: visible;}
-  to   { transform: translateY(-300px); visibility: hidden;}
-}
-
-@keyframes fadeIn {
-   0% { opacity: 0; visibility: hidden; }
- 100% { opacity: 1; visibility: visible; }
-}
-
-@keyframes fadeOut {
-    0% { opacity: 1; visibility: visible; }
-  100% { opacity: 0; visibility: hidden; width: 100%; }
-}
-</style>
-
-
-</head>
-
-<body>
-
-<!-- Icons -->
-
-<svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs>
-	<symbol id="file-import" viewBox="0 0 512 512">
-	<path fill="currentColor" d="M16 288c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h112v-64zm489-183L407.1 7c-4.5-4.5-10.6-7-17-7H384v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H152c-13.3 0-24 10.7-24 24v264h128v-65.2c0-14.3 17.3-21.4 27.4-11.3L379 308c6.6 6.7 6.6 17.4 0 24l-95.7 96.4c-10.1 10.1-27.4 3-27.4-11.3V352H128v136c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H376c-13.2 0-24-10.8-24-24z"/>
-	</symbol>
-	<symbol id="download" viewBox="0 0 512 512">
-	<path fill="currentColor" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
-	</symbol>
-	<symbol id="angle-down" viewBox="0 0 350 512">
-	<path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/>
-	</symbol>
+			 */
+			  border: 1px solid #186680;
+			  -webkit-box-sizing: border-box;
+			  -moz-box-sizing: border-box;
+			  box-sizing: border-box;
+			  width: 100%;
+		  }
+
+		  #download-json-div {
+			  float: right;
+			  margin: 0.2rem 0.5rem;
+		  }
+
+		  .simple_button {
+			  padding: 3px 0;
+			  margin-left: 1rem;
+			  border: 1px solid #adadad;
+			  border-radius: 4px;
+		  }
+
+		  .simple_button:hover {
+			  background-color: #ddd;
+			  -webkit-transition: all 0.3s ease-in-out;
+			  -moz-transition: all 0.3s ease-in-out;
+			  transition: all 0.3s ease-in-out;
+		  }
+
+		  .transp_button {
+			  padding: 0;
+			  width: 32px;
+			  height: 32px;
+			  margin-left: 0.5rem;
+			  border: 2px solid #e6e6e6;
+			  border-radius: 50%;
+			  background-color: transparent;
+			  box-shadow: inset 0 0 0 1px #fff;
+			  transition: box-shadow 0.25s linear;
+		  }
+
+		  .transp_button:hover {
+			  box-shadow: inset 0 0 0 1.2em #eaeaea;
+		  }
+
+		  .label-range-in {
+			  margin-left: 0.5em;
+			  margin-right: 0.2em;
+			  font-size: inherit;
+			  font-weight: 600;
+		  }
+
+		  .range-in {
+			  max-width: 4em;
+		  }
+
+
+		  #chartdiv {
+			  width : 98%;
+			  height: 640px;
+			  overflow: hidden;
+			  text-align: left;
+			  resize: vertical;
+		  }
+
+		  #plot-sect {
+			  overflow-x: inherit;
+			  padding-bottom: 1rem;
+		  }
+
+		  #res_legenddiv {
+			  display: inline-block;
+			  vertical-align: middle;
+			  cursor: pointer;
+			  padding: 6px;
+		  }
+
+		  #box-resid-in {
+			  position: relative;
+			  float: right;
+			  margin-right: 2%;
+			  padding-right: 0.5rem;
+			  background: #efefef;
+			  border: 1px solid #ddd;
+			  border-radius: 4px;
+		  }
+
+		  .box-cb {
+			  display: inline-block;
+			  margin-left: .5em;
+			  padding-right: .5em;
+			  background: #efefef;
+			  border: 1px solid #ddd;
+			  border-radius: 4px;
+			  vertical-align: middle;
+			  cursor: pointer;
+		  }
+
+		  .box-cb:hover {
+			  background-color: #ddd;
+		  }
+
+		  #controls-div {
+			  display: inline-block;
+			  margin-top: 0.5em;
+			  width: 100%;
+		  }
+
+		  #f_status, #range-selector-div {
+			  display: inline-block;
+			  margin-left: 1em;
+		  }
+
+		  section {
+			  overflow-x: auto;
+		  }
+
+		  div.row {
+			  clear: both;
+			  border: 0px;
+			  padding: 0px;
+		  }
+
+		  div.section {
+			  clear: both;
+			  border: 0px;
+			  padding: 24px 0px;
+			  font-size: 110%;
+			  color: var(--gray-dark);
+		  }
+
+		  div.summ-div {
+			  border: 0;
+			  padding: 0;
+		  }
+
+		  div.trailer {
+			  font-size: 0.9rem;
+			  text-align: center;
+			  padding-left: 1rem;
+			  line-height: 1.5rem;
+			  background-color: var(--primary);
+			  color: var(--secondary);
+			  border-left: 1px solid #186680;
+			  border-right: 1px solid #186680;
+		  }
+
+		  div.trailer a {
+			  text-decoration: none;
+			  color: #999;
+		  }
+
+		  div.trailer a:hover {
+			  color: #535353;
+		  }
+
+		  caption {
+			  display: table-caption;
+			  text-align: center;
+			  padding-bottom: 20px;
+			  padding-top: 10px;
+		  }
+
+		  table, td, th {
+			  border: solid 1px #ddd;
+			  border-collapse: collapse;
+			  padding: 4px 6px;
+			  vertical-align: top;
+			  white-space: nowrap;
+		  }
+
+		  th {
+			  text-align: center;
+			  font-weight: bold;
+			  background-color: #eaeaea;
+		  }
+
+		  td.highlight_blue {
+			  font-weight: bold;
+			  color: blue;
+		  }
+
+		  #gmf_info-div {
+			  float: right;
+			  display: inline-block;
+			  vertical-align: middle;
+			  margin-left: 1rem;
+			  color: #fff;
+			  box-sizing: border-box;
+			  border: 1px solid #ccc;
+			  border-radius: 4px;
+			  background-color: var(--primary);
+			  padding: 6px;
+		  }
+
+		  #mod_sel-div {
+			  font-size: initial;
+			  font-weight: bold;
+			  margin: 0.2rem 0.5rem;
+		  }
+
+		  #file_io-div {
+			  margin: 0.2rem 0.5rem;
+		  }
+
+		  /* The Modal (background) */
+		  .modal {
+			  position: fixed; /* Stay in place */
+			  z-index: 10; /* Sit on top */
+			  left: 0;
+			  top: 0;
+			  width: 100%; /* Full width */
+			  height: 100vh; /* Full height */
+			  overflow: auto; /* Enable scroll if needed */
+			  max-height: 100vh;  /* screen.height * .80; */
+			  background-color: rgba(0,0,0,0.4); /* Black with opacity */
+		  }
+
+		  .modal.modal-slidein {
+			  animation-duration: 0.5s;
+			  animation-name: slidein;
+			  animation-timing-function: linear;
+		  }
+
+		  .modal.modal-slideout {
+			  background-color: rgba(255, 255, 255, 0.0);
+			  height: 0;
+			  overflow: hidden;
+			  transition-property: all;
+			  transition-duration: 0.5s;
+			  transition-timing-function: ease-in-out;
+			  transition-delay: 0s;
+		  }
+
+		  .modal.modal-hide {
+			  height: 0;
+			  overflow: hidden;
+			  transition-property: all;
+			  transition-duration: 1s;
+			  transition-timing-function: ease-in-out;
+			  transition-delay: 0.2s;
+		  }
+
+		  /* Modal content */
+		  .modal-content {
+			  position: relative;
+			  background-color: #fefefe;
+			  margin: 1rem auto;
+			  padding: 0;
+			  border: 1px solid #888;
+			  width: 90%;
+			  height: 80%;
+			  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5),0 6px 20px 0 rgba(0,0,0,0.2);
+		  }
+
+		  .modal-content.modal-fadein {
+			  animation-duration: 0.5s;
+			  animation-name: fadeIn;
+		  }
+
+		  .modal-content.modal-fadeout {
+			  animation-duration: 0.5s;
+			  animation-name: fadeOut;
+		  }
+
+		  .modal-header {
+			  padding: 0.01rem 1rem;
+			  background-color: #6699cc;  /*#5cb85c;*/
+			  color: #fff;
+			  font-size: 1.3rem;
+		  }
+
+		  .modal-body {
+			  /*height: 80vh; */
+			  height: inherit;
+			  padding: 2px 16px;
+			  overflow: auto; /* Enable scroll if needed */
+		  }
+
+		  .modal-body th:hover {
+			  background-color: #6699cc;
+		  }
+
+		  #dropzone {
+			  display: table;
+			  width: 90%;
+			  height: 85%;
+			  margin: auto;
+			  border: 4px dashed grey;
+			  background-color: #fff;
+			  text-align: center;
+			  line-height: 3rem;
+			  font-size: 1.5rem;
+			  margin-top: 1rem;
+			  margin-bottom: 1rem;
+		  }
+
+		  #dropzone > div {
+			  display: table-cell;
+			  vertical-align: middle;
+			  padding: 1rem;
+		  }
+
+		  #dropzone > div > input {
+			  cursor: pointer;
+		  }
+
+		  /* The modal div Close button */
+		  .close {
+			  color: #fff;
+			  float: right;
+			  font-size: 40px;
+			  font-weight: 300;
+			  padding: 0px 4px 10px 4px;
+		  }
+
+		  .close:hover,
+		  .close:focus {
+			  color: #000;
+			  text-decoration: none;
+			  cursor: pointer;
+		  }
+
+		  div .visible {
+			  z-index: 2;
+			  display: block;
+			  opacity: 1;
+			  height: auto;
+			  -webkit-transition: all 0.60s ease-out;
+			  -moz-transition: all 0.60s ease-out;
+			  transition: all 0.60s ease-out;
+		  }
+
+		  div .hidden {
+			  opacity: 0;
+			  height: 0;
+			  visibility: hidden;
+			  overflow: hidden;
+			  -webkit-transition: all 0.60s ease-in;
+			  -moz-transition: all 0.60s ease-in;
+			  transition: all 0.60s ease-in;
+		  }
+
+		  #p_title {
+			  color: #666;
+			  font-size: 1.2rem;
+			  vertical-align: middle;
+		  }
+
+		  #p_selector {
+			  margin-right: 0.5em;
+			  vertical-align: middle;
+		  }
+
+		  div.interface
+		  {
+			  border-left: 1px solid #186680;
+			  border-right: 1px solid #186680;
+			  padding: 3px 8px;
+		  }
+
+		  /* Gradient color1 - color2 - color1 */
+		  hr.style-one {
+			  border: 0; height: 1px; background: #fff;
+			  background-image: linear-gradient(to right, #f00, #0f0, #00f);
+			  margin-top: 0;
+		  }
+
+		  /* Gradient transparent - color - transparent */
+		  hr.style-two {
+			  border: 0; height: 1px;
+			  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+		  }
+
+		  .custom-file-select {
+			  border: 1px solid #ccc;
+			  border-radius: 4px;
+			  display: inline-block;
+			  padding: 6px 12px;
+			  cursor: pointer;
+			  line-height: 2rem;
+		  }
+
+		  .custom-file-select:hover {
+			  background: #ddd;
+			  cursor: pointer;
+			  text-decoration: none;
+			  -webkit-transition: all 0.30s ease-in;
+			  -moz-transition: all 0.30s ease-in;
+			  transition: all 0.30s ease-in;
+		  }
+
+		  #fitlog_tables-div {
+			  height: auto;
+			  border-bottom: 2px solid black;
+			  margin-bottom: 1rem;
+		  }
+
+		  #fitlog_sect {
+			  font-size: 1.5em;
+			  font-weight: 500;
+		  }
+
+		  #fitlog_selector {
+			  width: auto;
+			  white-space: nowrap;
+			  margin-left: 1rem;
+			  font-size: 1rem;
+		  }
+
+		  .out_table {
+			  border: 0;
+			  padding: 1em 0 1em 1em;
+		  }
+
+		  .toggle_table-hdr {
+			  border-bottom: 3px solid #ddd;
+			  padding: .5em 1em;
+			  font-size: 1.1em;
+			  font-weight: 600;
+			  display: inline-block;
+		  }
+
+		  .toggle_table-hdr:hover {
+			  background-color: #eaeaea;
+			  cursor: pointer;
+			  color: #069;
+			  -webkit-transition: all 0.30s ease-in;
+			  -moz-transition: all 0.30s ease-in;
+			  transition: all 0.30s ease-in;
+		  }
+
+		  .inline {
+			  display: inline-block;
+		  }
+
+		  .inline-div {
+			  display: inline-block;
+			  vertical-align: middle;
+			  margin-left: 1rem;
+		  }
+
+		  .div-hide {
+			  display: none;
+			  visibility: hidden;
+			  height: 0;
+		  }
+
+		  .div-show {
+			  display: block;
+			  visibility: visible;
+			  height: auto;
+		  }
+
+		  .div-show-inline {
+			  display: inline-block;
+			  visibility: visible;
+			  height: auto;
+		  }
+
+		  .rep_div-show {
+			  display: block;
+			  visibility: visible;
+			  height: auto;
+			  animation: 0.5s linear 0s fadeIn;
+			  transition: height 0.5s 0.3s ease-in-out;
+		  }
+
+		  .div-selected {
+			  border-bottom: 3px solid var(--primary);
+			  background-color: #efefef;
+		  }
+
+		  .n_sigma-div {
+			  display: inline-block;
+			  vertical-align: middle;
+		  }
+
+		  #fitres-div {
+			  padding-top: 0;
+		  }
+
+		  #fitres_table-div {
+			  padding-top: 0;
+		  }
+
+		  .al-right {
+			  text-align: right;
+		  }
+
+		  .ud-angle-l {
+			  margin-left: 2rem;
+		  }
+
+		  .pre_res {
+			  font-size: 1rem;
+		  }
+
+		  .pre_res_bf {
+			  font-size: 1rem;
+			  font-weight: 600;
+		  }
+
+		  /* Icons */
+		  [class^="icon-"],
+		  [class*=" icon-"],
+		  [class^="logo-"] {
+			  display: inline-block;
+			  stroke-width: 0;
+			  stroke: currentColor;
+			  fill: currentColor;
+		  }
+
+		  .logos {
+			  /* TODO */
+		  }
+
+		  /* Add Animation */
+		  @keyframes slidein {
+			  from {top: -300px; visibility: hidden;}
+			  to {top: 0; visibility: visible;}
+		  }
+
+		  @keyframes slideout {
+			  from { transform: translateY(0); visibility: visible;}
+			  to   { transform: translateY(-300px); visibility: hidden;}
+		  }
+
+		  @keyframes fadeIn {
+			  0% { opacity: 0; visibility: hidden; }
+			  100% { opacity: 1; visibility: visible; }
+		  }
+
+		  @keyframes fadeOut {
+			  0% { opacity: 1; visibility: visible; }
+			  100% { opacity: 0; visibility: hidden; width: 100%; }
+		  }
+		</style>
+  </head>
+
+  <body>
+	<!-- Icons -->
+	<svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	  <defs>
+		<symbol id="file-import" viewBox="0 0 512 512">
+		  <path fill="currentColor" d="M16 288c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h112v-64zm489-183L407.1 7c-4.5-4.5-10.6-7-17-7H384v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H152c-13.3 0-24 10.7-24 24v264h128v-65.2c0-14.3 17.3-21.4 27.4-11.3L379 308c6.6 6.7 6.6 17.4 0 24l-95.7 96.4c-10.1 10.1-27.4 3-27.4-11.3V352H128v136c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H376c-13.2 0-24-10.8-24-24z"/>
+		</symbol>
+		<symbol id="download" viewBox="0 0 512 512">
+		  <path fill="currentColor" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
+		</symbol>
+		<symbol id="angle-down" viewBox="0 0 350 512">
+		  <path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/>
+		</symbol>
         <symbol id="angle-up" viewBox="0 0 350 512">
-	<path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/>
-	</symbol>
-	<symbol id="search" viewBox="0 0 512 512">
-<path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c26.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/>
-	</symbol>
-	<symbol id="check-circle" viewBox="0 0 512 512">
-<path fill="currentColor" d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 48c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m140.204 130.267l-22.536-22.718c-4.667-4.705-12.265-4.736-16.97-.068L215.346 303.697l-59.792-60.277c-4.667-4.705-12.265-4.736-16.97-.069l-22.719 22.536c-4.705 4.667-4.736 12.265-.068 16.971l90.781 91.516c4.667 4.705 12.265 4.736 16.97.068l172.589-171.204c4.704-4.668 4.734-12.266.067-16.971z"/>
-	</symbol>
-	<symbol id="times" viewBox="0 0 352 512">
-<path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/>
-	</symbol>
-	<symbol id="expand" viewBox="0 0 448 512">
-<path fill="currentColor" d="M448 344v112a23.94 23.94 0 0 1-24 24H312c-21.39 0-32.09-25.9-17-41l36.2-36.2L224 295.6 116.77 402.9 153 439c15.09 15.1 4.39 41-17 41H24a23.94 23.94 0 0 1-24-24V344c0-21.4 25.89-32.1 41-17l36.19 36.2L184.46 256 77.18 148.7 41 185c-15.1 15.1-41 4.4-41-17V56a23.94 23.94 0 0 1 24-24h112c21.39 0 32.09 25.9 17 41l-36.2 36.2L224 216.4l107.23-107.3L295 73c-15.09-15.1-4.39-41 17-41h112a23.94 23.94 0 0 1 24 24v112c0 21.4-25.89 32.1-41 17l-36.19-36.2L263.54 256l107.28 107.3L407 327.1c15.1-15.2 41-4.5 41 16.9z"></path>
-	</symbol>
-	<symbol id="shrink" viewBox="0 0 512 512">
-<path fill="currentColor" d="M200 288H88c-21.4 0-32.1 25.8-17 41l32.9 31-99.2 99.3c-6.2 6.2-6.2 16.4 0 22.6l25.4 25.4c6.2 6.2 16.4 6.2 22.6 0L152 408l31.1 33c15.1 15.1 40.9 4.4 40.9-17V312c0-13.3-10.7-24-24-24zm112-64h112c21.4 0 32.1-25.9 17-41l-33-31 99.3-99.3c6.2-6.2 6.2-16.4 0-22.6L481.9 4.7c-6.2-6.2-16.4-6.2-22.6 0L360 104l-31.1-33C313.8 55.9 288 66.6 288 88v112c0 13.3 10.7 24 24 24zm96 136l33-31.1c15.1-15.1 4.4-40.9-17-40.9H312c-13.3 0-24 10.7-24 24v112c0 21.4 25.9 32.1 41 17l31-32.9 99.3 99.3c6.2 6.2 16.4 6.2 22.6 0l25.4-25.4c6.2-6.2 6.2-16.4 0-22.6L408 360zM183 71.1L152 104 52.7 4.7c-6.2-6.2-16.4-6.2-22.6 0L4.7 30.1c-6.2 6.2-6.2 16.4 0 22.6L104 152l-33 31.1C55.9 198.2 66.6 224 88 224h112c13.3 0 24-10.7 24-24V88c0-21.3-25.9-32-41-16.9z"></path>
-	</symbol>
-  </defs>
-</svg>
+		  <path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/>
+		</symbol>
+		<symbol id="search" viewBox="0 0 512 512">
+		  <path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c26.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/>
+		</symbol>
+		<symbol id="check-circle" viewBox="0 0 512 512">
+		  <path fill="currentColor" d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 48c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m140.204 130.267l-22.536-22.718c-4.667-4.705-12.265-4.736-16.97-.068L215.346 303.697l-59.792-60.277c-4.667-4.705-12.265-4.736-16.97-.069l-22.719 22.536c-4.705 4.667-4.736 12.265-.068 16.971l90.781 91.516c4.667 4.705 12.265 4.736 16.97.068l172.589-171.204c4.704-4.668 4.734-12.266.067-16.971z"/>
+		</symbol>
+		<symbol id="times" viewBox="0 0 352 512">
+		  <path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/>
+		</symbol>
+		<symbol id="expand" viewBox="0 0 448 512">
+		  <path fill="currentColor" d="M448 344v112a23.94 23.94 0 0 1-24 24H312c-21.39 0-32.09-25.9-17-41l36.2-36.2L224 295.6 116.77 402.9 153 439c15.09 15.1 4.39 41-17 41H24a23.94 23.94 0 0 1-24-24V344c0-21.4 25.89-32.1 41-17l36.19 36.2L184.46 256 77.18 148.7 41 185c-15.1 15.1-41 4.4-41-17V56a23.94 23.94 0 0 1 24-24h112c21.39 0 32.09 25.9 17 41l-36.2 36.2L224 216.4l107.23-107.3L295 73c-15.09-15.1-4.39-41 17-41h112a23.94 23.94 0 0 1 24 24v112c0 21.4-25.89 32.1-41 17l-36.19-36.2L263.54 256l107.28 107.3L407 327.1c15.1-15.2 41-4.5 41 16.9z"></path>
+		</symbol>
+		<symbol id="shrink" viewBox="0 0 512 512">
+		  <path fill="currentColor" d="M200 288H88c-21.4 0-32.1 25.8-17 41l32.9 31-99.2 99.3c-6.2 6.2-6.2 16.4 0 22.6l25.4 25.4c6.2 6.2 16.4 6.2 22.6 0L152 408l31.1 33c15.1 15.1 40.9 4.4 40.9-17V312c0-13.3-10.7-24-24-24zm112-64h112c21.4 0 32.1-25.9 17-41l-33-31 99.3-99.3c6.2-6.2 6.2-16.4 0-22.6L481.9 4.7c-6.2-6.2-16.4-6.2-22.6 0L360 104l-31.1-33C313.8 55.9 288 66.6 288 88v112c0 13.3 10.7 24 24 24zm96 136l33-31.1c15.1-15.1 4.4-40.9-17-40.9H312c-13.3 0-24 10.7-24 24v112c0 21.4 25.9 32.1 41 17l31-32.9 99.3 99.3c6.2 6.2 16.4 6.2 22.6 0l25.4-25.4c6.2-6.2 6.2-16.4 0-22.6L408 360zM183 71.1L152 104 52.7 4.7c-6.2-6.2-16.4-6.2-22.6 0L4.7 30.1c-6.2 6.2-6.2 16.4 0 22.6L104 152l-33 31.1C55.9 198.2 66.6 224 88 224h112c13.3 0 24-10.7 24-24V88c0-21.3-25.9-32-41-16.9z"></path>
+		</symbol>
+	  </defs>
+	</svg>
 
-
-<!-- Empty header (TODO) -->
-<div id="hdrdiv" class="hdrdiv2">
-</div>
-
-
-<!-- See the fileio "mode" -->
-<section class="page_top_tbar">
-
-  <div id="file_io-div" class="div-hide">
-    <button class="submit_grey" type="submit" onclick="openLoadDiv()" id="myBtn">
-    <i style="color: #69c;"><svg class="icon-file-import" width="20" height="20"><use href="#file-import"></use></svg></i>Load file
-    </button>
-
-    <span id="filein_name" style="font-weight: bold;"></span> &minus;
-    <span>Current spectrum: <span id="json_info">JSON spectra info...</span>
-    <span class="w-span">Loaded <span id="fsize_info" style="font-weight: bold;">Data size info...</span> elements array</span>
-
-  </div>
-
-  <div id="download-json-div" class="div-hide">
-    <button id="viewbutton" class="simple_button" style="padding: 6px;" title="Retrieve full JSON data" onclick="saveJsonObj('gmodelfit_data.json', chart_data)">
-    <i style="color: #69c;"><svg class="icon-download" width="20" height="20"><use href="#download"></use></svg></i>JSON data
-    </button>
-  </div>
-
-</section>
-
-
-<!-- Main div area with plot and tables -->
-
-<div class="interface">
-
-  <div id="myModal" class="modal modal-hide">
-<!-- Modal content -->
-    <div id="myModal_cont" class="modal-content">
-
-	<div class="modal-header">
-		<span class="close" title="Close">&times;</span>
-		<h3 class="modal-header-text">GModelFitViewer file selector ...</h3>
+	<!-- Empty header (TODO) -->
+	<div id="hdrdiv" class="hdrdiv2">
 	</div>
 
-	<div id="modal-logdiv" class="modal-body">
+	<!-- See the fileio "mode" -->
+	<section class="page_top_tbar">
 
-		<div id="dropzone">
-		  <div>
-			Drag &amp; drop a GModelFit file here...
-			<br />or<br />
-			<label for="selfile" class="custom-file-select">
-			<svg class="icon-search" width="20" height="20"><use href="#search"></use></svg><span class="ud-angle-l">Browse ...</span>
-			</label>
-			<input id="selfile" type="file" accept=".json" />
+	  <div id="file_io-div" class="div-hide">
+		<button class="submit_grey" type="submit" onclick="openLoadDiv()" id="myBtn">
+		  <i style="color: #69c;"><svg class="icon-file-import" width="20" height="20"><use href="#file-import"></use></svg></i>Load file
+		</button>
+
+		<span id="filein_name" style="font-weight: bold;"></span> &minus;
+		<span>Current spectrum: <span id="json_info">JSON spectra info...</span>
+		  <span class="w-span">Loaded <span id="fsize_info" style="font-weight: bold;">Data size info...</span> elements array</span>
+
+	  </div>
+
+	  <div id="download-json-div" class="div-hide">
+		<button id="viewbutton" class="simple_button" style="padding: 6px;" title="Retrieve full JSON data" onclick="saveJsonObj('gmodelfit_data.json', chart_data)">
+		  <i style="color: #69c;"><svg class="icon-download" width="20" height="20"><use href="#download"></use></svg></i>JSON data
+		</button>
+	  </div>
+	</section>
+
+	<!-- Main div area with plot and tables -->
+	<div class="interface">
+	  <div id="myModal" class="modal modal-hide">
+		<!-- Modal content -->
+		<div id="myModal_cont" class="modal-content">
+
+		  <div class="modal-header">
+			<span class="close" title="Close">&times;</span>
+			<h3 class="modal-header-text">GModelFitViewer file selector ...</h3>
 		  </div>
+
+		  <div id="modal-logdiv" class="modal-body">
+
+			<div id="dropzone">
+			  <div>
+				Drag &amp; drop a GModelFit file here...
+				<br />or<br />
+				<label for="selfile" class="custom-file-select">
+				  <svg class="icon-search" width="20" height="20"><use href="#search"></use></svg><span class="ud-angle-l">Browse ...</span>
+				</label>
+				<input id="selfile" type="file" accept=".json" />
+			  </div>
+			</div>
+
+			<progress value="0" max="100" id="progress-bar"></progress>
+			<div id="f_status"></div>
+		  </div>
+
+		</div>
+	  </div>
+
+	  <section id="datainfo-sect" style="margin-top: 0.5em;">
+
+		<div id="p_title" class="inline">GModelFitViewer info here...</div>
+		<div id="mod_sel-div" class="div-hide">
+		  <select id="p_selector" onchange="p_select()" class="dd-select" title="Select model"></select>
+
+		  <!-- Add Prev / Next buttons -->
+		  <button id="prev_model" class="submit_grey" type="submit" onclick="p_select('prev')"> &lt; Prev </button>
+		  <button id="next_model" class="submit_grey" type="submit" onclick="p_select('next')"> Next &gt; </button>
 		</div>
 
-		<progress value="0" max="100" id="progress-bar"></progress>
-		<div id="f_status"></div>
-	</div>
+		<!-- The tools info -->
+		<div id="gmf_info-div">
+		  <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GModelFitViewer.jl" target="_new">GModelFitViewer</a>
+			<div id="version-div" class="inline" style="color: #fff;">Version x.y.z</div>
+		  </div>
 
-    </div>
-  </div>
+		  <!-- This is TODO -->
+		  <div class="app-info-div"> <div id="app_info">e.g. App name</div> </div>
+		</div>
 
-  <section id="datainfo-sect" style="margin-top: 0.5em;">
-
-  <div id="p_title" class="inline">GModelFitViewer info here...</div>
-
-  <div id="mod_sel-div" class="div-hide">
-    <select id="p_selector" onchange="p_select()" class="dd-select" title="Select model"></select>
-
-<!-- Add Prev / Next buttons -->
-    <button id="prev_model" class="submit_grey" type="submit" onclick="p_select('prev')"> &lt; Prev </button>
-    <button id="next_model" class="submit_grey" type="submit" onclick="p_select('next')"> Next &gt; </button>
-  </div>
-
-<!-- The tools info -->
-
-  <div id="gmf_info-div">
-    <div class="inline"><a style="color: #fff; font-weight: bold;" href="https://github.com/lnicastro/GModelFitViewer.jl" target="_new">GModelFitViewer</a>
-      <div id="version-div" class="inline" style="color: #fff;">Version x.y.z</div>
-    </div>
-
-<!-- This is TODO -->
-    <div class="app-info-div"> <div id="app_info">e.g. App name</div> </div>
-  </div>
-
-  </section>  <!-- datainfo-sect -->
+	  </section>  <!-- datainfo-sect -->
 
 
-  <section id="plot-sect">
+	  <section id="plot-sect">
 
-<!-- amCharts div -->
-  <div id="chartdiv"></div>
+		<!-- amCharts div -->
+		<div id="chartdiv"></div>
 
-<!-- Plot styel and range controls -->
-  <div id="controls-div">
-<!--
-	<span class="box-cb" title="Toggle Y errors plot">
-	  <input type="checkbox" id="y_err-cb" onclick="y_err_toggle()" /><label for="y_err-cb">Y err</label>
-	</span>
--->
-	<button class="box-cb" style="padding: 4px 4px 0 4px; color: var(--gray-dark); background: transparent;" title="Enter/exit Fullscreen Mode" onclick="toggleFullScreen('hdrdiv')">
-	  <svg class="icon-expand" width="16" height="16"><use id="fullscreen-i" href="#expand"></use></svg>
-	  </button>
-	<span class="box-cb" title="Toggle X lin/log scale">
-	  <input type="checkbox" id="x_log-cb" onclick="x_linlog_toggle()" /><label for="x_log-cb" id="x_log-lab">X log</label>
-	</span>
+		<!-- Plot styel and range controls -->
+		<div id="controls-div">
+		  <!--
+			  <span class="box-cb" title="Toggle Y errors plot">
+				<input type="checkbox" id="y_err-cb" onclick="y_err_toggle()" /><label for="y_err-cb">Y err</label>
+			  </span>
+			  -->
+			  <button class="box-cb" style="padding: 4px 4px 0 4px; color: var(--gray-dark); background: transparent;" title="Enter/exit Fullscreen Mode" onclick="toggleFullScreen('hdrdiv')">
+				<svg class="icon-expand" width="16" height="16"><use id="fullscreen-i" href="#expand"></use></svg>
+			  </button>
+			  <span class="box-cb" title="Toggle X lin/log scale">
+				<input type="checkbox" id="x_log-cb" onclick="x_linlog_toggle()" /><label for="x_log-cb" id="x_log-lab">X log</label>
+			  </span>
 
-	<span class="box-cb" title="Toggle Y lin/log scale">
-	  <input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()" /><label for="y_log-cb" id="y_log-lab">Y log</label>
-	</span>
+			  <span class="box-cb" title="Toggle Y lin/log scale">
+				<input type="checkbox" id="y_log-cb" onclick="y_linlog_toggle()" /><label for="y_log-cb" id="y_log-lab">Y log</label>
+			  </span>
 
-	<div id="range-selector-div">
-	  <span class="label-range-in">X range</span>
-		<input name="xmin" type="text" title="X min" class="range-in" value="" onchange="inx_range_set()" />
-		<input name="xmax" type="text" title="X max" class="range-in" value="" onchange="inx_range_set()" />
-	  <span class="label-range-in" style="margin-left: 1em;">Y range</span>
-		<input name="ymin" type="text" title="Y min" class="range-in" value="" onchange="iny_range_set()" />
-		<input name="ymax" type="text" title="Y max" class="range-in" value="" onchange="iny_range_set()" />
+			  <div id="range-selector-div">
+				<span class="label-range-in">X range</span>
+				<input name="xmin" type="text" title="X min" class="range-in" value="" onchange="inx_range_set()" />
+				<input name="xmax" type="text" title="X max" class="range-in" value="" onchange="inx_range_set()" />
+				<span class="label-range-in" style="margin-left: 1em;">Y range</span>
+				<input name="ymin" type="text" title="Y min" class="range-in" value="" onchange="iny_range_set()" />
+				<input name="ymax" type="text" title="Y max" class="range-in" value="" onchange="iny_range_set()" />
 
-	  <button class="transp_button" style="padding: 4px 0 0 0; color: var(--success);" title="Replot with these ranges" onclick="inx_range_set();iny_range_set()">
-	  <svg class="icon-check-circle" width="18" height="18"><use href="#check-circle"></use></svg>
-	  </button>
-	  <button class="transp_button" style="padding: 4px 0 0 0; color: var(--danger);" title="Clear range input values" onclick="xy_range_reset()">
-	  <svg class="icon-times" width="12" height="18"><use href="#times"></use></svg>
-	  </button>
-	</div>
+				<button class="transp_button" style="padding: 4px 0 0 0; color: var(--success);" title="Replot with these ranges" onclick="inx_range_set();iny_range_set()">
+				  <svg class="icon-check-circle" width="18" height="18"><use href="#check-circle"></use></svg>
+				</button>
+				<button class="transp_button" style="padding: 4px 0 0 0; color: var(--danger);" title="Clear range input values" onclick="xy_range_reset()">
+				  <svg class="icon-times" width="12" height="18"><use href="#times"></use></svg>
+				</button>
+			  </div>
 
-<!-- Residuals plot toggle and sigma range selction -->
+			  <!-- Residuals plot toggle and sigma range selction -->
+			  <div id="box-resid-in">
+				<div id="res_legenddiv" title="Show/hide residuals">
+				  <input type="checkbox" id="resid-cb" /><label for="resid-cb">Residuals</label>
+				</div>
 
-	<div id="box-resid-in">
-	  <div id="res_legenddiv" title="Show/hide residuals">
-		<input type="checkbox" id="resid-cb" /><label for="resid-cb">Residuals</label>
-	  </div>
+				<div class="n_sigma-div" title="Set the highlighted resid. range">&pm;
+				  <input type="number" style="width: 2.5rem;" min="1.0" max="30.0" step="0.1" name="n_sigma" id="n_sigma" value="3.0" onchange="n_sigma_update(this)" /> &sigma;
+				</div>
+			  </div>
 
-	  <div class="n_sigma-div" title="Set the highlighted resid. range">&pm;
-		<input type="number" style="width: 2.5rem;" min="1.0" max="30.0" step="0.1" name="n_sigma" id="n_sigma" value="3.0" onchange="n_sigma_update(this)" /> &sigma;
-	  </div>
-	</div>
-
-  </div>  <!-- controls-div -->
-  </section>  <!-- plot-sect -->
-
-
-  <hr class="style-one"></hr>
+		</div>  <!-- controls-div -->
+	  </section>  <!-- plot-sect -->
 
 
-<!-- Fit data info and results section -->
-
-  <section>
-
-  <div id="fitres-div" class="out_table"></div>
-
-<!-- Table selector -->
-  <div id="fitlog_selector"></div>
-
-<!-- Tables div -->
-    <div id="fitlog_tables-div">
-	<div id="fitlog_tables"></div>
-    </div>
-
-  </div>  <!-- fitres-div -->
-
-  </section>  <!-- Fit info -->
+	  <hr class="style-one"></hr>
 
 
-<!-- GModelFit passed JSON object -->
-  <script>
-    var chart_data = JSON_DATA;
-  </script>
+	  <!-- Fit data info and results section -->
+	  <section>
+
+		<div id="fitres-div" class="out_table"></div>
+
+		<!-- Table selector -->
+		<div id="fitlog_selector"></div>
+
+		<!-- Tables div -->
+		<div id="fitlog_tables-div">
+		  <div id="fitlog_tables"></div>
+		</div>
+	</div>  <!-- fitres-div -->
+	</section>  <!-- Fit info -->
 
 
-<script type="text/javascript">
-JS_CODE
-</script>
+	<!-- GModelFit passed JSON object -->
+	<script>
+      var chart_data = JSON_DATA;
+	</script>
+
+
+	<script type="text/javascript">
+	  JS_CODE
+	</script>
 
 </div>  <!-- interface -->
 
@@ -1039,7 +1006,7 @@ JS_CODE
 <div class="trailer">
   A viewer for <a href="https://github.com/gcalderone/GModelFit.jl" style="color: #fff; font-weight: bold;" target="_new">GModelFit</a> 1D results
   &minus; <a style="color: #ccc;" href="mailto:luciano.nicastro@inaf.it">L. Nicastro</a>
-        &amp; <a style="color: #ccc;" href="mailto:giorgio.calderone@inaf.it">G. Calderone</a>, 2025
+  &amp; <a style="color: #ccc;" href="mailto:giorgio.calderone@inaf.it">G. Calderone</a>, 2025
 </div>
 
 </body>
