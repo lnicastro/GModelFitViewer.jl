@@ -1,4 +1,4 @@
-var _version = '0.4.3', _date = '2025-10-24';
+var _date = '2025-10-24';
 document.querySelector('meta[name="version"]').setAttribute("content", _version);
 document.querySelector('meta[name="date"]').setAttribute("content", _date);
 document.getElementById('version-div').innerHTML = 'v'+ _version;

@@ -126,6 +126,9 @@ function serialize_html(bestfit::GModelFit.ModelSnapshot,
     write(output, readuntil(input_html, "JSON_DATA"))
     TypedJSON.serialize(output, ll)
     write(output, readuntil(input_html, "JS_CODE"))
+    write(output, "var _version = '")
+    write(output, string(pkgversion(GModelFitViewer)))
+    write(output, "';\n")
     while !eof(input_js)
         write(output, readavailable(input_js))
     end
