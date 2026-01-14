@@ -102,8 +102,8 @@ end
 function serialize_html(filename::String,
                         bestfit::Vector{GModelFit.ModelSnapshot},
                         fsumm::GModelFit.Solvers.FitSummary,
-                        data::Vector{GModelFit.Measures},
-                        meta::Vector{Meta})
+                        data::Vector{D},
+                        meta::Vector{Meta}) where {D <: GModelFit.Measures}
     @assert length(bestfit) == length(data) == length(meta)
     return write_html(filename,
                       TypedJSON.lower(Dict(:nepochs => length(bestfit),
