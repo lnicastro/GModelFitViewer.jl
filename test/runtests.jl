@@ -15,10 +15,10 @@ model[:l2].center.val = 1   # guess value for the distance between the centers
 model[:l2].center.low = 0   # ensure [l2].center > [l1].center
 dom = Domain(0:0.1:5)
 data = GModelFit.mock(Measures, model, dom)
-bestfit, stats = fit(model, data)
+bestfit, fsumm = fit(model, data)
 
 
-GModelFitViewer.serialize_html(filename="gmodelfitviewer_test04.html", bestfit, stats, data,
+GModelFitViewer.serialize_html("gmodelfitviewer_test01.html", bestfit, fsumm, data,
                                title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
                                xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 
@@ -34,11 +34,8 @@ multi[2][:main].center.mpatch = @fd m -> m[1][:main].center
 # Create datasets and fit
 dom = Domain(-5.:0.1:5)
 data = GModelFit.mock(Measures, multi, [dom, dom])
-bestfit, stats = fit(multi, data)
+bestfit, fsumm = fit(multi, data)
 
-
-meta1 = GModelFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
-meta2 = GModelFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
-GModelFitViewer.serialize_html(filename="gmodelfitviewer_test05.html", bestfit, xlab="Abscissa", ylab="Ordinate", xr=[-4, 4])
-GModelFitViewer.serialize_html(filename="gmodelfitviewer_test06.html", bestfit, stats, meta=[meta1, meta2])
-GModelFitViewer.serialize_html(filename="gmodelfitviewer_test07.html", bestfit, stats, data, meta=[meta1, meta2])
+meta = [GModelFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1"),
+        GModelFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")]
+GModelFitViewer.serialize_html("gmodelfitviewer_test02.html", bestfit, fsumm, data, meta)

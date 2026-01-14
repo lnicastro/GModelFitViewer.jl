@@ -48,78 +48,30 @@ function Meta(; kwargs...)
 end
 
 
-# The following structure contains vector(s) of dicts as a result of
-# serializarion with GModelFit._serialize().  Its constructor allows
-# to apply meta information provided via keywords to each dict.
-struct ViewerData
-    data::Vector
+import TypedJSON: lower
+lower(v::TypedJSON.JSONType) = v
 
-    ViewerData(data::Vector) = new(data)
+function my_lower(input::GModelFit.ModelSnapshot, meta::Meta)
+    out = TypedJSON.lower(input)
+    io = IOBuffer()
+    ctx = IOContext(io, :color => true)
+    show(ctx, input)
+    out.dict[:show] = TypedJSON.JSONString(String(take!(io)))
+    out.dict[:meta] = TypedJSON.JSONDict(meta)
+    return out
+end
 
-    function ViewerData(args...; meta=nothing, kws...)
-        @assert any(isa.(args, GModelFit.ModelSnapshot)  .|  isa.(args, Vector{GModelFit.ModelSnapshot}))
-        if isnothing(meta)
-            meta = Meta(; kws...)
-        end
-
-        out = GModelFit._serialize(args...)
-        if !isa(out, Vector)
-            out = [out] # output must always be a vector to simplify JavaScript code
-        elseif length(args) == 1
-            # We have a vector with only one input arg: it means we are
-            # in a multi-model case, hence we need to add a further vector
-            # level
-            out = [out]
-        end
-
-        # Apply meta to dicts
-        for i in 1:length(out)
-            if isa(out[i], Vector)
-                for j in 1:length(out[i])
-                    if isa(meta, Vector)
-                        out[i][j]["meta"] = GModelFit._serialize_struct(meta[j])
-                    else
-                        out[i][j]["meta"] = GModelFit._serialize_struct(meta)
-                    end
-                end
-            else
-                if !isa(meta, Vector)
-                    out[i]["meta"] = GModelFit._serialize_struct(meta)
-                end
-            end
-        end
-        return new(out)
-    end
+function my_lower(input::GModelFit.Solvers.FitSummary)
+    out = TypedJSON.lower(input)
+    io = IOBuffer()
+    ctx = IOContext(io, :color => true)
+    show(ctx, input)
+    out.dict[:show] = TypedJSON.JSONString(String(take!(io)))
+    return out
 end
 
 
-# Serialize to HTML
-default_filename_html() = joinpath(tempdir(), "gmodelfitviewer.html")
-
-function serialize_html(bestfit::GModelFit.ModelSnapshot,
-                        fsumm::GModelFit.Solvers.FitSummary,
-                        data::GModelFit.Measures{1};
-                        filename=default_filename_html(),
-                        kws...)
-    ll = TypedJSON.lower([[bestfit], fsumm, [data]])
-    
-    io = IOBuffer()
-    ctx = IOContext(io, :color => true)
-    show(ctx, bestfit)
-    ll.value[1].value[1].dict[:show] = TypedJSON.JSONString(String(take!(io)))
-    ll.value[1].value[1].dict[:meta] = TypedJSON.lower(Meta(; kws...))
-
-    io = IOBuffer()
-    ctx = IOContext(io, :color => true)
-    show(ctx, fsumm)
-    ll.value[2].dict[:show] = TypedJSON.JSONString(String(take!(io)))
-
-    if true # TODO
-        io = open("/tmp/gmodelfitviewer.json", "w")
-        TypedJSON.serialize(io, ll)
-        close(io)
-    end
-
+function write_html(filename::String, ll::TypedJSON.JSONType)
     input_html = open(joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html"))
     input_js   = open(joinpath(dirname(pathof(@__MODULE__)), "vieweronline.js"))
     output     = open(filename, "w")
@@ -136,15 +88,46 @@ function serialize_html(bestfit::GModelFit.ModelSnapshot,
         write(output, readavailable(input_html))
     end
     close(output)
-    close(input_html)
+          close(input_html)
     close(input_js)
+
+    # TODO: comment the following lines
+    output = open(replace(filename, ".html" => ".json"), "w")
+    TypedJSON.serialize(output, ll)
+    close(output)
 
     return filename
 end
-    
-# Viewer
-function viewer(args...; kws...)
-    filename = serialize_html(args...; kws...)
+
+function serialize_html(filename::String,
+                        bestfit::Vector{GModelFit.ModelSnapshot},
+                        fsumm::GModelFit.Solvers.FitSummary,
+                        data::Vector{GModelFit.Measures},
+                        meta::Vector{Meta})
+    @assert length(bestfit) == length(data) == length(meta)
+    return write_html(filename,
+                      TypedJSON.lower(Dict(:nepochs => length(bestfit),
+                                           :models => [my_lower(bestfit[i], meta[i]) for i in 1:length(bestfit)],
+                                           :fitsummary => my_lower(fsumm),
+                                           :data => data)))
+end
+
+serialize_html(filename::String,
+               bestfit::GModelFit.ModelSnapshot,
+               fsumm::GModelFit.Solvers.FitSummary,
+               data::GModelFit.Measures{1},
+               meta::Meta) =
+                   serialize_html(filename, [bestfit], fsumm, [data], [meta])
+
+serialize_html(filename::String,
+               bestfit::GModelFit.ModelSnapshot,
+               fsumm::GModelFit.Solvers.FitSummary,
+               data::GModelFit.Measures{1};
+               kws...) =
+                   serialize_html(filename, [bestfit], fsumm, [data], [Meta(; kws...)])
+
+function viewer(args...; filename=joinpath(tempdir(), "gmodelfitviewer.html"), kws...)
+    filename = serialize_html(filename, args...; kws...)
     DefaultApplication.open(filename)
 end
 
