@@ -1,4 +1,5 @@
-var _date = '2025-10-24';
+var _version = '0.4.5';
+var _date = '2026-01-15';
 document.querySelector('meta[name="version"]').setAttribute("content", _version);
 document.querySelector('meta[name="date"]').setAttribute("content", _date);
 document.getElementById('version-div').innerHTML = 'v'+ _version;
@@ -20,9 +21,6 @@ var   n_sigma = 3,		// Highlight residuals region within this +/- sigma
 	csr2,		// The sum of squared residuals chart series
 	aux = {},	// The metadata information read from the JSON file and more
 	i_chmodel = -1, // Index of the Model data in the chart.series
-	i_mod = -1,	// chart_data index of the Models
-	i_mea = -1,	// chart_data index of the Measurements
-	i_fit = -1,	// chart_data index of the FitStats
 	vxAxis,		// The X axis object
 	valueAxis,	// The Y axis object
 	resyAxis,	// The residuals right axis object
@@ -78,7 +76,6 @@ var mycolors = [
 
 // Manage URL passed parameters
 var c_imod = 0;		 // Currently plotted model index
-var interface_type = 'basic';	 // Default interface type
 
 if ( window.location.search !== '' ) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -91,15 +88,6 @@ if ( window.location.search !== '' ) {
 	if ( urlParams.has('model') )
 		c_imod = urlParams.get('model') - 1;
 
-	// Check for the interface type: basic (default), fileio, more TODO
-	if ( urlParams.has('mode') )
-		interface_type = urlParams.get('mode');
-}
-
-if ( interface_type == 'fileio' ) {
-	document.getElementById('file_io-div').setAttribute('class', 'div-show-inline');
-	document.getElementById('download-json-div').setAttribute('class', 'div-show-inline');
-	document.getElementById('myModal').className = 'modal';
 }
 
 
@@ -186,162 +174,6 @@ function isHidden(e) {
 }
 
 
-// -- Show spectrum components info and number of data elements (note: div visibility is mode dependent)
-
-function show_spe_maininfo() {
-	document.getElementById('json_info').innerHTML = (aux.modinfo[0].n_comps) +' components fit.';
-
-	document.getElementById('fsize_info').innerHTML = numberWithCommas(my_chartdata.dat.length);
-}
-
-
-// -- Open the file load modal div
-
-function openLoadDiv() {
-	// Get the button that opens the modal
-	//var btn = document.getElementById("myBtn");
-
-	// When the user clicks the button, open the modal
-	showLoadDiv();
-
-	// Clean progress bar and load status message
-	document.getElementById('progress-bar').value = 0;
-	f_changeStatus('');
-
-	// Get the span element that hides the modal
-	var span = document.getElementsByClassName('close')[0];
-
-	// When the user clicks on span (x), hide the modal
-	span.onclick = function() {
-		hideLoadDiv();
-	}
-
-	// When the user clicks anywhere outside of the modal, hide it
-	window.onclick = function(event) {
-		var modal = document.getElementById('myModal');
-		if ( event.target == modal )
-			hideLoadDiv();
-	}
-}
-
-
-// -- Show the modal div
-
-function showLoadDiv() {
-	var modal = document.getElementById('myModal');
-	modal.className = 'modal modal-slidein';
-}
-
-
-// -- Hide the modal div
-
-function hideLoadDiv() {
-	var modal = document.getElementById('myModal');
-	modal.className = 'modal modal-slideout';
-}
-
-
-//
-// -- Files drop management
-
-window.onload = function() {
-	var dropzone = document.getElementById('dropzone');
-	dropzone.ondragover = dropzone.ondragenter = function(event) {
-		event.stopPropagation();
-		event.preventDefault();
-	}
-
-	dropzone.ondrop = function(event) {
-		event.stopPropagation();
-		event.preventDefault();
-
-		var filesArray = event.dataTransfer.files;
-		for (i = 0; i < filesArray.length; i++)  // Actually here should limit to 1 file!
-			processFile(filesArray[i]);
-	}
-}
-
-
-//
-// -- Files loading listening to "selfile" element change
-
-document.getElementById('selfile').addEventListener('change', (e) => {
-	const file = document.getElementById('selfile').files[0];
-	if ( file )
-		processFile(file);
-});
-
-
-// -- A basic error handler for FileReader
-
-const f_errorHandler = (e) => {
-	f_changeStatus("Error: "+ e.target.error.name);
-}
-
-
-// -- Updates the value of the progress bar
-
-const f_setProgress = (e) => {
-	// The target is the file reader
-	const fr = e.target;
-	const loadingPercentage = 100 * e.loaded / e.total;
-	document.getElementById('progress-bar').value = loadingPercentage;
-}
-
-const f_changeStatus = (status) => {
-	document.getElementById('f_status').innerHTML = status;
-}
-
-
-// -- Manage local file upload
-
-const processFile = (file) => {
-	const fr = new FileReader();
-	fr.readAsText(file);
-	fr.onprogress = f_setProgress;
-	fr.onerror = f_errorHandler;
-	fr.onabort = () => f_changeStatus('Start Loading');
-	fr.onloadstart = () => f_changeStatus('Start Loading');
-	fr.onload = f_loadedOk;
-	fr.onloadend = () => fileInfo(file);
-
-	// At this point we can also perform some operations on the data asynchronously
-}
-
-
-// -- Display file info in the interface, considering data origin (local or web)
-
-const fileInfo = (file) => {
-	document.getElementById('progress-bar').value = 100;
-	f_changeStatus('Loaded!');
-	var fname, size_info;
-	if ( typeof file === 'object' ) {
-		fname = file.name;
-		document.getElementById('json_info').innerHTML = (aux.modinfo[0].n_comps) +' components fit.';
-		size_info = numberWithCommas(my_chartdata.dat.length);
-	} else if ( typeof file === 'string' ) {
-		fname = file.split('/').reverse()[0];
-		document.getElementById('json_info').innerHTML = '';
-		size_info = numberWithCommas(chart.dataSource.data.length);
-	}
-	document.getElementById('filein_name').innerHTML = fname;
-	document.getElementById('fsize_info').innerHTML = size_info;
-}
-
-
-// -- Loading completed successfully; pass the data to chart
-
-const f_loadedOk = (e) => {
-	const fr = e.target;
-	chart_data = JSON.parse(fr.result);
-	c_imod = 0;  // Reset the model(s) index
-
-	getauxinfo();
-
-	p_select(0, true);
-	hideLoadDiv();
-}
-
 
 //
 // -- Toggle full-screen mode. Also toggle visibility of a user given div.
@@ -366,34 +198,52 @@ function toggleFullScreen(id_div) {
 		document.getElementById(id_div).classList.toggle('div-hide');
 }
 
+//
+// Functions to read from chart_data
 
-// Function to read from chart_data
+function getMainComp(chart_data, epoch) {
+	return chart_data['+'].models[epoch]['+'].maincomp[''];
+}
+
+function getModels(chart_data, epoch) {
+	return chart_data['+'].models[epoch]['+'];
+}
+
+function getModelsDomainAxis(chart_data, epoch) {
+	return chart_data['+']['models'][epoch]['+']['domain']['+'].axis[''][0];
+}
+
 function getComps(chart_data, epoch) {
-	out = chart_data[0][epoch]["+"].comps["+"];
+	out = chart_data['+'].models[epoch]['+'].comps['+'];
 	for (const [key, value] of Object.entries(out)) {
 		out[key] = value["+"].buffer;
 	}
-	console.log(out);
+//	console.log(out);
+return out;
 }
 
-function getMainComp(chart_data, epoch) {
-	return chart_data[0][epoch]["+"].maincomp[""];
+function getData(chart_data, epoch) {
+	return chart_data['+'].data[epoch]['+'];
+}
+
+function getDataDomainAxis(chart_data, epoch) {
+	return chart_data['+'].data[epoch]['+']['domain']['+'].axis[''][0];
 }
 
 function getNEpochs(chart_data) {
-	return chart_data[0].length
+	return chart_data['+'].nepochs;
 }
 
 function getMeta(chart_data, epoch) {
-	return chart_data[0][epoch]["+"].meta["+"];
+	return chart_data['+']['models'][epoch]['+'].meta['+'];
 }
 
 function getNData(chart_data) {
-	return chart_data[1]["+"].ndata;
+	return chart_data['+'].fitsummary['+'].ndata;
 }
 
 function getNFree(chart_data) {
-	return chart_data[1]["+"].nfree;
+	return chart_data['+'].fitsummary['+'].nfree;
 }
 
 
@@ -442,63 +292,57 @@ function getauxinfo() {  // TODO
 			desc = '<span style="color: #69c; font-weight: bold;">',
 			v_labs = ['values', 'uncerts'];
 
-		if ( aux.is_multimodel ) {
-			cdata = chart_data[i_mod][i];
-			if ( i_mea >= 0 )
-				mea = chart_data[i_mea][i];
-		} else {
-			cdata = chart_data[i_mod];
-			if ( i_mea >= 0 )
-				mea = chart_data[i_mea];
-		}
+			cdata = getModels(chart_data, i);
+			if ( chart_data['+'].data[i] !== undefined )
+				mea = getData(chart_data, i);
 
-		cnames = Object.keys(cdata.comps);
-		aux.maincomp.push(cdata.maincomp.substring(4));  // maincomp ~= _TS_main
-		//aux.maincomp.push('folded');
+		cnames = Object.keys(cdata.comps['+']);
+		aux.maincomp.push(cdata.maincomp[''].substring(4));  // maincomp ~= _TS_main
 
 		// Labels in Measures
-		if ( i_mea >= 0 && mea.labels !== undefined ) {
-			v_labs = mea.labels;
+		if ( mea.labels[''] !== undefined ) {
+			v_labs = mea.labels[''];
 		}
 
 		if ( cdata.meta !== undefined ) {
-			if ( cdata.meta.rebin )
-				n_reb = cdata.meta.rebin;
-			if ( cdata.meta.xrange )
-				x_rng = cdata.meta.xrange;
-			if ( cdata.meta.yrange )
-				y_rng = cdata.meta.yrange;
-			if ( cdata.meta.xlog )
-				x_lg = cdata.meta.xlog;
-			if ( cdata.meta.ylog )
-				y_lg = cdata.meta.ylog;
-			if ( cdata.meta.xlabel ) {
-				x_lab = cdata.meta.xlabel;
+			var meta = getMeta(chart_data, i);
+			if ( meta.rebin )
+				n_reb = meta.rebin;
+			if ( meta.xrange )
+				x_rng = meta.xrange;
+			if ( meta.yrange )
+				y_rng = meta.yrange;
+			if ( meta.xlog )
+				x_lg = meta.xlog;
+			if ( meta.ylog )
+				y_lg = meta.ylog;
+			if ( meta.xlabel ) {
+				x_lab = meta.xlabel;
 				if ( x_lab ) {
-					if ( cdata.meta.xscale !== null && cdata.meta.xscale !== 1 ) {
-						var un = cdata.meta.xscale.toString().replace(/\+/,'');
+					if ( meta.xscale !== null && meta.xscale !== 1 ) {
+						var un = meta.xscale.toString().replace(/\+/,'');
 						x_lab += ' [[x '+ un +']]';
 					}
-					if ( cdata.meta.xunit )
-						x_lab += ' ('+ cdata.meta.xunit +')';
+					if ( meta.xunit )
+						x_lab += ' ('+ meta.xunit +')';
 				}
 			}
 
-			if ( cdata.meta.ylabel ) {
-				y_lab = cdata.meta.ylabel;
+			if ( meta.ylabel ) {
+				y_lab = meta.ylabel;
 				if (  y_lab ) {
-					if ( cdata.meta.yscale !== null && cdata.meta.yscale !== 1 ) {
-						var un = cdata.meta.yscale.toString().replace(/\+/,'');
+					if ( meta.yscale !== null && meta.yscale !== 1 ) {
+						var un = meta.yscale.toString().replace(/\+/,'');
 						y_lab += ' [[x '+ un +']]';
 					}
-					if ( cdata.meta.yunit )
-						y_lab += ' ('+ cdata.meta.yunit +')';
+					if ( meta.yunit )
+						y_lab += ' ('+ meta.yunit +')';
 				}
 			}
 
-			if ( cdata.meta !== undefined && cdata.meta.title ) {
-				title = cdata.meta.title;
-				desc += cdata.meta.title;
+			if ( meta !== undefined && meta.title ) {
+				title = meta.title;
+				desc += meta.title;
 			} else
 				desc += 'Model '+ i;
 
@@ -512,21 +356,21 @@ function getauxinfo() {  // TODO
 			y_min = y_rng[0];
 			y_max = y_rng[1];
 		} else {  // Y range is model dependent ...
-			y_min = Math.min(y_min, Math.min(...mea.values[0]));
-			y_max = Math.max(y_max, Math.max(...mea.values[0]));
+			y_min = Math.min(y_min, Math.min(...mea.values[''][0]));
+			y_max = Math.max(y_max, Math.max(...mea.values[''][0]));
 			for (var j = 0; j < cnames.length; j++) {
-				y_min = Math.min(y_min, Math.min(...(cdata.comps[cnames[j]].buffer)));
-				y_max = Math.max(y_max, Math.max(...(cdata.comps[cnames[j]].buffer)));
+				y_min = Math.min(y_min, Math.min(...(cdata.comps['+'][cnames[j]]['+'].buffer)));
+				y_max = Math.max(y_max, Math.max(...(cdata.comps['+'][cnames[j]]['+'].buffer)));
 				console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
 			}
-			var e_max = 3*Math.min(...mea.values[1]);  // TODO
+			var e_max = 3*Math.min(...mea.values[''][1]);  // TODO
 			console.log('Error max:', e_max);
 			y_min -= e_max;
 			y_max += e_max;
 		}
 
 		// Scale Y axis for values < 0.01 or > 100
-		var	log10scale2 = Math.floor(Math.log10(y_max));
+		var log10scale2 = Math.floor(Math.log10(y_max));
 
 		if ( log10scale2 < -2 || log10scale2 > 2 )
 			y_scale = Math.pow(10, log10scale2);
@@ -535,12 +379,15 @@ function getauxinfo() {  // TODO
 
 		//console.log('log10scale2, y_scale', log10scale2, y_scale);
 
-		n_xmea = mea.domain.axis[0].length;
-		var n_xcomp = cdata.domain.axis[0].length;
-		console.log('i_mea, n_xmea, n_xcomp', i_mea, n_xmea, n_xcomp);
+		var datadomain = getDataDomainAxis(chart_data, i);
+		n_xmea = datadomain.length;
+		var moddomain = getModelsDomainAxis(chart_data, i);
+		var n_xcomp = moddomain.length;
+		console.log('n_xmea, n_xcomp', n_xmea, n_xcomp);
 
-		x_step = Math.abs(cdata.domain.axis[0][1] - cdata.domain.axis[0][0]);
-		console.log('n_xmea, x_min, x_max:', n_xmea, mea.domain.axis[0][0], mea.domain.axis[0][n_xmea - 1]);
+		//x_step = Math.abs(cdata.domain['+'].axis[''][0][1] - cdata.domain['+'].axis[''][0][0]);
+		x_step = Math.abs(moddomain[1] - moddomain[0]);
+		console.log('n_xmea, x_min, x_max:', n_xmea, datadomain[0], datadomain[n_xmea - 1]);
 		aux.modinfo.push({
 			title: title,
 			p_title: desc,
@@ -549,8 +396,8 @@ function getauxinfo() {  // TODO
 			v_labels: v_labs,
 			nx_mea: n_xmea,
 			nx_comp: n_xcomp,
-			x_min: +(mea.domain.axis[0][0]).toPrecision(4),
-			x_max: +(mea.domain.axis[0][n_xmea - 1]).toPrecision(4),
+			x_min: +(datadomain[0]).toPrecision(4),
+			x_max: +(datadomain[n_xmea - 1]).toPrecision(4),
 			x_step: x_step,
 			x_scale: x_scale,
 			y_scale: y_scale,
@@ -587,12 +434,9 @@ function getauxinfo() {  // TODO
 			var lab, option = document.createElement('option');
 			option.value = i;
 
-			if ( aux.is_multimodel )
-				cdata = chart_data[i_mod][i];
-			else
-				cdata = chart_data[i_mod];
-			if ( cdata.meta !== undefined && cdata.meta.title !== undefined )
-				lab = cdata.meta.title;
+			cdata = getModels(chart_data, i);
+			if ( cdata.meta !== undefined && cdata.meta['+'].title !== undefined )
+				lab = cdata.meta['+'].title
 			else
 				lab = "Model "+ i;
 			option.text = (i+1).toString() +': '+ lab;
@@ -624,53 +468,47 @@ var mydata2chart = function(isel) {
 
 	//console.log('mydata2chart isel:', isel);
 	var cdata, mea;
-	if ( aux.is_multimodel ) {
-		cdata = chart_data[i_mod][isel];
-		if ( i_mea >= 0 )
-			mea = chart_data[i_mea][isel];
-	} else {
-		cdata = chart_data[i_mod];
-		if ( i_mea >= 0 )
-			mea = chart_data[i_mea];
-	}
+	cdata = getModels(chart_data, isel);
+	if ( chart_data['+'].data[isel] !== undefined )
+		//mea = chart_data['+'].data[isel]['+'];
+		mea = getData(chart_data, isel);
 
 	// Change web page and plot labels
-	document.title = cdata.meta.title;
+	document.title = cdata.meta['+'].title;
 	p_title.innerHTML = aux.modinfo[isel].p_title;
 
-	var x = cdata.domain.axis[0],
+	var x = getDataDomainAxis(chart_data, isel),
 		cnames = aux.modinfo[isel].components,
 		fscale = Math.pow(10, aux.modinfo[isel].nf_sig),
 		mydata = {dat: [], res: [], comp: []}, data, res, comps;
 
 
 	// X values rounded to the N sig. factional digits
-	//var cs2 = 0, lenf = cdata.folded_domain.axis[0].length;
 	var cs2 = 0;
 	if ( aux.NEpochs > 0 ) {
 		// Extend domain.axis for bin width computation
-		var binw = mea.domain.axis[0][aux.modinfo[isel].nx_mea - 1] - mea.domain.axis[0][aux.modinfo[isel].nx_mea - 2]
-		mea.domain.axis[0].push(mea.domain.axis[0][aux.modinfo[isel].nx_mea - 1] + binw);
+		var binw = x[aux.modinfo[isel].nx_mea - 1] - x[aux.modinfo[isel].nx_mea - 2]
+		x.push(x[aux.modinfo[isel].nx_mea - 1] + binw);
 		for (var i = 0; i < aux.modinfo[isel].nx_mea; i++) {  // folded domain
 			data = {};
-			binw = mea.domain.axis[0][i+1] - mea.domain.axis[0][i];
-			data['xc'] = mea.domain.axis[0][i];
-			data['x'] = ((mea.domain.axis[0][i] - binw/2) * fscale) / fscale;
-			data['y'] = mea.values[0][i] / aux.modinfo[isel].y_scale;
-			data['error'] = mea.values[1][i] / aux.modinfo[isel].y_scale;
+			binw = x[i+1] - mea.domain['+'].axis[''][0][i];
+			data['xc'] = x[i];
+			data['x'] = ((x[i] - binw/2) * fscale) / fscale;
+			data['y'] = mea.values[''][0][i] / aux.modinfo[isel].y_scale;
+			data['error'] = mea.values[''][1][i] / aux.modinfo[isel].y_scale;
 			data['model'] = cdata.folded[i] / aux.modinfo[isel].y_scale;
 			mydata.dat.push(data);
 
 			res = {};
 			res['x'] = data['xc'];
-			res['resid'] = (mea.values[0][i] - cdata.folded[i]) / mea.values[1][i];
+			res['resid'] = (mea.values[''][0][i] - cdata.folded[i]) / mea.values[''][1][i];
 			// Normalised cumulative sum of squared residuals
 			cs2 += res['resid']*res['resid'];
 			res['csr2'] = cs2 / (aux.ndata_fit  - aux.nfree_fit);
 			mydata.res.push(res);
 
-			//vals['err_lo'] = (mea.values[0][i] - mea.values[1][i]) / aux.modinfo[isel].y_scale;
-			//vals['err_up'] = (mea.values[0][i] + mea.values[1][i]) / aux.modinfo[isel].y_scale;
+			//vals['err_lo'] = (mea.values[''][0][i] - mea.values[''][1][i]) / aux.modinfo[isel].y_scale;
+			//vals['err_up'] = (mea.values[''][0][i] + mea.values[''][1][i]) / aux.modinfo[isel].y_scale;
 		}
 	}
 
@@ -679,7 +517,7 @@ var mydata2chart = function(isel) {
 		comps['comp_x'] = x[i];
 
 		for (var j = 0; j < aux.modinfo[isel].n_comps; j++)  // Components
-			comps[cnames[j]] = cdata.comps[cnames[j]].buffer[i] / aux.modinfo[isel].y_scale;
+			comps[cnames[j]] = cdata.comps['+'][cnames[j]]['+'].buffer[i] / aux.modinfo[isel].y_scale;
 
 		mydata.comp.push(comps);
 	}
@@ -696,11 +534,7 @@ function createMainReducer(isel) {
 	if ( isel === undefined )
 		isel = c_imod;
 
-	var p;
-	if ( aux.is_multimodel )
-		p = chart_data[i_mod][isel];
-	else
-		p = chart_data[i_mod];
+	var p = getModels(chart_data, isel);
 
 	var series = chart.series.push(
 		am5xy.LineSeries.new(root, {
@@ -788,7 +622,7 @@ function createResiduals(isel) {
 		am5xy.LineSeries.new(root, {
 			valueXField: 'x',
 			valueYField: 'resid',
-			name: 'Residuals',  // chart_data.data.meta.resid_label;
+			name: 'Residuals',
 			legendLabelText: 'Resid.',
 			xAxis: vxAxis,
 			yAxis: resyAxis,
@@ -969,11 +803,7 @@ function createCompSeries(isel) {
 	if ( isel === undefined )
 		isel = c_imod;
 
-	var p;
-	if ( aux.is_multimodel )
-		p = chart_data[i_mod][isel];
-	else
-		p = chart_data[i_mod];
+	var p = getModels(chart_data, isel);
 
 	var series, cname, hs, icol = 0;
 
@@ -1257,7 +1087,6 @@ function p_select(isel, new_file) {
 
 	// The JSON reformatted data
 	my_chartdata = mydata2chart(isel);
-	show_spe_maininfo();
 
 	// The series
 	createDataSeries();
@@ -1463,8 +1292,6 @@ function xy_range_reset() {
 	set_init_y_range();
 
 }  // end xy_range_reset
-
-
 
 
 //
@@ -1677,8 +1504,6 @@ function create_chart() {
 am5.ready(function() {
 
 	if ( chart_data !== undefined ) {
-		if (interface_type == 'fileio' )
-			document.getElementById('myModal').className = 'modal modal-hide';
 
 		// Read metadata info
 		getauxinfo();
@@ -1695,9 +1520,6 @@ am5.ready(function() {
 		for (var j = 0; j < 2 * Math.PI; j += 0.1)
 			my_chartdata.push({"lambda": parseInt(1000 + j*1500), "y": Math.sin(j)});
 
-		// Open the file load div (if I/O mode interface)
-		if ( interface_type == 'fileio' )
-			openLoadDiv();
 	}
 
 
@@ -1976,23 +1798,6 @@ function gfit_table_toggle(id) {
 
 
 //
-// -- Download the full original JSON data
-
-function saveJsonObj(filename, obj) {
-	var a = document.createElement('a');
-	var file = new Blob([JSON.stringify(obj)], {type: 'text/plain'});
-
-	a.href = URL.createObjectURL(file);
-	a.setAttribute('download', filename);
-	a.style.display = 'none';
-	document.body.appendChild(a);
-	a.click();
-	document.body.removeChild(a);
-
-}  // end saveJsonObj
-
-
-//
 // -- Display input JSON formatted fit results in table format
 // -- Params:
 //    obj:    the json object
@@ -2150,25 +1955,17 @@ function createFitLogTabs() {
 	var divSelectData = document.getElementById('fitlog_selector');
 	var divShowData = document.getElementById('fitlog_tables');
 	var divFitRes = document.getElementById('fitres-div');
-	var tabdiv, p;
+	var tabdiv;
 
 	divSelectData.innerHTML = '';
 	divShowData.innerHTML = '';
 	divFitRes.innerHTML = '';
 
-	if ( aux.is_multimodel ) {
-		p = chart_data[i_mod][c_imod];
-		if ( chart_data[0][c_imod].extra !== undefined )
-			tab_extra.push(chart_data[0][c_imod].extra[0]);
-		else
-			tab_extra.push({});
-	} else {
-		p = chart_data[i_mod];
-		if ( chart_data[c_imod].extra !== undefined )
-			tab_extra.push(chart_data[c_imod].extra[0]);
-		else
-			tab_extra.push({});
-	}
+	var p = getModels(chart_data, c_imod);
+	if ( chart_data['+'].extra !== undefined )
+		tab_extra.push(chart_data['+'].extra['+']);
+	else
+		tab_extra.push({});
 
 	tabdiv = tableFromJson(p, 0, 'comp_table');
 
@@ -2194,8 +1991,8 @@ function createFitLogTabs() {
 	} //else
 	//divShowExtra.classList.add('div-hide');
 
-	if ( i_fit >= 0 ) {
-		tabdiv = tableFromJson(chart_data[i_fit], 1, 'fitres_table');
+	if ( chart_data['+'].fitsummary !== undefined ) {
+		tabdiv = tableFromJson(chart_data['+'].fitsummary['+'], 1, 'fitres_table');
 
 		if ( tabdiv !== undefined )
 			divFitRes.appendChild(tabdiv.table);
