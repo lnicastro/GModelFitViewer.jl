@@ -48,6 +48,20 @@ function Meta(; kwargs...)
 end
 
 
+struct ExtraField
+    label::String
+    data::Vector{String}
+    ExtraField(label::String, values::AbstractVector) = new(label, string.(collect(values)))
+end
+
+struct Extra
+    label::String
+    fields::Vector{ExtraField}
+    Extra(label::String) = new(label, Vector{ExtraField}())
+end
+add_field!(e::Extra, label::String, v::AbstractVector) = push!(e.fields, ExtraField(label, v))
+
+
 import TypedJSON: lower
 lower(v::TypedJSON.JSONType) = v  # Should this be implemented in TypedJSON?
 
@@ -73,25 +87,30 @@ end
 function gmfv_lower(bestfit::Vector{GModelFit.ModelSnapshot},
                     fsumm::GModelFit.Solvers.FitSummary,
                     data::Vector{D},
-                    meta::Vector{Meta}) where {D <: GModelFit.Measures}
+                    meta::Vector{Meta},
+                    extra::Vector{Vector{Extra}}=Vector{Vector{Extra}}()) where {D <: GModelFit.Measures}
     @assert length(bestfit) == length(data) == length(meta)
+    @assert length(extra) in [0, length(bestfit)]
     return TypedJSON.lower(Dict(:nepochs => length(bestfit),
                                 :models => [gmfv_lower(bestfit[i], meta[i]) for i in 1:length(bestfit)],
                                 :fitsummary => gmfv_lower(fsumm),
-                                :data => data))
+                                :data => data,
+                                :extra => extra))
 end
 
 gmfv_lower(bestfit::GModelFit.ModelSnapshot,
            fsumm::GModelFit.Solvers.FitSummary,
            data::GModelFit.Measures{1},
-           meta::Meta) =
-               gmfv_lower([bestfit], fsumm, [data], [meta])
+           meta::Meta,
+           extra::Vector{Extra}=Vector{Extra}()) =
+               gmfv_lower([bestfit], fsumm, [data], [meta], [extra])
 
 gmfv_lower(bestfit::GModelFit.ModelSnapshot,
            fsumm::GModelFit.Solvers.FitSummary,
-           data::GModelFit.Measures{1};
+           data::GModelFit.Measures{1},
+           extra::Vector{Extra}=Vector{Extra}();
            kws...) =
-               gmfv_lower([bestfit], fsumm, [data], [Meta(; kws...)])
+               gmfv_lower([bestfit], fsumm, [data], [Meta(; kws...)], [extra])
 
 
 

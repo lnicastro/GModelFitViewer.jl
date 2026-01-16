@@ -22,6 +22,17 @@ GModelFitViewer.serialize_html("gmodelfitviewer_test01.html", bestfit, fsumm, da
                                title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
                                xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")
 
+tab1 = GModelFitViewer.Extra("Tab1")
+GModelFitViewer.add_field!(tab1, "Field1", ["a", "b"])
+GModelFitViewer.add_field!(tab1, "Field2", ["1", "2"])
+tab2 = GModelFitViewer.Extra("Tab2")
+GModelFitViewer.add_field!(tab2, "FieldA", ["A", "B"])
+GModelFitViewer.add_field!(tab2, "FieldB", ["3", "4"])
+GModelFitViewer.serialize_html("gmodelfitviewer_test02.html", bestfit, fsumm, data,
+                               title="Test", xlab="Abscissa", ylab="Ordinate", xr=[0.5, 4.5], yr=[0, 3],
+                               xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1",
+                               [tab1, tab2])
+
 
 model1 = Model(GModelFit.Gaussian(1, 0., 1.))
 model2 = Model(GModelFit.Gaussian(1, 0., 1.))
@@ -38,4 +49,5 @@ bestfit, fsumm = fit(multi, data)
 
 meta = [GModelFitViewer.Meta(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1"),
         GModelFitViewer.Meta(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")]
-GModelFitViewer.serialize_html("gmodelfitviewer_test02.html", bestfit, fsumm, data, meta)
+GModelFitViewer.serialize_html("gmodelfitviewer_test03.html", bestfit, fsumm, data, meta)
+GModelFitViewer.serialize_html("gmodelfitviewer_test04.html", bestfit, fsumm, data, meta, [[tab1], [tab2]])

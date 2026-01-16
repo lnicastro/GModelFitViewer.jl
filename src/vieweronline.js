@@ -1903,24 +1903,23 @@ var tableFromJson = function(obj, type, tab_id) {
 		// Create table header row using the field names
 		hdr = tab.createTHead();
 		tr = hdr.insertRow(0);
-		var col = Object.keys(comp.fields["+"]);
 
-		for (var i = 0; i < col.length; i++) {
+		for (var i = 0; i < comp.fields.length; i++) {
 			var th = document.createElement('th');
-			th.innerHTML = comp.fields["+"][col[i]]["+"].meta["+"].desc
+			th.innerHTML = comp.fields[i]["+"].label
 			tr.appendChild(th);
 		}
 
 		// Table body
 		tb = tab.appendChild(document.createElement('tbody'));
-		var nc = comp.fields["+"][col[0]]["+"].data.length;  // Number of rows
+		var nc = comp.fields[0]["+"].data.length;  // Number of rows
 
 		for (var i = 0; i < nc; i++) {
 			tr = tb.insertRow(-1);
 
-			for (var j = 0; j < col.length; j++) {
+			for (var j = 0; j < comp.fields.length; j++) {
 				tabCell = tr.insertCell(-1);
-				tabCell.innerHTML = comp.fields["+"][col[j]]["+"].data[i];
+				tabCell.innerHTML = comp.fields[j]["+"].data[i];
 			}
 		}
 		contentdiv.appendChild(div);
@@ -1963,7 +1962,7 @@ function createFitLogTabs() {
 
 	var p = getModels(chart_data, c_imod);
 	if ( chart_data['+'].extra !== undefined )
-		tab_extra.push(chart_data['+'].extra['+']);
+		tab_extra.push(chart_data['+'].extra[0]);
 	else
 		tab_extra.push({});
 
@@ -1974,9 +1973,8 @@ function createFitLogTabs() {
 
 
 	// Extra tables in a separate div, if they exist for the current evaluations.
-
 	if ( tab_extra[0] !== undefined ) {
-		n_extratab = Object.keys(tab_extra[0]).length;
+		n_extratab = Object.keys(tab_extra[0]).length;  // TODO: replace [0] with epoch
 		console.log('There are '+ n_extratab +' extra tables.');
 
 		var extratabs = Object.keys(tab_extra[0]);
