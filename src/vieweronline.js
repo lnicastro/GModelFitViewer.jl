@@ -1883,7 +1883,7 @@ var tableFromJson = function(obj, type, tab_id) {
 
     case 2:  // Extra tables
 		//comp = obj.show;
-		comp = obj;
+		comp = obj["+"];
 		tab_id = 'extra_table'+ tab_id;  // Must be unique
 
 		title = '<div id="'+ tab_id +'_angle_down" class="div-show-inline"><svg class="icon-angle" width="12" height="18"><use href="#angle-down"></use></svg></div>'+
@@ -1903,24 +1903,24 @@ var tableFromJson = function(obj, type, tab_id) {
 		// Create table header row using the field names
 		hdr = tab.createTHead();
 		tr = hdr.insertRow(0);
-		var col = Object.keys(comp.fields);
+		var col = Object.keys(comp.fields["+"]);
 
 		for (var i = 0; i < col.length; i++) {
 			var th = document.createElement('th');
-			th.innerHTML = comp.fields[col[i]].meta.desc
+			th.innerHTML = comp.fields["+"][col[i]]["+"].meta["+"].desc
 			tr.appendChild(th);
 		}
 
 		// Table body
 		tb = tab.appendChild(document.createElement('tbody'));
-		var nc = comp.fields[col[0]].data.length;  // Number of rows
+		var nc = comp.fields["+"][col[0]]["+"].data.length;  // Number of rows
 
 		for (var i = 0; i < nc; i++) {
 			tr = tb.insertRow(-1);
 
 			for (var j = 0; j < col.length; j++) {
 				tabCell = tr.insertCell(-1);
-				tabCell.innerHTML = comp.fields[col[j]].data[i];
+				tabCell.innerHTML = comp.fields["+"][col[j]]["+"].data[i];
 			}
 		}
 		contentdiv.appendChild(div);

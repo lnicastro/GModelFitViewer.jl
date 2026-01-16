@@ -49,9 +49,9 @@ end
 
 
 import TypedJSON: lower
-lower(v::TypedJSON.JSONType) = v
+lower(v::TypedJSON.JSONType) = v  # Should this be implemented in TypedJSON?
 
-function my_lower(input::GModelFit.ModelSnapshot, meta::Meta)
+function gmfv_lower(input::GModelFit.ModelSnapshot, meta::Meta)
     out = TypedJSON.lower(input)
     io = IOBuffer()
     ctx = IOContext(io, :color => true)
@@ -61,7 +61,7 @@ function my_lower(input::GModelFit.ModelSnapshot, meta::Meta)
     return out
 end
 
-function my_lower(input::GModelFit.Solvers.FitSummary)
+function gmfv_lower(input::GModelFit.Solvers.FitSummary)
     out = TypedJSON.lower(input)
     io = IOBuffer()
     ctx = IOContext(io, :color => true)
@@ -70,8 +70,34 @@ function my_lower(input::GModelFit.Solvers.FitSummary)
     return out
 end
 
+function gmfv_lower(bestfit::Vector{GModelFit.ModelSnapshot},
+                    fsumm::GModelFit.Solvers.FitSummary,
+                    data::Vector{D},
+                    meta::Vector{Meta}) where {D <: GModelFit.Measures}
+    @assert length(bestfit) == length(data) == length(meta)
+    return TypedJSON.lower(Dict(:nepochs => length(bestfit),
+                                :models => [gmfv_lower(bestfit[i], meta[i]) for i in 1:length(bestfit)],
+                                :fitsummary => gmfv_lower(fsumm),
+                                :data => data))
+end
 
-function write_html(filename::String, ll::TypedJSON.JSONType)
+gmfv_lower(bestfit::GModelFit.ModelSnapshot,
+           fsumm::GModelFit.Solvers.FitSummary,
+           data::GModelFit.Measures{1},
+           meta::Meta) =
+               gmfv_lower([bestfit], fsumm, [data], [meta])
+
+gmfv_lower(bestfit::GModelFit.ModelSnapshot,
+           fsumm::GModelFit.Solvers.FitSummary,
+           data::GModelFit.Measures{1};
+           kws...) =
+               gmfv_lower([bestfit], fsumm, [data], [Meta(; kws...)])
+
+
+
+function serialize_html(filename::String, args...; kws...)
+    ll = gmfv_lower(args...; kws...)
+
     input_html = open(joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html"))
     input_js   = open(joinpath(dirname(pathof(@__MODULE__)), "vieweronline.js"))
     output     = open(filename, "w")
@@ -99,32 +125,6 @@ function write_html(filename::String, ll::TypedJSON.JSONType)
     return filename
 end
 
-function serialize_html(filename::String,
-                        bestfit::Vector{GModelFit.ModelSnapshot},
-                        fsumm::GModelFit.Solvers.FitSummary,
-                        data::Vector{D},
-                        meta::Vector{Meta}) where {D <: GModelFit.Measures}
-    @assert length(bestfit) == length(data) == length(meta)
-    return write_html(filename,
-                      TypedJSON.lower(Dict(:nepochs => length(bestfit),
-                                           :models => [my_lower(bestfit[i], meta[i]) for i in 1:length(bestfit)],
-                                           :fitsummary => my_lower(fsumm),
-                                           :data => data)))
-end
-
-serialize_html(filename::String,
-               bestfit::GModelFit.ModelSnapshot,
-               fsumm::GModelFit.Solvers.FitSummary,
-               data::GModelFit.Measures{1},
-               meta::Meta) =
-                   serialize_html(filename, [bestfit], fsumm, [data], [meta])
-
-serialize_html(filename::String,
-               bestfit::GModelFit.ModelSnapshot,
-               fsumm::GModelFit.Solvers.FitSummary,
-               data::GModelFit.Measures{1};
-               kws...) =
-                   serialize_html(filename, [bestfit], fsumm, [data], [Meta(; kws...)])
 
 function viewer(args...; filename=joinpath(tempdir(), "gmodelfitviewer.html"), kws...)
     filename = serialize_html(filename, args...; kws...)
