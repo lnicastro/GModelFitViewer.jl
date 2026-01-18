@@ -1,4 +1,5 @@
-using GModelFit, GModelFitViewer
+using Test, GModelFit, GModelFitViewer, Dates
+
 model = Model(:bkg => GModelFit.OffsetSlope(1, 1, 0.1),
               :l1 => GModelFit.Gaussian(1, 2, 0.2),
               :l2 => GModelFit.Gaussian(1, 3, 0.4),
@@ -51,3 +52,17 @@ meta = [ViewerOpts(title="First" , xlab="Abscissa", ylab="Ordinate", xr=[-4, 4],
         ViewerOpts(title="Second", xlab="Abscissa", ylab="Ordinate", xr=[-4, 4], xscale=1000, yscale=1e-17, xunit="Angstrom", yunit="erg s^-1 cm^-2 A^-1")]
 export_html("test03.html", bestfit, fsumm, data, meta)
 export_html("test04.html", bestfit, fsumm, data, meta, [[tab1], [tab2]])
+
+
+# Compare a generated HTML with a reference one
+x    = 1.:5
+meas = 1.:5
+unc  = meas .* 0.
+dom  = Domain(x)
+data = Measures(dom, meas, unc)
+model = Model(@fd (x, a2=3, a1=2, a0=1) -> (a2 .* x.^2  .+  a1 .* x  .+  a0))
+bestfit, fsumm = fit(model, data, GModelFit.Solvers.dry())
+# Drop values which depends on the execution timestamp
+fsumm = GModelFit.Solvers.FitSummary(DateTime("0000-01-01T00:00:00"), 0., fsumm.ndata, fsumm.nfree, fsumm.fitstat, fsumm.status, fsumm.solver_retval)
+export_html("test05.html", bestfit, fsumm, data)
+@test read("test05.html", String) == read("ref05.html", String)
