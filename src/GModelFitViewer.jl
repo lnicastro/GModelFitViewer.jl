@@ -3,9 +3,9 @@ module GModelFitViewer
 using JSON
 using DefaultApplication, StructC14N, GModelFit, TypedJSON
 
-export viewer
+export viewer, export_html, ViewerOpts, AuxTable, add_col!
 
-mutable struct Meta
+mutable struct ViewerOpts
     title::String
     xlabel::String
     ylabel::String
@@ -20,7 +20,7 @@ mutable struct Meta
 end
 
 
-function Meta(; kwargs...)
+function ViewerOpts(; kwargs...)
     template = (title=AbstractString,
                 xlabel=AbstractString,
                 ylabel=AbstractString,
@@ -34,7 +34,7 @@ function Meta(; kwargs...)
                 ylog=Bool)
     kw = canonicalize(template; kwargs...)
 
-    return Meta((ismissing(kw.title)   ?  ""       :  kw.title),
+    return ViewerOpts((ismissing(kw.title)   ?  ""       :  kw.title),
                 (ismissing(kw.xlabel)  ?  ""       :  kw.xlabel),
                 (ismissing(kw.ylabel)  ?  ""       :  kw.ylabel),
                 (ismissing(kw.xrange)  ?  nothing  :  [kw.xrange...]),
@@ -48,24 +48,21 @@ function Meta(; kwargs...)
 end
 
 
-struct ExtraField
+struct AuxColumn
     label::String
     data::Vector{String}
-    ExtraField(label::String, values::AbstractVector) = new(label, string.(collect(values)))
+    AuxColumn(label::String, values::AbstractVector) = new(label, string.(collect(values)))
 end
 
-struct Extra
+struct AuxTable
     label::String
-    fields::Vector{ExtraField}
-    Extra(label::String) = new(label, Vector{ExtraField}())
+    fields::Vector{AuxColumn}
+    AuxTable(label::String) = new(label, Vector{AuxColumn}())
 end
-add_field!(e::Extra, label::String, v::AbstractVector) = push!(e.fields, ExtraField(label, v))
+add_col!(e::AuxTable, label::String, v::AbstractVector) = push!(e.fields, AuxColumn(label, v))
 
 
-import TypedJSON: lower
-lower(v::TypedJSON.JSONType) = v  # Should this be implemented in TypedJSON?
-
-function gmfv_lower(input::GModelFit.ModelSnapshot, meta::Meta)
+function _priv_lower(input::GModelFit.ModelSnapshot, meta::ViewerOpts)
     out = TypedJSON.lower(input)
     io = IOBuffer()
     ctx = IOContext(io, :color => true)
@@ -75,7 +72,7 @@ function gmfv_lower(input::GModelFit.ModelSnapshot, meta::Meta)
     return out
 end
 
-function gmfv_lower(input::GModelFit.Solvers.FitSummary)
+function _priv_lower(input::GModelFit.Solvers.FitSummary)
     out = TypedJSON.lower(input)
     io = IOBuffer()
     ctx = IOContext(io, :color => true)
@@ -84,38 +81,38 @@ function gmfv_lower(input::GModelFit.Solvers.FitSummary)
     return out
 end
 
-function gmfv_lower(bestfit::Vector{GModelFit.ModelSnapshot},
+function _priv_lower(bestfit::Vector{GModelFit.ModelSnapshot},
                     fsumm::GModelFit.Solvers.FitSummary,
                     data::Vector{D},
-                    meta::Vector{Meta},
-                    extra::Vector{Vector{Extra}}=Vector{Vector{Extra}}()) where {D <: GModelFit.Measures}
+                    meta::Vector{ViewerOpts},
+                    extra::Vector{Vector{AuxTable}}=Vector{Vector{AuxTable}}()) where {D <: GModelFit.Measures}
     @assert length(bestfit) == length(data) == length(meta)
     @assert length(extra) in [0, length(bestfit)]
     return TypedJSON.lower(Dict(:nepochs => length(bestfit),
-                                :models => [gmfv_lower(bestfit[i], meta[i]) for i in 1:length(bestfit)],
-                                :fitsummary => gmfv_lower(fsumm),
+                                :models => [_priv_lower(bestfit[i], meta[i]) for i in 1:length(bestfit)],
+                                :fitsummary => _priv_lower(fsumm),
                                 :data => data,
                                 :extra => extra))
 end
 
-gmfv_lower(bestfit::GModelFit.ModelSnapshot,
+_priv_lower(bestfit::GModelFit.ModelSnapshot,
            fsumm::GModelFit.Solvers.FitSummary,
            data::GModelFit.Measures{1},
-           meta::Meta,
-           extra::Vector{Extra}=Vector{Extra}()) =
-               gmfv_lower([bestfit], fsumm, [data], [meta], [extra])
+           meta::ViewerOpts,
+           extra::Vector{AuxTable}=Vector{AuxTable}()) =
+               _priv_lower([bestfit], fsumm, [data], [meta], [extra])
 
-gmfv_lower(bestfit::GModelFit.ModelSnapshot,
+_priv_lower(bestfit::GModelFit.ModelSnapshot,
            fsumm::GModelFit.Solvers.FitSummary,
            data::GModelFit.Measures{1},
-           extra::Vector{Extra}=Vector{Extra}();
+           extra::Vector{AuxTable}=Vector{AuxTable}();
            kws...) =
-               gmfv_lower([bestfit], fsumm, [data], [Meta(; kws...)], [extra])
+               _priv_lower([bestfit], fsumm, [data], [ViewerOpts(; kws...)], [extra])
 
 
 
-function serialize_html(filename::String, args...; kws...)
-    ll = gmfv_lower(args...; kws...)
+function export_html(filename::String, args...; kws...)
+    ll = _priv_lower(args...; kws...)
 
     input_html = open(joinpath(dirname(pathof(@__MODULE__)), "vieweronline.html"))
     input_js   = open(joinpath(dirname(pathof(@__MODULE__)), "vieweronline.js"))
@@ -146,7 +143,7 @@ end
 
 
 function viewer(args...; filename=joinpath(tempdir(), "gmodelfitviewer.html"), kws...)
-    filename = serialize_html(filename, args...; kws...)
+    filename = export_html(filename, args...; kws...)
     DefaultApplication.open(filename)
 end
 

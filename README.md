@@ -3,7 +3,7 @@
 The **GModelFitViewer.jl** package allows to visualize 1D [**GModelFit**](https://gcalderone.github.io/GModelFit.jl) objects in a HTML page.  Specifically, it allows to display a plot of the best fit model (along with all its component) and of the empirical data, as well as the logs reported in the Julia REPL when `show`ing the objects.
 
 The most relevant functions are:
-- `GModelFitViewer.serialize_html()`: writes an HTML page containing the above mentioned contents;
+- `export_html()`: writes an HTML page containing the above mentioned contents;
 - `viewer()`: writes an HTML page and displays it using the default browser;
 
 Both functions accepts the same arguments:
@@ -11,7 +11,7 @@ Both functions accepts the same arguments:
 - a `FitSummary` object;
 - a `Measures` or a `Vector{Measures}` object;
 
-The file name for the output file can be provided as first argument to `GModelFitViewer.serialize_html()` or via the `filename=` keyword to the `viewer()` function.  If the latter keyword is not used the file will stored in the `tempdir()` directory.
+The file name for the output file can be provided as first argument to `export_html()` or via the `filename=` keyword to the `viewer()` function.  If the latter keyword is not used the file will stored in the `tempdir()` directory.
 
 Besides the above arguments, a number of optional keywords may be provided to customize the plot:
 - `title`: plot title;
@@ -55,5 +55,5 @@ viewer(bestfit, fsumm, data,
 
 To save the HTML page in `myfile.html` (without opening it in the web browser):
 ```julia
-GModelFitViewer.serialize_html("myfile.html", bestfit, fsumm, data)
+export_html("myfile.html", bestfit, fsumm, data)
 ```
