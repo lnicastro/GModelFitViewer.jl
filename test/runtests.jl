@@ -1,5 +1,28 @@
 using Test, GModelFit, GModelFitViewer, Dates
 
+#
+using Interpolations
+import GModelFit: unfolded_domain, apply_ir!
+
+struct MyInstrument <: GModelFit.AbstractInstrumentResponse
+end
+
+# Return the evenly-spaced domain to be used for evalation of the unfolded model
+unfolded_domain(IR::MyInstrument, folded_domain::GModelFit.AbstractDomain) =
+    Domain(logrange(minimum(coords(folded_domain)),
+                    maximum(coords(folded_domain)),
+                    length(folded_domain)))
+
+# Apply instrument response
+function apply_ir!(IR::MyInstrument,
+                   folded_domain::GModelFit.AbstractDomain, folded::Vector,
+                   unfolded_domain::GModelFit.AbstractDomain, unfolded::Vector)
+    folded .= linear_interpolation(coords(unfolded_domain), unfolded)(coords(folded_domain))
+end
+
+
+
+
 model = Model(:bkg => GModelFit.OffsetSlope(1, 1, 0.1),
               :l1 => GModelFit.Gaussian(1, 2, 0.2),
               :l2 => GModelFit.Gaussian(1, 3, 0.4),
@@ -14,7 +37,12 @@ model[:l2].sigma.patch = @fd m -> 2 * m[:l1].sigma
 model[:l2].center.patch = @fd (m, v) -> v + m[:l1].center
 model[:l2].center.val = 1   # guess value for the distance between the centers
 model[:l2].center.low = 0   # ensure [l2].center > [l1].center
-dom = Domain(0:0.1:5)
+set_IR!(model, MyInstrument())
+
+x = collect(logrange(0.1, 5, 100))
+deleteat!(x, 5:20)
+dom = Domain(x) # Domain(0.1:0.1:5)
+
 data = GModelFit.mock(Measures, model, dom)
 bestfit, fsumm = fit(model, data)
 
