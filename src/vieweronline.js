@@ -385,7 +385,7 @@ function getauxinfo() {  // TODO
 
 		var datadomain = getDataDomainAxis(chart_data, i);
 		n_xmea = datadomain.length;
-		var moddomain = getModelsDomainAxis(chart_data, i);
+		var moddomain = getFoldedDomainAxis(chart_data, i);
 		var n_xcomp = moddomain.length;
 		console.log('n_xmea, n_xcomp', n_xmea, n_xcomp);
 
