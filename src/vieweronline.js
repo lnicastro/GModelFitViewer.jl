@@ -1,5 +1,5 @@
 var _version = '0.4.5';
-var _date = '2026-01-15';
+var _date = '2026-01-21';
 document.querySelector('meta[name="version"]').setAttribute("content", _version);
 document.querySelector('meta[name="date"]').setAttribute("content", _date);
 document.getElementById('version-div').innerHTML = 'v'+ _version;
@@ -209,8 +209,16 @@ function getModels(chart_data, epoch) {
 	return chart_data['+'].models[epoch]['+'];
 }
 
-function getModelsDomainAxis(chart_data, epoch) {
+function getUnfoldedDomainAxis(chart_data, epoch) {
 	return chart_data['+']['models'][epoch]['+']['domain']['+'].axis[''][0];
+}
+
+function getFoldedDomainAxis(chart_data, epoch) {
+	return chart_data['+']['models'][epoch]['+']['folded_domain']['+'].axis[''][0];
+}
+
+function getDataDomainAxis(chart_data, epoch) {
+	return chart_data['+'].data[epoch]['+']['domain']['+'].axis[''][0];
 }
 
 function getComps(chart_data, epoch) {
@@ -224,10 +232,6 @@ return out;
 
 function getData(chart_data, epoch) {
 	return chart_data['+'].data[epoch]['+'];
-}
-
-function getDataDomainAxis(chart_data, epoch) {
-	return chart_data['+'].data[epoch]['+']['domain']['+'].axis[''][0];
 }
 
 function getNEpochs(chart_data) {
@@ -486,14 +490,9 @@ var mydata2chart = function(isel) {
 	// X values rounded to the N sig. factional digits
 	var cs2 = 0;
 	if ( aux.NEpochs > 0 ) {
-		// Extend domain.axis for bin width computation
-		var binw = x[aux.modinfo[isel].nx_mea - 1] - x[aux.modinfo[isel].nx_mea - 2]
-		x.push(x[aux.modinfo[isel].nx_mea - 1] + binw);
 		for (var i = 0; i < aux.modinfo[isel].nx_mea; i++) {  // folded domain
 			data = {};
-			binw = x[i+1] - mea.domain['+'].axis[''][0][i];
 			data['xc'] = x[i];
-			data['x'] = ((x[i] - binw/2) * fscale) / fscale;
 			data['y'] = mea.values[''][0][i] / aux.modinfo[isel].y_scale;
 			data['error'] = mea.values[''][1][i] / aux.modinfo[isel].y_scale;
 			data['model'] = cdata.folded[i] / aux.modinfo[isel].y_scale;
@@ -512,6 +511,7 @@ var mydata2chart = function(isel) {
 		}
 	}
 
+	x = getUnfoldedDomainAxis(chart_data, isel);
 	for (var i = 0; i < x.length; i++) {
 		comps = {};
 		comps['comp_x'] = x[i];
@@ -694,12 +694,12 @@ function createDataSeries(isel) {
 	if ( sdata ) sdata.dispose();
 
 	sdata = chart.series.push(
-		am5xy.StepLineSeries.new(root, {
+		am5xy.LineSeries.new(root, {
 			name: 'data',
 			legendLabelText: 'Data',
 			xAxis: vxAxis,
 			yAxis: valueAxis,
-			valueXField: "x",
+			valueXField: "xc",
 			valueYField: "y",
 			stroke: dcolor.hex,
 			fill: dcolor.hex,
