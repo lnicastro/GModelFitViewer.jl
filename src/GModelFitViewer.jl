@@ -134,9 +134,9 @@ function export_html(filename::String, args...; kws...)
     close(input_js)
 
     # TODO: comment the following lines
-    output = open(replace(filename, ".html" => ".json"), "w")
-    TypedJSON.serialize(output, ll)
-    close(output)
+    # output = open(replace(filename, ".html" => ".json"), "w")
+    # TypedJSON.serialize(output, ll)
+    # close(output)
 
     return filename
 end
