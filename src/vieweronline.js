@@ -1962,7 +1962,7 @@ function createFitLogTabs() {
 
 	var p = getModels(chart_data, c_imod);
 	if ( chart_data['+'].extra !== undefined )
-		tab_extra.push(chart_data['+'].extra[0]);
+		tab_extra.push(chart_data['+'].extra[c_imod]);
 	else
 		tab_extra.push({});
 
