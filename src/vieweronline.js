@@ -210,15 +210,15 @@ function getModels(chart_data, epoch) {
 }
 
 function getUnfoldedDomainAxis(chart_data, epoch) {
-	return chart_data['+']['models'][epoch]['+']['domain']['+'].axis[''][0];
+	return chart_data['+']['models'][epoch]['+']['domain']['+'].axes[''][0];
 }
 
 function getFoldedDomainAxis(chart_data, epoch) {
-	return chart_data['+']['models'][epoch]['+']['folded_domain']['+'].axis[''][0];
+	return chart_data['+']['models'][epoch]['+']['folded_domain']['+'].axes[''][0];
 }
 
 function getDataDomainAxis(chart_data, epoch) {
-	return chart_data['+'].data[epoch]['+']['domain']['+'].axis[''][0];
+	return chart_data['+'].data[epoch]['+']['domain']['+'].axes[''][0];
 }
 
 function getComps(chart_data, epoch) {
@@ -304,8 +304,8 @@ function getauxinfo() {  // TODO
 		aux.maincomp.push(cdata.maincomp[''].substring(4));  // maincomp ~= _TS_main
 
 		// Labels in Measures
-		if ( mea.labels[''] !== undefined ) {
-			v_labs = mea.labels[''];
+		if ( mea.values !== undefined ) {
+			v_labs = ['values', 'uncerts'];
 		}
 
 		if ( cdata.meta !== undefined ) {
@@ -360,14 +360,14 @@ function getauxinfo() {  // TODO
 			y_min = y_rng[0];
 			y_max = y_rng[1];
 		} else {  // Y range is model dependent ...
-			y_min = Math.min(y_min, Math.min(...mea.values[''][0]));
-			y_max = Math.max(y_max, Math.max(...mea.values[''][0]));
+			y_min = Math.min(y_min, Math.min(...mea.values));
+			y_max = Math.max(y_max, Math.max(...mea.values));
 			for (var j = 0; j < cnames.length; j++) {
 				y_min = Math.min(y_min, Math.min(...(cdata.comps['+'][cnames[j]]['+'].buffer)));
 				y_max = Math.max(y_max, Math.max(...(cdata.comps['+'][cnames[j]]['+'].buffer)));
 				console.log('Model #, comp. #, y_min, y_max:', i, j, y_min, y_max);
 			}
-			var e_max = 3*Math.min(...mea.values[''][1]);  // TODO
+			var e_max = 3*Math.min(...mea.uncerts);  // TODO
 			console.log('Error max:', e_max);
 			y_min -= e_max;
 			y_max += e_max;
@@ -493,14 +493,14 @@ var mydata2chart = function(isel) {
 		for (var i = 0; i < aux.modinfo[isel].nx_mea; i++) {  // folded domain
 			data = {};
 			data['xc'] = x[i];
-			data['y'] = mea.values[''][0][i] / aux.modinfo[isel].y_scale;
-			data['error'] = mea.values[''][1][i] / aux.modinfo[isel].y_scale;
+			data['y'] = mea.values[i] / aux.modinfo[isel].y_scale;
+			data['error'] = mea.uncerts[i] / aux.modinfo[isel].y_scale;
 			data['model'] = cdata.folded[i] / aux.modinfo[isel].y_scale;
 			mydata.dat.push(data);
 
 			res = {};
 			res['x'] = data['xc'];
-			res['resid'] = (mea.values[''][0][i] - cdata.folded[i]) / mea.values[''][1][i];
+			res['resid'] = (mea.values[i] - cdata.folded[i]) / mea.uncerts[i];
 			// Normalised cumulative sum of squared residuals
 			cs2 += res['resid']*res['resid'];
 			res['csr2'] = cs2 / (aux.ndata_fit  - aux.nfree_fit);
