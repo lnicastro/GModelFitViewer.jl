@@ -1,6 +1,6 @@
 name = "GModelFitViewer"
 uuid = "5d93b50e-5cc7-4feb-a740-ec85257caa01"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Luciano Nicastro <luciano.nicastro@gmail.com>"]
 
 [deps]
